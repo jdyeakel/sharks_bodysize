@@ -70,16 +70,16 @@ R"plot($tvec,$(mass),xlab='Growth time',ylab='Mass')"
 #=====================#
 
 #Reproduction parameters
-alpha = 5;
-beta = 0.01;
-repepsilon = 75;
+alpha = 0.5;
+beta = 0.1;
+repepsilon = 90;
 
-gen = 10;
+gen = 100;
 tstep = minimum(tint);
 tmax = maximum(tvec)*gen; #How much time to simulate?
 totsteps = tmax/tstep;
 #How many individuals start
-n0 = 10;
+n0 = 100;
 # initialstate = zeros(Int64,n0);
 
 #state vector - number of individuals in given state
@@ -90,7 +90,18 @@ state[1] = n0; #start out all individuals at birth size class
 
 #Simulation
 tcum = 0;
+tictoc = 0;
+popstate = Array{Int64}(0);
 while tcum < tmax
+	
+	tictoc = tictoc + 1;
+	pop = sum(state);
+	push!(popstate,pop);
+	
+	if mod(tictoc,100) == 0
+		println("tictoc ",tictoc,"; Population = ",pop)
+	end
+	
 	tcum += tstep;
 	stateclock += tstep;
 	
@@ -107,13 +118,15 @@ while tcum < tmax
 		#Grow
 		statetime = stateclock[i];
 		if i < lspan
-			if statetime >= tvec[i]
-				#Add growing individuals to new state
-				state[i+1] = state[i+1]+state[i];
-				#Remove growing individuals from current state;
-				state[i] = 0;
-				#reset clock for that bin
-				stateclock[i] = 0;
+			if state[i] > 0
+				if statetime >= tvec[i]
+					#Add growing individuals to new state
+					state[i+1] = state[i+1]+state[i];
+					#Remove growing individuals from current state;
+					state[i] = 0;
+					#reset clock for that bin
+					stateclock[i] = 0;
+				end
 			end
 		else 
 			state[i] = 0;
@@ -129,4 +142,23 @@ while tcum < tmax
 		
 		#Tooth stuff
 	end
+	
 end
+
+#Simulation time in years
+timesim = (collect(1:tictoc)*tstep)/60/60/24/365;
+R"plot($(timesim),$popstate,type='l',xlab='Time',ylab='Population size')"
+
+#Produce stationary distribution of mass NOTE OVER some time interval (rather than a single step)
+mvec = Array{Float64}(0);
+for i=1:length(state)
+	mvec = [mvec;vec(repeat([mass[i]],inner=state[i]))];
+end
+R"hist($mvec,xlab='Mass (grams)',breaks=20,col='gray',main='')"
+
+
+
+
+
+
+
