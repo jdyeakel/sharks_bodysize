@@ -13,10 +13,14 @@ agevec = collect(1/agestep:1/agestep:0.99);
 lspan = length(agevec);
 
 #We will want to use the Gillooly relationships (Nature, 2002) rather than these (which are for mammals!)
-B0 = 0.047; #Metabolic normalization constant
+# B0 = 0.047; #Metabolic normalization constant
+# C = 19.50; #endotherms (Brown Ecology 2004)
+C = 18.47; #FISH
+temp = 294.3; #324 to get B0 in natcomm; 291.5 for 65F; 294.3 for 70F
+B0 = (exp(C))/(exp(0.63/((8.61733*10^(-5.0))*temp)));
 Em = 5774; #Energy needed to synthesize a unit of mass
 a = B0/Em;
-m0 = 10; #Birth size (grams)
+m0 = 100000; #Birth size (grams)
 M = 500000; #Asymptotic size :: tiger shark: 380000 to 630000 grams
 eta = 3/4; #Scaling exponent
 
@@ -55,14 +59,15 @@ tint = diff(tvec);
 # Survivorship: this is 1 - the probability of death at a given ageclass
 ltime = length(tvec);
 survship = Array{Float64}(ltime)
+tvecsum = cumsum(tvec);
 for i=1:ltime
-	survship[i] = F(tvec[i])
+	survship[i] = F(tvecsum[i])
 end
-
+survship[ltime] = 0;
 #Check relationships
 
 #Body mass over time
-R"plot($tvec,$(mass),xlab='Growth time',ylab='Mass')"
+R"plot($(tvec/60/60/24/365),$(mass),xlab='Growth time',ylab='Mass')"
 
 
 #=====================#
@@ -70,16 +75,17 @@ R"plot($tvec,$(mass),xlab='Growth time',ylab='Mass')"
 #=====================#
 
 #Reproduction parameters
-alpha = 0.5;
-beta = 0.1;
-repepsilon = 90;
+alpha = 10;
+beta = 0.001;
+maturity = 
+repepsilon = 50;
 
-gen = 100;
+gen = 200;
 tstep = minimum(tint);
 tmax = maximum(tvec)*gen; #How much time to simulate?
 totsteps = tmax/tstep;
 #How many individuals start
-n0 = 100;
+n0 = 1000;
 # initialstate = zeros(Int64,n0);
 
 #state vector - number of individuals in given state
@@ -117,7 +123,7 @@ while tcum < tmax
 		
 		#Grow
 		statetime = stateclock[i];
-		if i < lspan
+		# if i < lspan
 			if state[i] > 0
 				if statetime >= tvec[i]
 					#Add growing individuals to new state
@@ -128,9 +134,9 @@ while tcum < tmax
 					stateclock[i] = 0;
 				end
 			end
-		else 
-			state[i] = 0;
-		end
+		# else 
+		# 	state[i] = 0;
+		# end
 		
 		#Reproduce
 		if i >= repepsilon
@@ -147,7 +153,7 @@ end
 
 #Simulation time in years
 timesim = (collect(1:tictoc)*tstep)/60/60/24/365;
-R"plot($(timesim),$popstate,type='l',xlab='Time',ylab='Population size')"
+R"plot($(timesim),$popstate,type='l',xlab='Time',ylab='Population size',log='y')"
 
 #Produce stationary distribution of mass NOTE OVER some time interval (rather than a single step)
 mvec = Array{Float64}(0);
