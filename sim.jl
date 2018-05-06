@@ -8,9 +8,7 @@ using RCall
 #=====================#
 
 #Initialize variables
-agestep = 100;
-agevec = collect(1/agestep:1/agestep:0.99);
-lspan = length(agevec);
+
 
 #We will want to use the Gillooly relationships (Nature, 2002) rather than these (which are for mammals!)
 # B0 = 0.047; #Metabolic normalization constant
@@ -20,9 +18,23 @@ temp = 294.3; #324 to get B0 in natcomm; 291.5 for 65F; 294.3 for 70F
 B0 = (exp(C))/(exp(0.63/((8.61733*10^(-5.0))*temp)));
 Em = 5774; #Energy needed to synthesize a unit of mass
 a = B0/Em;
-m0 = 100000; #Birth size (grams)
+m0 = 200; #Birth size (grams)
 M = 500000; #Asymptotic size :: tiger shark: 380000 to 630000 grams
 eta = 3/4; #Scaling exponent
+
+epsilonstep = 100;
+epsilonmax = 0.99;
+epsilonvec = collect(m0/M:(epsilonmax - (m0/M))/epsilonstep:epsilonmax);
+lspan = length(epsilonvec);
+
+#Growth function :: the time it takes to get to epsilon % body mass M from m0
+function ts(epsilon1,epsilon2)
+	# ts = log(((1-(m0/M)^(1-eta))/(1-epsilon^(1-eta))))*((M^(1-eta)/(a*(1-eta))));
+	# Epsilon 1: proportion of M to start
+	# Epsilon 2: proportion of M to end
+	ts = log(((1-(epsilon1)^(1-eta))/(1-epsilon2^(1-eta))))*((M^(1-eta)/(a*(1-eta))));
+	return ts
+end
 
 #Gompertz parameters -- somewhat mysterious need to get Calder book
 #from Calder, W. A. Size, function, and life history (Harvard University Press, 1984)
@@ -33,35 +45,30 @@ a1 = 1.45*10^(-7.0);
 b1 = -0.27;
 c0 = a0*M^b0;
 c1 = a1*M^b1;
-
-#Growth function :: the time it takes to get to epsilon % body mass M from m0
-function ts(epsilon)
-	ts = log(((1-(m0/M)^(1-eta))/(1-epsilon^(1-eta))))*((M^(1-eta)/(a*(1-eta))));
-	return ts
-end
 #Survivorship from Gompertz curve
 function F(t)
-	survship = F0*exp((c0/c1)*(1-exp(c1*t)));
+	survship = minimum([1,F0*exp((c0/c1)*(1-exp(c1*t)))]);
 	return survship
 end
 
 #The time it takes to get from m0 to epsilon M for increasing epsilons.
 #The time experienced by the individual is tvec[3] = tvec[2]-tvec[1]
-tvec = Array{Float64}(lspan);
-mass = Array{Float64}(lspan);
-for i=1:length(agevec)
-	epsilon = agevec[i];
-	tvec[i] = ts(epsilon);
-	mass[i] = epsilon*M;
+tint = Array{Float64}(lspan-1);
+mass = Array{Float64}(lspan-1);
+for i=1:lspan-1
+	epsilon1 = epsilonvec[i];
+	epsilon2 = epsilonvec[i+1];
+	tint[i] = ts(epsilon1,epsilon2);
+	mass[i] = (epsilon1*M + epsilon2*M)*0.5;
 end
-tint = diff(tvec);
+
+tvec = cumsum(tint);
 
 # Survivorship: this is 1 - the probability of death at a given ageclass
 ltime = length(tvec);
 survship = Array{Float64}(ltime)
-tvecsum = cumsum(tvec);
 for i=1:ltime
-	survship[i] = F(tvecsum[i])
+	survship[i] = F(tvec[i]);
 end
 survship[ltime] = 0;
 #Check relationships
@@ -73,15 +80,23 @@ R"plot($(tvec/60/60/24/365),$(mass),xlab='Growth time',ylab='Mass')"
 #=====================#
 #Simulation
 #=====================#
-
+tvec_yrs = tvec/60/60/24/365;
 #Reproduction parameters
-alpha = 10;
-beta = 0.001;
-maturity = 
-repepsilon = 50;
+alpha = 3;
+beta = 0.1;
+maturity = 10; #in years
+repsilon = findmin((maturity-tvec_yrs).^2)[2]
 
-gen = 200;
-tstep = minimum(tint);
+# R"""
+# par(mfrow=c(2,1))
+# plot($(tvec_yrs),$(mass),xlab='Growth time',ylab='Mass')
+# lines(rep($(tvec_yrs[repsilon]),length.out=length(seq(1,10^6,by=1000))),seq(1,10^6,by=1000))
+# """
+
+
+
+gen = 20;
+tstep = minimum(tint); #The timesteps are set at the minimum time interval between age classes
 tmax = maximum(tvec)*gen; #How much time to simulate?
 totsteps = tmax/tstep;
 #How many individuals start
@@ -93,6 +108,9 @@ state = zeros(Int64,lspan);
 stateclock = zeros(Float64,lspan);
 state[1] = n0; #start out all individuals at birth size class
 
+N=100;
+savestate = zeros(Int64,N,lspan);
+n=0;
 
 #Simulation
 tcum = 0;
@@ -112,7 +130,7 @@ while tcum < tmax
 	stateclock += tstep;
 	
 	#Individuals grow
-	for i=1:lspan
+	for i=1:ltime
 		
 		#Remove indidivduals that die
 		prmort = 1-survship[i];
@@ -139,7 +157,7 @@ while tcum < tmax
 		# end
 		
 		#Reproduce
-		if i >= repepsilon
+		if i >= repsilon
 			#Recruitment function
 			recruits = convert(Int64,floor((alpha*state[i])/(1+beta*state[i])));
 			#Add the recruits to the initial state
@@ -149,18 +167,29 @@ while tcum < tmax
 		#Tooth stuff
 	end
 	
+	#save states from the last N timestep
+	
+	if mod(tictoc,N) == 0
+		n=0;
+	end
+	n+=1;
+	savestate[n,:] = state;
+	
 end
 
 #Simulation time in years
-timesim = (collect(1:tictoc)*tstep)/60/60/24/365;
-R"plot($(timesim),$popstate,type='l',xlab='Time',ylab='Population size',log='y')"
+maxlifetime = maximum(tvec)/60/60/24/365;
+timesim = (collect(1:tictoc)*tstep)/60/60/24/365/maxlifetime;
+R"plot($(timesim),$popstate,type='l',xlab='Time (generations)',ylab='Population size',log='y')"
 
 #Produce stationary distribution of mass NOTE OVER some time interval (rather than a single step)
 mvec = Array{Float64}(0);
-for i=1:length(state)
-	mvec = [mvec;vec(repeat([mass[i]],inner=state[i]))];
+for j=1:N
+	for i=1:ltime
+		mvec = [mvec;vec(repeat([mass[i]],inner=savestate[j,i]))];
+	end
 end
-R"hist($mvec,xlab='Mass (grams)',breaks=20,col='gray',main='')"
+R"hist($mvec,xlab='Steady state mass distribution (grams)',breaks=20,col='gray',main='',freq=FALSE)"
 
 
 
