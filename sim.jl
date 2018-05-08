@@ -82,7 +82,7 @@ R"plot($(tvec/60/60/24/365),$(mass),xlab='Growth time',ylab='Mass')"
 #=====================#
 tvec_yrs = tvec/60/60/24/365;
 #Reproduction parameters
-alpha = 3;
+alpha = 1;
 beta = 0.1;
 maturity = 10; #in years
 repsilon = findmin((maturity-tvec_yrs).^2)[2]
@@ -108,7 +108,20 @@ state = zeros(Int64,lspan);
 stateclock = zeros(Float64,lspan);
 state[1] = n0; #start out all individuals at birth size class
 
-N=100;
+#teeth lost at each state
+toothdrop = zeros(Float64,lspan);
+#mass vector for teeth in each timebin
+#NOTE this right now it's just linear, but should be allomtric and/or saturating
+mintoothmass = 5.0;
+maxtoothmass = 50.0;
+toothmass = collect(mintoothmass:((maxtoothmass-mintoothmass)/(lspan-1)):maxtoothmass); 
+teethlostperday = 10;
+#(g/s) :: number of teeth lost per second * toothmass
+#This should probably also vary with size
+toothlossrate = (teethlostperday/24/60/60)*toothmass; 
+
+
+N=100; #how many timebins to save to calculate steady state distribution
 savestate = zeros(Int64,N,lspan);
 n=0;
 
@@ -164,7 +177,9 @@ while tcum < tmax
 			state[1] = state[1] + recruits;
 		end
 		
-		#Tooth stuff
+		#lose teeth
+		# number of ndividuals * tooth loss rate [toothloss/sec] * time interval [sec]
+		toothdrop[i] += state[i]*(toothlossrate[i] * tstep);
 	end
 	
 	#save states from the last N timestep
@@ -182,18 +197,28 @@ maxlifetime = maximum(tvec)/60/60/24/365;
 timesim = (collect(1:tictoc)*tstep)/60/60/24/365/maxlifetime;
 R"plot($(timesim),$popstate,type='l',xlab='Time (generations)',ylab='Population size',log='y')"
 
+
+
+
 #Produce stationary distribution of mass NOTE OVER some time interval (rather than a single step)
-mvec = Array{Float64}(0);
-for j=1:N
-	for i=1:ltime
-		mvec = [mvec;vec(repeat([mass[i]],inner=savestate[j,i]))];
-	end
-end
-R"hist($mvec,xlab='Steady state mass distribution (grams)',breaks=20,col='gray',main='',freq=FALSE)"
+# mvec = Array{Float64}(0);
+# for j=1:N
+# 	for i=1:ltime
+# 		mvec = [mvec;vec(repeat([mass[i]],inner=savestate[j,i]))];
+# 	end
+# end
+# R"hist($mvec,xlab='Steady state mass distribution (grams)',breaks=20,col='gray',main='',freq=FALSE)"
+
+
+accumstate = sum(savestate,1);
+laststate = find(iszero,accumstate)[1];
+R"barplot($(accumstate[1:laststate]),names.arg=$((epsilonvec*M)[1:laststate]))"
 
 
 
+#Tooth accumulation distribution
+R"""
+plot($(epsilonvec*M),$(toothdrop),xlab='Teeth by body mass (grams)',type='l',lwd=3)
+"""
 
-
-
-
+R"barplot($(toothdrop),names.arg=$(epsilonvec*M),xlab='Teeth by body mass (grams)')"
