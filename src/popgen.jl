@@ -7,11 +7,12 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     # B0 = (exp(C))/(exp(0.63/((8.61733*10^(-5.0))*temp)));
     # Em = 5774; #Energy needed to synthesize a unit of mass
     # a = B0/Em;
-    # # m0 = 200; #Birth size (grams)
+    # # m0 = 136; #Birth size (grams)
     # # M = 500000; #Asymptotic size :: tiger shark: 380000 to 630000 grams
     eta = 3/4; #Scaling exponent
     C = 18.47; #FISH
-    Em = 5774; #Energy needed to synthesize a unit of mass
+    Em = 5414; #J/g energy density of adult sharks from Schindler
+    # Em = 5774; #Energy needed to synthesize a unit of mass
     
     epsilonstep = 100;
     epsilonmax = 0.99;
@@ -45,7 +46,7 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     #The time it takes to get from m0 to epsilon M for increasing epsilons.
     #The time experienced by the individual is tvec[3] = tvec[2]-tvec[1]
     ltime = lspan -1;
-    ltemp = ltemp;
+    ltemp = length(tempvec);
     tint = Array{Float64}(ltemp,ltime);
     mass = Array{Float64}(ltemp,ltime);
     for k=1:ltemp
@@ -57,7 +58,7 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
         for i=1:ltime
         	epsilon1 = epsilonvec[i];
         	epsilon2 = epsilonvec[i+1];
-        	tint[k,i] = ts(epsilon1,epsilon2);
+        	tint[k,i] = ts(epsilon1,epsilon2,a);
         	mass[k,i] = (epsilon1*M + epsilon2*M)*0.5;
         end
     end
@@ -66,7 +67,6 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     tvec = cumsum(tint,2);
 
     # Survivorship: this is 1 - the probability of death at a given ageclass
-    ltime = length(tvec);
     survship = Array{Float64}(ltemp,ltime)
     for k=1:ltemp
         for i=1:ltime
@@ -100,6 +100,11 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     totsteps = tmax/tstep;
     #How many individuals start
     # n0 = 1000;
+    
+    #Keep track of temperature changes by days
+    daysinyear = 365;
+    secondsinday = 24*60*60;
+    temptime = mean(tempvec) + (maximum(tempvec) - mean(tempvec)).*sin.((pi/(daysinyear/2)).*collect(0:1:daysinyear));
 
     #state vector - number of individuals in given state
     state = zeros(Int64,lspan);
@@ -109,16 +114,14 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     #teeth lost at each state
     toothdrop = zeros(Float64,lspan);
     #mass vector for teeth in each timebin
-    #NOTE this right now it's just linear, but should be allomtric and/or saturating
-    mintoothmass = 5.0;
-    maxtoothmass = 50.0;
-    toothmass = collect(mintoothmass:((maxtoothmass-mintoothmass)/(lspan-1)):maxtoothmass); 
     teethlostperday = 10;
-    #(g/s) :: number of teeth lost per second * toothmass
-    #This should probably also vary with size
-    toothlossrate = (teethlostperday/24/60/60)*toothmass; 
-
-
+    bodylength = 5.38674.*mass.^(0.32237); #precaudal length in centimeters
+    toothlength = -0.0800064.*(-26.665 - bodylength); #I think also in centimeters? NOTE check
+    teethlostperday = 2/40;
+    #(teeth/s) :: number of teeth lost per second
+    toothlossrate = (teethlostperday/24/60/60); #*toothmass; 
+    
+    
     # N=100; #how many timebins to save to calculate steady state distribution
     N = savebin;
     savestate = zeros(Int64,N,lspan);

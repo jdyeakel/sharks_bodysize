@@ -10,7 +10,7 @@ using RCall
 #Initialize variables
 
 
-#We will want to use the Gillooly relationships (Nature, 2002) rather than these (which are for mammals!)
+#Gillooly relationships (Nature, 2002)
 # B0 = 0.047; #Metabolic normalization constant
 # C = 19.50; #endotherms (Brown Ecology 2004)
 C = 18.47; #FISH
@@ -114,8 +114,9 @@ toothdrop = zeros(Float64,lspan);
 #NOTE this right now it's just linear, but should be allomtric and/or saturating
 # mintoothmass = 5.0;
 # maxtoothmass = 50.0;
-# toothmass = collect(mintoothmass:((maxtoothmass-mintoothmass)/(lspan-1)):maxtoothmass); 
-toothlength = xxx;
+# toothmass = collect(mintoothmass:((maxtoothmass-mintoothmass)/(lspan-1)):maxtoothmass);
+bodylength = mass 
+toothlength = -0.0800064.*(-26.665 - bodylength);
 teethlostperday = 2/40;
 #(teeth/s) :: number of teeth lost per second
 toothlossrate = (teethlostperday/24/60/60); #*toothmass; 
