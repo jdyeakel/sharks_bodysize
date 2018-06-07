@@ -14,7 +14,7 @@ using RCall
 # B0 = 0.047; #Metabolic normalization constant
 # C = 19.50; #endotherms (Brown Ecology 2004)
 C = 18.47; #FISH
-temp = 294.3; #324 to get B0 in natcomm; 291.5 for 65F; 294.3 for 70F
+temp = 324; #324 to get B0 in natcomm; 291.5 for 65F; 294.3 for 70F
 B0 = (exp(C))/(exp(0.63/((8.61733*10^(-5.0))*temp)));
 Em = 5774; #Energy needed to synthesize a unit of mass
 a = B0/Em;
@@ -74,7 +74,7 @@ survship[ltime] = 0;
 #Check relationships
 
 #Body mass over time
-R"plot($(tvec/60/60/24/365),$(mass),xlab='Growth time',ylab='Mass')"
+# R"plot($(tvec/60/60/24/365),$(mass),xlab='Growth time',ylab='Mass')"
 
 
 #=====================#
@@ -82,7 +82,7 @@ R"plot($(tvec/60/60/24/365),$(mass),xlab='Growth time',ylab='Mass')"
 #=====================#
 tvec_yrs = tvec/60/60/24/365;
 #Reproduction parameters
-alpha = 1;
+alpha = 2;
 beta = 0.1;
 maturity = 10; #in years
 repsilon = findmin((maturity-tvec_yrs).^2)[2]
@@ -112,16 +112,16 @@ state[1] = n0; #start out all individuals at birth size class
 toothdrop = zeros(Float64,lspan);
 #mass vector for teeth in each timebin
 #NOTE this right now it's just linear, but should be allomtric and/or saturating
-mintoothmass = 5.0;
-maxtoothmass = 50.0;
-toothmass = collect(mintoothmass:((maxtoothmass-mintoothmass)/(lspan-1)):maxtoothmass); 
-teethlostperday = 10;
-#(g/s) :: number of teeth lost per second * toothmass
-#This should probably also vary with size
-toothlossrate = (teethlostperday/24/60/60)*toothmass; 
+# mintoothmass = 5.0;
+# maxtoothmass = 50.0;
+# toothmass = collect(mintoothmass:((maxtoothmass-mintoothmass)/(lspan-1)):maxtoothmass); 
+toothlength = xxx;
+teethlostperday = 2/40;
+#(teeth/s) :: number of teeth lost per second
+toothlossrate = (teethlostperday/24/60/60); #*toothmass; 
 
 
-N=100; #how many timebins to save to calculate steady state distribution
+N=1000; #how many timebins to save to calculate steady state distribution
 savestate = zeros(Int64,N,lspan);
 n=0;
 
@@ -151,6 +151,11 @@ while tcum < tmax
 		die = sum(rand(bdist,state[i]));
 		#Remove individuals who die
 		state[i] = state[i] - die;
+		
+		#death tooth drop
+		toothdrop[i] += die*((toothlossrate[i]*4) * tstep);
+		
+		#NOTE: Tooth pulse drop with death
 		
 		#Grow
 		statetime = stateclock[i];
@@ -195,7 +200,7 @@ end
 #Simulation time in years
 maxlifetime = maximum(tvec)/60/60/24/365;
 timesim = (collect(1:tictoc)*tstep)/60/60/24/365/maxlifetime;
-R"plot($(timesim),$popstate,type='l',xlab='Time (generations)',ylab='Population size',log='y')"
+# R"plot($(timesim),$popstate,type='l',xlab='Time (generations)',ylab='Population size',log='y')"
 
 
 
@@ -212,13 +217,18 @@ R"plot($(timesim),$popstate,type='l',xlab='Time (generations)',ylab='Population 
 
 accumstate = sum(savestate,1);
 laststate = find(iszero,accumstate)[1];
-R"barplot($(accumstate[1:laststate]),names.arg=$((epsilonvec*M)[1:laststate]))"
-
-
-
-#Tooth accumulation distribution
 R"""
-plot($(epsilonvec*M),$(toothdrop),xlab='Teeth by body mass (grams)',type='l',lwd=3)
-"""
+par=mfrow=c(2,1)
+barplot($(accumstate[1:laststate]),names.arg=$((epsilonvec*M)[1:laststate]));
+""";
 
-R"barplot($(toothdrop),names.arg=$(epsilonvec*M),xlab='Teeth by body mass (grams)')"
+
+
+# #Tooth accumulation distribution
+# R"""
+# plot($(epsilonvec*M),$(toothdrop),xlab='Teeth by body mass (grams)',type='l',lwd=3)
+# """
+
+R"""
+barplot($(toothdrop),names.arg=$(epsilonvec*M),xlab='Teeth by body mass (grams)');
+""";
