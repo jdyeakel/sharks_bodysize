@@ -15,12 +15,17 @@ bbeta = 0.1;
 maturity=1.0;
 
 #Sim params
-n0=100;
+n0=1000;
 gen=20;
 
 #Temperature range
-tempmin = 280; tempmax = 300;
-tempvec = collect(tempmin:((tempmax-tempmin)/(100-1)):tempmax);
+tempmin = 17+273.15; tempmax = 23+273.15;
+tempvec = Array{Float64}();
+if tempmin == tempmax
+    tempvec = repeat([tempmin],inner=100);
+else
+    tempvec = collect(tempmin:((tempmax-tempmin)/(100-1)):tempmax);
+end
 
 #How many iterations to save to calculate steady state
 savebin=1000;
@@ -29,3 +34,7 @@ savebin=1000;
 popstate,
 savestate,
 toothdrop = popgen(m0,M,tempvec,aalpha,bbeta,maturity,n0,savebin,gen);
+
+R"""
+plot($popstate)
+"""

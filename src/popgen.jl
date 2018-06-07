@@ -11,8 +11,8 @@ function popgen(m0,M,tempvec,aalpha,bbeta,maturity,n0,savebin,gen)
     # # M = 500000; #Asymptotic size :: tiger shark: 380000 to 630000 grams
     eta = 3/4; #Scaling exponent
     C = 18.47; #FISH
-    Em = 5414; #J/g energy density of adult sharks from Schindler
-    # Em = 5774; #Energy needed to synthesize a unit of mass
+    # Em = 5414; #J/g energy density of adult sharks from Schindler
+    Em = 5774; #Energy needed to synthesize a unit of mass
     
     epsilonstep = 100;
     epsilonmax = 0.99;
@@ -69,7 +69,7 @@ function popgen(m0,M,tempvec,aalpha,bbeta,maturity,n0,savebin,gen)
     tvec = cumsum(tint,2);
 
     # Survivorship: this is 1 - the probability of death at a given ageclass
-    survship = Array{Float64}(ltemp,ltime)
+    survship = Array{Float64}(ltemp,ltime);
     for k=1:ltemp
         for i=1:ltime
         	survship[k,i] = F(tvec[k,i]);
@@ -86,7 +86,8 @@ function popgen(m0,M,tempvec,aalpha,bbeta,maturity,n0,savebin,gen)
     # alpha = 1;
     # beta = 0.1;
     # maturity = 10; #in years
-    repsilon = findmin((maturity-tvec_yrs).^2)[2]
+    # repsilon = findmin((maturity-tvec_yrs).^2)[2]
+    repsilon = findmin(findmin((maturity-tvec_yrs).^2,1)[1])[2];
 
     # R"""
     # par(mfrow=c(2,1))
@@ -148,6 +149,7 @@ function popgen(m0,M,tempvec,aalpha,bbeta,maturity,n0,savebin,gen)
         
         #What is the temperature?
         day = convert(Int64,round(daysinyear*((tcum/secondsinyear) - floor(tcum/secondsinyear)),0));
+        day = maximum([1,day]);
         daytemp = temptime[day];
         #find index for closest match in tempvec
         k = findmin((tempvec-daytemp).^2)[2];
