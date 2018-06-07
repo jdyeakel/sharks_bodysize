@@ -1,4 +1,4 @@
-function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
+function popgen(m0,M,tempvec,aalpha,bbeta,maturity,n0,savebin,gen)
     
     #Temperature is a vector (!!)
     
@@ -20,28 +20,30 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     lspan = length(epsilonvec);
 
     #Growth function :: the time it takes to get to epsilon % body mass M from m0
-    function ts(epsilon1,epsilon2,a)
-    	# ts = log(((1-(m0/M)^(1-eta))/(1-epsilon^(1-eta))))*((M^(1-eta)/(a*(1-eta))));
-    	# Epsilon 1: proportion of M to start
-    	# Epsilon 2: proportion of M to end
-    	ts = log(((1-(epsilon1)^(1-eta))/(1-epsilon2^(1-eta))))*((M^(1-eta)/(a*(1-eta))));
-    	return ts
-    end
+    
+    # function ts(epsilon1,epsilon2,a,eta)
+    # 	# ts = log(((1-(m0/M)^(1-eta))/(1-epsilon^(1-eta))))*((M^(1-eta)/(a*(1-eta))));
+    # 	# Epsilon 1: proportion of M to start
+    # 	# Epsilon 2: proportion of M to end
+    # 	ts = log(((1-(epsilon1)^(1-eta))/(1-epsilon2^(1-eta))))*((M^(1-eta)/(a*(1-eta))));
+    # 	return ts
+    # end
 
     #Gompertz parameters -- somewhat mysterious need to get Calder book
     #from Calder, W. A. Size, function, and life history (Harvard University Press, 1984)
-    F0 = 1;
-    a0 = 1.88*10^(-8.0);
-    b0 = -0.56;
-    a1 = 1.45*10^(-7.0);
-    b1 = -0.27;
-    c0 = a0*M^b0;
-    c1 = a1*M^b1;
+
     #Survivorship from Gompertz curve
-    function F(t)
-    	survship = minimum([1,F0*exp((c0/c1)*(1-exp(c1*t)))]);
-    	return survship
-    end
+    # function F(t)
+    #     F0 = 1;
+    #     a0 = 1.88*10^(-8.0);
+    #     b0 = -0.56;
+    #     a1 = 1.45*10^(-7.0);
+    #     b1 = -0.27;
+    #     c0 = a0*M^b0;
+    #     c1 = a1*M^b1;
+    # 	survship = minimum([1,F0*exp((c0/c1)*(1-exp(c1*t)))]);
+    # 	return survship
+    # end
 
     #The time it takes to get from m0 to epsilon M for increasing epsilons.
     #The time experienced by the individual is tvec[3] = tvec[2]-tvec[1]
@@ -53,12 +55,12 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
         temp = tempvec[k]; #324 to get B0 in natcomm; 291.5 for 65F; 294.3 for 70F
         B0 = (exp(C))/(exp(0.63/((8.61733*10^(-5.0))*temp)));
         a = B0/Em;
-        m0 = 200; #Birth size (grams)
-        M = 500000; #Asymptotic size :: tiger shark: 380000 to 630000 grams
+        # m0 = 200; #Birth size (grams)
+        # M = 500000; #Asymptotic size :: tiger shark: 380000 to 630000 grams
         for i=1:ltime
         	epsilon1 = epsilonvec[i];
         	epsilon2 = epsilonvec[i+1];
-        	tint[k,i] = ts(epsilon1,epsilon2,a);
+        	tint[k,i] = ts(epsilon1,epsilon2,a,eta);
         	mass[k,i] = (epsilon1*M + epsilon2*M)*0.5;
         end
     end
@@ -104,6 +106,7 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     #Keep track of temperature changes by days
     daysinyear = 365;
     secondsinday = 24*60*60;
+    secondsinyear = daysinyear*secondsinday;
     temptime = mean(tempvec) + (maximum(tempvec) - mean(tempvec)).*sin.((pi/(daysinyear/2)).*collect(0:1:daysinyear));
 
     #state vector - number of individuals in given state
@@ -114,7 +117,6 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     #teeth lost at each state
     toothdrop = zeros(Float64,lspan);
     #mass vector for teeth in each timebin
-    teethlostperday = 10;
     bodylength = 5.38674.*mass.^(0.32237); #precaudal length in centimeters
     toothlength = -0.0800064.*(-26.665 - bodylength); #I think also in centimeters? NOTE check
     teethlostperday = 2/40;
@@ -133,7 +135,7 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     popstate = Array{Int64}(0);
     while tcum < tmax
     	
-    	tictoc = tictoc + 1;
+    	tictoc += 1;
     	pop = sum(state);
     	push!(popstate,pop);
     	
@@ -143,12 +145,18 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     	
     	tcum += tstep;
     	stateclock += tstep;
+        
+        #What is the temperature?
+        day = convert(Int64,round(daysinyear*((tcum/secondsinyear) - floor(tcum/secondsinyear)),0));
+        daytemp = temptime[day];
+        #find index for closest match in tempvec
+        k = findmin((tempvec-daytemp).^2)[2];
     	
     	#Individuals grow
     	for i=1:ltime
     		
     		#Remove indidivduals that die
-    		prmort = 1-survship[i];
+    		prmort = 1-survship[k,i];
     		bdist = Binomial(1,prmort);
     		die = sum(rand(bdist,state[i]));
     		#Remove individuals who die
@@ -157,16 +165,16 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     		#Grow
     		statetime = stateclock[i];
     		# if i < lspan
-    			if state[i] > 0
-    				if statetime >= tvec[i]
-    					#Add growing individuals to new state
-    					state[i+1] = state[i+1]+state[i];
-    					#Remove growing individuals from current state;
-    					state[i] = 0;
-    					#reset clock for that bin
-    					stateclock[i] = 0;
-    				end
-    			end
+			if state[i] > 0
+				if statetime >= tvec[k,i]
+					#Add growing individuals to new state
+					state[i+1] = state[i+1]+state[i];
+					#Remove growing individuals from current state;
+					state[i] = 0;
+					#reset clock for that bin
+					stateclock[i] = 0;
+				end
+			end
     		# else 
     		# 	state[i] = 0;
     		# end
@@ -174,14 +182,14 @@ function popgen(m0,M,tempvec,alpha,beta,maturity,n0,savebin,gen)
     		#Reproduce
     		if i >= repsilon
     			#Recruitment function
-    			recruits = convert(Int64,floor((alpha*state[i])/(1+beta*state[i])));
+    			recruits = convert(Int64,floor((aalpha*state[i])/(1+bbeta*state[i])));
     			#Add the recruits to the initial state
     			state[1] = state[1] + recruits;
     		end
     		
     		#lose teeth
     		# number of ndividuals * tooth loss rate [toothloss/sec] * time interval [sec]
-    		toothdrop[i] += state[i]*(toothlossrate[i] * tstep);
+    		toothdrop[i] += state[i]*(toothlossrate * tstep);
     	end
     	
     	#save states from the last N timestep
