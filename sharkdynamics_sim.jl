@@ -16,10 +16,10 @@ maturity=1.0;
 
 #Sim params
 n0=1000;
-gen=20;
+gen=40;
 
 #Temperature range
-tempmin = 17+273.15; tempmax = 23+273.15;
+tempmin = 12+273.15; tempmax = 23+273.15;
 tempvec = Array{Float64}();
 if tempmin == tempmax
     tempvec = repeat([tempmin],inner=100);
@@ -30,11 +30,27 @@ end
 #How many iterations to save to calculate steady state
 savebin=1000;
 
-
+epsilonvec,
 popstate,
 savestate,
 toothdrop = popgen(m0,M,tempvec,aalpha,bbeta,maturity,n0,savebin,gen);
 
+
+namespace = string("$(homedir())/Dropbox/PostDoc/2018_sharks/figures/toothdrop.pdf");
+R"""
+pdf($namespace,height=5,width=6)
+barplot($(toothdrop),names.arg=$(epsilonvec*M)/1000,xlab='Teeth by body mass (Kg)');
+dev.off()
+"""
+
+
 R"""
 plot($popstate)
+"""
+
+accumstate = sum(savestate,1);
+laststate = find(iszero,accumstate)[1];
+R"""
+par=mfrow=c(2,1)
+barplot($(accumstate[1:laststate]),names.arg=$((epsilonvec*M)[1:laststate])/1000);
 """

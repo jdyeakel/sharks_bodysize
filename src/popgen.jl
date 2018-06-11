@@ -120,7 +120,7 @@ function popgen(m0,M,tempvec,aalpha,bbeta,maturity,n0,savebin,gen)
     #mass vector for teeth in each timebin
     bodylength = 5.38674.*mass.^(0.32237); #precaudal length in centimeters
     toothlength = -0.0800064.*(-26.665 - bodylength); #I think also in centimeters? NOTE check
-    teethlostperday = 2/40;
+    teethlostperday = 1/40;
     #(teeth/s) :: number of teeth lost per second
     toothlossrate = (teethlostperday/24/60/60); #*toothmass; 
     
@@ -163,6 +163,9 @@ function popgen(m0,M,tempvec,aalpha,bbeta,maturity,n0,savebin,gen)
     		die = sum(rand(bdist,state[i]));
     		#Remove individuals who die
     		state[i] = state[i] - die;
+            
+            #death tooth drop
+    		toothdrop[i] += die*((toothlossrate*4) * tstep);
     		
     		#Grow
     		statetime = stateclock[i];
@@ -207,6 +210,7 @@ function popgen(m0,M,tempvec,aalpha,bbeta,maturity,n0,savebin,gen)
 
     
     return(
+    epsilonvec,
     popstate,
     savestate,
     toothdrop
