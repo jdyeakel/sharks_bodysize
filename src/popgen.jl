@@ -165,7 +165,7 @@ function popgen(m0,M,tempvec,aalpha,bbeta,maturity,n0,savebin,gen)
     		state[i] = state[i] - die;
             
             #death tooth drop
-    		toothdrop[i] += die*((toothlossrate*4) * tstep);
+    		toothdrop[i] += die*((toothlossrate*8) * tstep);
     		
     		#Grow
     		statetime = stateclock[i];

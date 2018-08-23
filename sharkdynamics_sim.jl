@@ -16,10 +16,10 @@ maturity=1.0;
 
 #Sim params
 n0=1000;
-gen=40;
+gen=20;
 
 #Temperature range
-tempmin = 12+273.15; tempmax = 23+273.15;
+tempmin = 8+273.15; tempmax = 13+273.15;
 tempvec = Array{Float64}();
 if tempmin == tempmax
     tempvec = repeat([tempmin],inner=100);
