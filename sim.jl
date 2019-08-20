@@ -1,6 +1,5 @@
 using Distributions
-using HDF5
-using JLD
+using JLD2
 using RCall
 
 #=====================#
@@ -53,8 +52,8 @@ end
 
 #The time it takes to get from m0 to epsilon M for increasing epsilons.
 #The time experienced by the individual is tvec[3] = tvec[2]-tvec[1]
-tint = Array{Float64}(lspan-1);
-mass = Array{Float64}(lspan-1);
+tint = Array{Float64}(undef,lspan-1);
+mass = Array{Float64}(undef,lspan-1);
 for i=1:lspan-1
 	epsilon1 = epsilonvec[i];
 	epsilon2 = epsilonvec[i+1];
@@ -66,7 +65,7 @@ tvec = cumsum(tint);
 
 # Survivorship: this is 1 - the probability of death at a given ageclass
 ltime = length(tvec);
-survship = Array{Float64}(ltime)
+survship = Array{Float64}(undef,ltime)
 for i=1:ltime
 	survship[i] = F(tvec[i]);
 end
@@ -129,7 +128,7 @@ n=0;
 #Simulation
 tcum = 0;
 tictoc = 0;
-popstate = Array{Int64}(0);
+popstate = Array{Int64}(undef,0);
 while tcum < tmax
 	
 	tictoc = tictoc + 1;
@@ -217,7 +216,7 @@ timesim = (collect(1:tictoc)*tstep)/60/60/24/365/maxlifetime;
 
 
 accumstate = sum(savestate,1);
-laststate = find(iszero,accumstate)[1];
+laststate = findall(iszero,accumstate)[1];
 R"""
 par=mfrow=c(2,1)
 barplot($(accumstate[1:laststate]),names.arg=$((epsilonvec*M)[1:laststate]));
