@@ -318,7 +318,7 @@ function popgen(m0,M,tempvec,n0,savebin,gen,poprep)
             for i=1:ltime
                 if die[i] > 0
                     rdraw = rand(die[i]);
-                    toothdrop[i] += sum(rdraw .< probdrop[i]) * (toothlossrate * tstep);
+                    toothdrop[i] += sum(rdraw .< probdrop[i]) * ((toothlossrate*8) * tstep);
                 end
             end
             

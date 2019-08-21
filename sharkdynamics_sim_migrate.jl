@@ -3,7 +3,7 @@ using Distributed
 @everywhere using Distributions
 @everywhere using LinearAlgebra
 @everywhere using SharedArrays
-# @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/popgen.jl")
+@everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/popgen_migrate_g.jl")
 @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/ts.jl")
 @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/F.jl")
 R"""
@@ -32,14 +32,9 @@ M = (0.00013*L^2.4)*1000;
 n0=1000;
 gen=10;
 
-#distance between site (m)
-distance = 3.779e6;
-#Shark velocity (m/s)
-velocity = 1.0;
-
 #Temperature range (high latitude: 8-13; Low latitude 22-30)
-tempmin1 = 22+273.15; tempmax1 = 29+273.15;
-tempmin2 = 22+273.15; tempmax2 = 29+273.15;
+tempmin1 = 25+273.15; tempmax1 = 26+273.15;
+tempmin2 = 8+273.15; tempmax2 = 13+273.15;
 tempvec = Array{Float64}(undef,0);
 if tempmin1 == tempmax1
     tempvec1 = repeat([tempmin1],inner=100);
@@ -52,18 +47,40 @@ else
     tempvec2 = collect(tempmin2:((tempmax2-tempmin2)/(100-1)):tempmax2);
 end
 
-#How many iterations to save to calculate steady state
-savebin=1000;
+#distance between site (m)
+distance = 3.779e6/0.5;
+#Shark velocity (m/s)
+velocity = 1;
 
-poprep = "adult"; # juv adult both
 
-mass,
+mass1,
+mass2,
 epsilonvec,
 clock,
 popstate,
-savestate,
 toothdrop,
-state = popgen(m0,M,tempvec,n0,savebin,gen,poprep);
+state = popgen_migrate_g(m0,M,tempvec,n0,gen,distance,velocity);
+
+R"""
+par(mfrow=c(1,1))
+plot($clock/60/60/24/365,$(popstate[:,1]),pch='.',ylim=c(1,max($popstate)),log='y')
+points($clock/60/60/24/365,$(popstate[:,2]),pch='.',col='blue')
+"""
+
+R"""
+par(mfrow=c(1,2))
+plot($(vec(mass[1,:])),$(toothdrop[:,1]),type='h',log='xy',lwd=3)
+plot($(vec(mass[1,:])),$(toothdrop[:,2]),type='h',log='xy',col='blue',lwd=3)
+"""
+
+
+
+
+
+
+
+
+
 
 clockyrs = clock ./ 60 ./ 60 ./ 24 ./ 365;
 inds = Array{Int64}(undef,0);

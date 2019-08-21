@@ -180,19 +180,27 @@ function popgen(m0,M,tempvec,n0,savebin,gen,poprep)
     #How many individuals start
     # n0 = 1000;
     
+    time_migration = distance/velocity;
+    
     #Keep track of temperature changes by days
     daysinyear = 365;
     secondsinday = 24*60*60;
     secondsinyear = daysinyear*secondsinday;
-    temptime = mean(tempvec) .+ (maximum(tempvec) .- mean(tempvec)).*sin.((pi/(daysinyear/2)).*collect(0:1:daysinyear));
-
+    
+    #temporal temperature vectors for sites 1 and 2
+    temptime1 = mean(tempvec1) .+ (maximum(tempvec1) .- mean(tempvec1)).*sin.((pi/(daysinyear/2)).*collect(0:1:daysinyear));
+    temptime2 = mean(tempvec2) .+ (maximum(tempvec2) .- mean(tempvec2)).*sin.((pi/(daysinyear/2)).*collect(0:1:daysinyear));
+    
+    juvpos = Int64(floor(ltime/4)); #What defines 'juvenile state'
+    
     #state vector - number of individuals in given state
-    state = zeros(Int64,ltime);
-    stateclock = zeros(Float64,ltime);
-    state[1] = n0; #start out all individuals at birth size class
-
+    state = zeros(Int64,ltime,2);
+    stateclock = zeros(Float64,ltime,2);
+    state[1,1] = n0; #Nursury has n0 newborns
+    state[juvpos,2] = n0; #Adult site has n0 juveniles
+    
     #teeth lost at each state
-    toothdrop = zeros(Float64,ltime);
+    toothdrop = zeros(Float64,ltime,2);
     #mass vector for teeth in each timebin
     #NOTE: CHANGE TO THE MEASURE FROM Branstetter and MUSICK
     bodylength = 5.38674.*mass.^(0.32237); #precaudal length in centimeters
@@ -217,93 +225,105 @@ function popgen(m0,M,tempvec,n0,savebin,gen,poprep)
     
     
     # N=100; #how many timebins to save to calculate steady state distribution
-    savestate = zeros(Int64,savebin,ltime);
+    # savestate = zeros(Int64,savebin,ltime,2);
     
     
-    juvpos = Int64(floor(ltime/4)); #What defines 'juvenile state'
-    sharpness = 0.25; #high is sharp
-    if poprep == "adult"
-        probdrop = 1 ./ (1 .+ exp.(-sharpness .* (collect(1:ltime) .- juvpos)));
-    end
-    if poprep == "juv"
-        probdrop = 1 .- (1 ./ (1 .+ exp.(-sharpness .* (collect(1:ltime) .- juvpos))));
-    end
-    if poprep == "both"
-        probdrop = repeat([1.0],outer=ltime);
-    end
     
+    # sharpness = 0.25; #high is sharp
+    # if poprep == "adult"
+    #     probdrop = 1 ./ (1 .+ exp.(-sharpness .* (collect(1:ltime) .- juvpos)));
+    # end
+    # if poprep == "juv"
+    #     probdrop = 1 .- (1 ./ (1 .+ exp.(-sharpness .* (collect(1:ltime) .- juvpos))));
+    # end
+    # if poprep == "both"
+    #     probdrop = repeat([1.0],outer=ltime);
+    # end
+    # 
 
     #Simulation
-    popstate = Array{Int64}(undef,0);
+    popstate = Array{Int64}(undef,1,2);
+    popstate[1,:] = sum(state,dims=1);
     clock = Array{Float64}(undef,0);
     let n=0, tcum = 0, tictoc = 0
         while tcum < tmax
         	
         	tictoc += 1;
-        	pop = sum(state);
-        	push!(popstate,pop);
+        	pop = sum(state,dims=1);
+        	popstate = [popstate;pop'];
             
         	
         	if mod(tictoc,100) == 0
-        		println("tictoc ",tictoc,"; Population = ",pop)
+        		println("tictoc ",tictoc,"; Juv site = ",pop[1]," Adult site = ",pop[2])
         	end
         	
         	tcum += tstep;
         	stateclock .+= tstep;
             push!(clock,tcum);
             
-            #What is the temperature?
+            #Advance temperature in both sites with time
             day = round(Int64,daysinyear*((tcum/secondsinyear) - floor(tcum/secondsinyear)));
             day = maximum([1,day]);
-            daytemp = temptime[day];
+            daytemp1 = temptime[day1];
+            daytemp2 = temptime[day2];
             #find index for closest match in tempvec
-            k = findmin((tempvec .- daytemp).^2)[2];
-            
+            k1 = findmin((tempvec1 .- daytemp1).^2)[2];
+            k2 = findmin((tempvec2 .- daytemp2).^2)[2];
             
             #drop teeth
-            for i=1:ltime
-                rdraw = rand(state[i]);
-                toothdrop[i] += sum(rdraw .< probdrop[i]) * (toothlossrate * tstep);
-            end
+            toothdrop .+= state .* (toothlossrate * tstep);
             
-            newstate = zeros(Int64,ltime);
+            #state for next time interval
+            newstate = zeros(Int64,ltime,2);
         	#Individuals grow
-        	for i=1:(ltime-1)
-        		#Grow
-        		statetime = stateclock[i];
-        		# if i < lspan
-    			if state[i] > 0
-                    #GROWTH
-    				if statetime >= tint[k,i]
-    					#Add growing individuals to new state
-    					newstate[i+1] = state[i];
-    					#reset clock for that bin
-    					stateclock[i] = 0;
-                    #NO GROWTH
-    				else
-                        newstate[i] = state[i];
+            for j=1:2
+            	for i=1:(ltime-1)
+                    #define site-specific temperature location
+                    if j == 1
+                        #site 1
+                        k = copy(k1);
+                    else
+                        #site 2
+                        k = copy(k2);
                     end
-    			end
-        	end
+            		#Grow
+            		statetime = stateclock[i,j];
+            		# if i < lspan
+        			if state[i,j] > 0
+                        #GROWTH
+        				if statetime >= tint[k,i]
+        					#Add growing individuals to new state
+        					newstate[i+1,j] = state[i,j];
+        					#reset clock for that bin
+        					stateclock[i] = 0;
+                        #NO GROWTH
+        				else
+                            newstate[i,j] = state[i,j];
+                        end
+        			end
+            	end
+            end
             #save updated state as current state 
             state = copy(newstate);
             
-            #Reproduction
-            recruitmass = sum(r_sizetemp[k,:] .* tstep .* state);
+            #Reproduction... only occurs at nursery
+            recruitmass = sum(r_sizetemp[k1,:] .* tstep .* state[:,1]);
             recruits = Int64(floor(recruitmass));
-            state[1] += recruits;
+            state[1,1] += recruits;
             
             #Mortality
             #Remove indidivduals that die
             # prmort = (1 .- (survship[k,:]));
             #sets carrying capacity
             K = 100;
-            prmort = 1 - exp(-tstep*m*(sum(state)/K));
-            bdist = Binomial(1,prmort);
-            die = zeros(Int64,ltime);
-            for i=1:(ltime-1)
-                if state[i] > 0
-                    die[i] = sum(rand(bdist,state[i]));
+            prmort = 1 .- exp.(-tstep .* m .* (sum(state,dims=1) ./ K));
+            bdist = Binomial.(1,prmort);
+            die = zeros(Int64,ltime,2);
+            for j=1:2
+                for i=1:(ltime-1)
+                    if state[i,j] > 0
+                        die[i,j] = sum(rand(bdist[j],state[i,j]));
+                    end
                 end
             end
             #all at last age-class die
@@ -314,21 +334,23 @@ function popgen(m0,M,tempvec,n0,savebin,gen,poprep)
             
             #death tooth drop
             # toothdrop .+= die .* ((toothlossrate*8) * tstep);
+            toothdrop += die .* ((toothlossrate*8) * tstep);
             
-            for i=1:ltime
-                if die[i] > 0
-                    rdraw = rand(die[i]);
-                    toothdrop[i] += sum(rdraw .< probdrop[i]) * (toothlossrate * tstep);
-                end
-            end
+            #Migration between sites
+            
+            
+            
+            
+            
+            
             
         	
         	#save states from the last savebin timestep
-        	if mod(tictoc,savebin) == 0
-        		n=0;
-        	end
-        	n += 1;
-        	savestate[n,:] = state;
+        	# if mod(tictoc,savebin) == 0
+        	# 	n=0;
+        	# end
+        	# n += 1;
+        	# savestate[n,:] = state;
         	
         end #end while
         
