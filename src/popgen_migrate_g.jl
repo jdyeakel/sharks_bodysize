@@ -1,4 +1,4 @@
-function popgen_migrate_g(m0,M,tempvec,n0,gen,distance,velocity)
+function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     
     #Temperature is a vector (!!)
     
@@ -82,7 +82,7 @@ function popgen_migrate_g(m0,M,tempvec,n0,gen,distance,velocity)
     # NOTE: this is currently not a function of size (it is static)
     # Survivorship: this is 1 - the probability of death at a given ageclass
     #mortality rate
-    m=(3.076*10^(-9.0))*0.09;
+    m=(3.076*10^(-9.0))*0.1;
     survship1 = Array{Float64}(undef,ltemp,ltime);
     survship2 = Array{Float64}(undef,ltemp,ltime);
     for k=1:ltemp
@@ -194,7 +194,7 @@ function popgen_migrate_g(m0,M,tempvec,n0,gen,distance,velocity)
 
     # gen = 20;
     # tstep = minimum(tint); #The timesteps are set at the minimum time interval between age classes and temps
-    tmax = maximum([tvec1;tvec2])*gen; #How much time to simulate?
+    tmax = mean([maximum(tvec1),maximum(tvec2)])*gen; #How much time to simulate?
     # totsteps = tmax/tstep;
     #How many individuals start
     # n0 = 1000;
@@ -300,12 +300,12 @@ function popgen_migrate_g(m0,M,tempvec,n0,gen,distance,velocity)
             #migration rate per state/location
             m1 = zeros(Float64,ltime);
             m1[1:Int64(floor(juvpos/2))] .= 0;
-            m1[juvpos:ltime] .= velocity/distance;
+            m1[juvpos:ltime] .= D*velocity/distance;
             
             #peak travel day
             peakday = 180;
-            tau = 100;
-            m2 = repeat([(velocity/distance)*exp(-((day .- peakday)^2)/(2*tau^2))],ltime);
+            tau = 5;
+            m2 = repeat([D*(velocity/distance)*exp(-((day .- peakday)^2)/(2*tau^2))],ltime);
             # m2 = zeros(Float64,ltime);
             # m2[1:juvpos] .= (velocity/2)/distance;
             # m2[juvpos:ltime] .= velocity/distance;
@@ -377,7 +377,8 @@ function popgen_migrate_g(m0,M,tempvec,n0,gen,distance,velocity)
             if Apos == 3
                 #subtract individual from state
                 state[Nstate,Nloc] -= 1;
-                toothdrop[Nstate,Nloc] += 8;
+                #drop teeth
+                # toothdrop[Nstate,Nloc] += 8;
             end
             
             #Move (and grow while moving if distance is far enough)
@@ -385,9 +386,9 @@ function popgen_migrate_g(m0,M,tempvec,n0,gen,distance,velocity)
                 #If there is growth to a new state over migration, advance state and location
                 #Otherwise advance location
                 if Nloc == 1
-                    growthovermigration = (distance/velocity)/tint1[k1,Nstate];
+                    growthovermigration = 0; #(distance/velocity)/tint1[k1,Nstate];
                 else
-                    growthovermigration = (distance/velocity)/tint2[k2,Nstate];
+                    growthovermigration = 0; #(distance/velocity)/tint2[k2,Nstate];
                 end
                 if growthovermigration > 1 && Nstate < ltime
                     dstate = Int64(floor(growthovermigration));

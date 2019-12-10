@@ -30,12 +30,13 @@ M = (0.00013*L^2.4)*1000;
 
 #Sim params
 n0=1000;
-gen=10;
+gen=30;
 
 #Temperature range (high latitude: 8-13; Low latitude 22-30)
-tempmin1 = 25+273.15; tempmax1 = 26+273.15;
-tempmin2 = 8+273.15; tempmax2 = 13+273.15;
-tempvec = Array{Float64}(undef,0);
+tempmin1 = 22+273.15; tempmax1 = 30+273.15;
+tempmin2 = 22+273.15; tempmax2 = 30+273.15;
+tempvec1 = Array{Float64}(undef,0);
+tempvec2 = Array{Float64}(undef,0);
 if tempmin1 == tempmax1
     tempvec1 = repeat([tempmin1],inner=100);
 else
@@ -48,9 +49,10 @@ else
 end
 
 #distance between site (m)
-distance = 3.779e6/0.5;
+distance = 1500*1000; #3.779e6/10;
 #Shark velocity (m/s)
 velocity = 1;
+D = 1;
 
 
 mass1,
@@ -59,18 +61,18 @@ epsilonvec,
 clock,
 popstate,
 toothdrop,
-state = popgen_migrate_g(m0,M,tempvec,n0,gen,distance,velocity);
+state = popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D);
 
 R"""
 par(mfrow=c(1,1))
-plot($clock/60/60/24/365,$(popstate[:,1]),pch='.',ylim=c(1,max($popstate)),log='y')
+plot($clock/60/60/24/365,$(popstate[:,1]),pch='.',ylim=c(1,max($popstate)),log='y',xlab='years',ylab='Population')
 points($clock/60/60/24/365,$(popstate[:,2]),pch='.',col='blue')
 """
 
 R"""
 par(mfrow=c(1,2))
-plot($(vec(mass[1,:])),$(toothdrop[:,1]),type='h',log='xy',lwd=3)
-plot($(vec(mass[1,:])),$(toothdrop[:,2]),type='h',log='xy',col='blue',lwd=3)
+plot($(vec(mass1[1,:])),$(toothdrop[:,1]),type='h',log='xy',lwd=3)
+plot($(vec(mass2[1,:])),$(toothdrop[:,2]),type='h',log='xy',col='blue',lwd=3)
 """
 
 
