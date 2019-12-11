@@ -82,17 +82,21 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     # NOTE: this is currently not a function of size (it is static)
     # Survivorship: this is 1 - the probability of death at a given ageclass
     #mortality rate
-    m=(3.076*10^(-9.0))*0.1;
-    survship1 = Array{Float64}(undef,ltemp,ltime);
-    survship2 = Array{Float64}(undef,ltemp,ltime);
-    for k=1:ltemp
-        for i=1:ltime
-        	survship1[k,i] = F(tvec1[k,i],m);
-            survship2[k,i] = F(tvec2[k,i],m);
-        end
-    end
-    survship1[:,ltime] .= 0;
-    survship2[:,ltime] .= 0;
+    #Sand tiger shark mortality: Z = 0.18 to 0.097 yr-1
+    #0.097/(60*60*24*365) = 3.07585*10^-9
+    m=(3.076*10^(-9.0))*1;
+    
+    #CURRENTLY NOT USING THIS
+    # survship1 = Array{Float64}(undef,ltemp,ltime);
+    # survship2 = Array{Float64}(undef,ltemp,ltime);
+    # for k=1:ltemp
+    #     for i=1:ltime
+    #     	survship1[k,i] = F(tvec1[k,i],m);
+    #         survship2[k,i] = F(tvec2[k,i],m);
+    #     end
+    # end
+    # survship1[:,ltime] .= 0;
+    # survship2[:,ltime] .= 0;
     
     
     # Reproduction
@@ -108,13 +112,14 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     #Offsping weight
     
     #Branstetter and Musick (1994) -- 1 litter per 2 years and 2 pups per litter = 3.17*10^-8
-    
+    #Female pups per female per second 0.5/(60*60*24*365) = 1.58549*10^-8
     #Number of female pups per female per second = 1.585*10^-8
     #NOTE: smaller size bins have 'more' offsprings because bins are larger
-    rmax_warm = (1.585*10^-8.0);
+    rmax_warm = (1.585*10^-8.0)*10;
     #NOTE: could make this percent difference a function of Delta temp
-    rmax_cold = (1.585*10^-8.0)*0.5;
+    rmax_cold = (rmax_warm)*0.5;
     
+    #reproduction rate per state/location
     mintemp1 = minimum(tempvec1);
     maxtemp1 = maximum(tempvec1);
     mintemp2 = minimum(tempvec2);
@@ -125,8 +130,11 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     offspring_sizetemp2 = Array{Float64}(undef,ltemp,ltime);
     for i=1:ltemp
         for j=1:ltime
+            #interpolated reproductive rate for a given temperature
             rtemp1 = rmax_cold + (rmax_warm - rmax_cold)*((tempvec1[i]-mintemp1)/(maxtemp1-mintemp1));
+            #reproductive rate as a function of mass and temperature
             r_sizetemp1[i,j] = (-4*(mass1[i,j] - mass1[i,ltime])*(mass1[i,j] - m0)*rtemp1)/((mass1[i,ltime] - m0)^2);
+            #offspring in time interval tint
             offspring_sizetemp1[i,j] = r_sizetemp1[i,j]*tint1[i,j];
             
             rtemp2 = rmax_cold + (rmax_warm - rmax_cold)*((tempvec2[i]-mintemp2)/(maxtemp2-mintemp2));
@@ -260,7 +268,7 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     
     let n=0, tcum = 0, tictoc = 0, day = 1 #n=0; tcum = 0; tictoc = 0; day = 1
         
-        while tcum < tmax
+        while tcum < tmax && tictoc < 1000000
             
             tictoc += 1;
         	
@@ -290,21 +298,25 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
             r2 = repeat([0],ltime);
     
             #growth rate per state/location
-            g1 = transpose(1/tint1[k1,:]);
-            g2 = transpose(1/tint2[k2,:]);
+            g1 = 1 ./ tint1[k1,:]; #transpose(1/tint1[k1,:]);
+            g2 = 1 ./ tint2[k2,:]; #transpose(1/tint2[k2,:]);
             
             #mortality rate per state/location
             d1 = repeat([m],ltime);
             d2 = copy(d1);
             
             #migration rate per state/location
-            m1 = zeros(Float64,ltime);
-            m1[1:Int64(floor(juvpos/2))] .= 0;
-            m1[juvpos:ltime] .= D*velocity/distance;
-            
             #peak travel day
             peakday = 180;
-            tau = 5;
+            
+            # m1 = zeros(Float64,ltime);
+            # m1[1:Int64(floor(juvpos/2))] .= 0;
+            # m1[juvpos:ltime] .= D*velocity/distance;
+            #sigmoidal increase to top migration
+            sigtau = 2;
+            m1 = D*(velocity/distance) ./ (1 .+ exp.(- (1/sigtau) .* (collect(1:ltime) .- juvpos)));
+
+            tau = 1;
             m2 = repeat([D*(velocity/distance)*exp(-((day .- peakday)^2)/(2*tau^2))],ltime);
             # m2 = zeros(Float64,ltime);
             # m2[1:juvpos] .= (velocity/2)/distance;
@@ -424,7 +436,7 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
             
             #Report
         	if mod(tictoc,5000) == 0
-        		println("tcum ",tcum/60/60/24/365,"; Juv site = ",pop[1]," Adult site = ",pop[2])
+        		println("tcum ",tcum/tmax,"; Juv site = ",pop[1]," Adult site = ",pop[2])
         	end
         	
         
