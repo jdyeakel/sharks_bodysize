@@ -20,10 +20,10 @@ function smartpath(filename::String,indices::Array{Int64}=[0])
         end
         
         if homedir() == "/home/z840"
-            namespace = string("$(homedir())/2018_sharks/",filename_cut,indexstring,extension);
+            namespace = string("$(homedir())/sharks_bodysize/",filename_cut,indexstring,extension);
         else
             # namespace = string("$(homedir())/Dropbox/Postdoc/2018_sharks/",filename_cut,indexstring,extension);
-            namespace = string("$(homedir())/2018_sharks/",filename_cut,indexstring,extension);
+            namespace = string("$(homedir())/sharks_bodysize/",filename_cut,indexstring,extension);
         end
     end
     
