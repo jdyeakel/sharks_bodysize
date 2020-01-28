@@ -5,10 +5,10 @@ function smartpath(filename::String,indices::Array{Int64}=[0])
     
     if indices[1] == 0
         if homedir() == "/home/z840"
-            namespace = string("$(homedir())/2018_sharks/",filename_cut,extension);
+            namespace = string("$(homedir())/sharks_bodysize/",filename_cut,extension);
         else
             # namespace = string("$(homedir())/Dropbox/Postdoc/2018_sharks/",filename_cut,extension);
-            namespace = string("$(homedir())/2018_sharks/",filename_cut,extension);
+            namespace = string("$(homedir())/Dropbox/PostDoc/2018_sharks/",filename_cut,extension);
         end
     else
         
@@ -23,7 +23,7 @@ function smartpath(filename::String,indices::Array{Int64}=[0])
             namespace = string("$(homedir())/sharks_bodysize/",filename_cut,indexstring,extension);
         else
             # namespace = string("$(homedir())/Dropbox/Postdoc/2018_sharks/",filename_cut,indexstring,extension);
-            namespace = string("$(homedir())/sharks_bodysize/",filename_cut,indexstring,extension);
+            namespace = string("$(homedir())/Dropbox/PostDoc/2018_sharks/",filename_cut,indexstring,extension);
         end
     end
     
