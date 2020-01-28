@@ -1,4 +1,4 @@
-function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
+function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D,sigtau,tau)
     
     #Temperature is a vector (!!)
     
@@ -14,7 +14,7 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     # Em = 5414; #J/g energy density of adult sharks from Schindler
     Em = 5774; #Energy needed to synthesize a unit of mass
     
-    epsilonstep = 100;
+    epsilonstep = 50;
     epsilonmax = 0.99;
     epsilonvec = collect(m0/M:(epsilonmax - (m0/M))/epsilonstep:epsilonmax);
     lspan = length(epsilonvec);
@@ -75,6 +75,7 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     #Cumsum across rows
     tvec1 = cumsum(tint1,dims=2);
     tvec2 = cumsum(tint2,dims=2);
+    # R"plot($(tint1[1,:]))"    
     
     #COMPARE TO VON BUTTERFLY
     # VBlength = VB_Linf*(1 - exp(-VB_k*(VB_t - VB_t0)));
@@ -84,7 +85,9 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     #mortality rate
     #Sand tiger shark mortality: Z = 0.18 to 0.097 yr-1
     #0.097/(60*60*24*365) = 3.07585*10^-9
-    m=(3.076*10^(-9.0))*1;
+    
+    # m=(3.076*10^(-9.0))*1;
+    m = (5.70776*10^(-9));
     
     #CURRENTLY NOT USING THIS
     # survship1 = Array{Float64}(undef,ltemp,ltime);
@@ -115,9 +118,19 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     #Female pups per female per second 0.5/(60*60*24*365) = 1.58549*10^-8
     #Number of female pups per female per second = 1.585*10^-8
     #NOTE: smaller size bins have 'more' offsprings because bins are larger
-    rmax_warm = (1.585*10^-8.0)*10;
+    
+    #Branstetter and Musick (1994) -- 1 litter per 2 years and 2 pups per litter 
+    # (1/2)/(60*60*24*365) = 3.17*10^-8
+    # rmax_warm = (1.585*10^-8.0);
+    
+    #Cortes 1996 Bonnetthead shark 4.45 and 4.65 female pups/female
+    #  4.65/(60*60*24*365)
+    rmax_warm = (1.47451*10^(-7));
+    
     #NOTE: could make this percent difference a function of Delta temp
-    rmax_cold = (rmax_warm)*0.5;
+    rmax_cold = (rmax_warm)*1;
+    
+    juvpos = Int64(floor(ltime/4)); #What defines 'juvenile state'
     
     #reproduction rate per state/location
     mintemp1 = minimum(tempvec1);
@@ -126,20 +139,37 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     maxtemp2 = maximum(tempvec2);
     r_sizetemp1 = Array{Float64}(undef,ltemp,ltime);
     r_sizetemp2 = Array{Float64}(undef,ltemp,ltime);
-    offspring_sizetemp1 = Array{Float64}(undef,ltemp,ltime);
-    offspring_sizetemp2 = Array{Float64}(undef,ltemp,ltime);
+    # offspring_sizetemp1 = Array{Float64}(undef,ltemp,ltime);
+    # offspring_sizetemp2 = Array{Float64}(undef,ltemp,ltime);
     for i=1:ltemp
         for j=1:ltime
+            
             #interpolated reproductive rate for a given temperature
             rtemp1 = rmax_cold + (rmax_warm - rmax_cold)*((tempvec1[i]-mintemp1)/(maxtemp1-mintemp1));
+            
             #reproductive rate as a function of mass and temperature
-            r_sizetemp1[i,j] = (-4*(mass1[i,j] - mass1[i,ltime])*(mass1[i,j] - m0)*rtemp1)/((mass1[i,ltime] - m0)^2);
+            # r_sizetemp1[i,j] = (-4*(mass1[i,j] - mass1[i,ltime])*(mass1[i,j] - m0)*rtemp1)/((mass1[i,ltime] - m0)^2);
+            
+            #ALT sigmoid relationship
+            # r_sizetemp1[i,j] = rtemp1 ./ (1 .+ exp.(- (1/1) .* (mass1[i,j] .- juvpos)));
+            
+            #ALT single value
+            r_sizetemp1[i,j] = rtemp1;
+            
             #offspring in time interval tint
-            offspring_sizetemp1[i,j] = r_sizetemp1[i,j]*tint1[i,j];
+            #offspring_sizetemp1[i,j] = r_sizetemp1[i,j]*tint1[i,j];
             
             rtemp2 = rmax_cold + (rmax_warm - rmax_cold)*((tempvec2[i]-mintemp2)/(maxtemp2-mintemp2));
-            r_sizetemp2[i,j] = (-4*(mass2[i,j] - mass2[i,ltime])*(mass2[i,j] - m0)*rtemp2)/((mass2[i,ltime] - m0)^2);
-            offspring_sizetemp2[i,j] = r_sizetemp2[i,j]*tint2[i,j];
+            
+            # r_sizetemp2[i,j] = (-4*(mass2[i,j] - mass2[i,ltime])*(mass2[i,j] - m0)*rtemp2)/((mass2[i,ltime] - m0)^2);
+            
+            #ALT sigmoid relationship
+            # r_sizetemp2[i,j] = rtemp2 ./ (1 .+ exp.(- (1/1) .* (mass2[i,j] .- juvpos)));
+            
+            #ALT single value
+            r_sizetemp2[i,j] = rtemp2;
+            
+            #offspring_sizetemp2[i,j] = r_sizetemp2[i,j]*tint2[i,j];
         end
     end
     
@@ -216,7 +246,7 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     temptime1 = mean(tempvec1) .+ (maximum(tempvec1) .- mean(tempvec1)).*sin.((pi/(daysinyear/2)).*collect(0:1:daysinyear));
     temptime2 = mean(tempvec2) .+ (maximum(tempvec2) .- mean(tempvec2)).*sin.((pi/(daysinyear/2)).*collect(0:1:daysinyear));
     
-    juvpos = Int64(floor(ltime/4)); #What defines 'juvenile state'
+    
     
     
     
@@ -264,11 +294,11 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
     
     staterate = [state;state;state;state];
     cistaterate = CartesianIndices(staterate);
-    states = repeat(collect(1:99),outer=4);
+    states = repeat(collect(1:ltime),outer=4);
     
     let n=0, tcum = 0, tictoc = 0, day = 1 #n=0; tcum = 0; tictoc = 0; day = 1
         
-        while tcum < tmax && tictoc < 1000000
+        while tcum < tmax #&& tictoc < 1000000
             
             tictoc += 1;
         	
@@ -291,9 +321,15 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
             end
             
             #reproduction rate per state/location
+            #A nonlinear function, dependent on temp and size
             r1 = r_sizetemp1[k1,:];
+            
+            #A single value
+            # r1 = repeat([rmax_warm],ltime);
+            
             #turn off pre-juv reproduction
             r1[1:juvpos] .= 0;
+            
             #No reproduction at adult site
             r2 = repeat([0],ltime);
     
@@ -302,8 +338,10 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
             g2 = 1 ./ tint2[k2,:]; #transpose(1/tint2[k2,:]);
             
             #mortality rate per state/location
-            d1 = repeat([m],ltime);
-            d2 = copy(d1);
+            d2 = repeat([m],ltime);
+            #elevated mortality for last mass class
+            d2[ltime] = m*10;
+            d1 = copy(d2);
             
             #migration rate per state/location
             #peak travel day
@@ -312,11 +350,14 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
             # m1 = zeros(Float64,ltime);
             # m1[1:Int64(floor(juvpos/2))] .= 0;
             # m1[juvpos:ltime] .= D*velocity/distance;
-            #sigmoidal increase to top migration
-            sigtau = 2;
+            
+            #For Juvenile site, migration is a function of size
+            #sigmoidal increase over body mass to top migration above juvpos
+            # sigtau = 5;
             m1 = D*(velocity/distance) ./ (1 .+ exp.(- (1/sigtau) .* (collect(1:ltime) .- juvpos)));
-
-            tau = 1;
+            
+            #For adult site, migration is a function of TIME
+            # tau = 20;
             m2 = repeat([D*(velocity/distance)*exp(-((day .- peakday)^2)/(2*tau^2))],ltime);
             # m2 = zeros(Float64,ltime);
             # m2[1:juvpos] .= (velocity/2)/distance;
@@ -370,8 +411,11 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
             # 
             #Reproduce
             if Apos == 1
+                #Grab a birth state at random
+                rbirthstate = rand(collect(1:Int64(epsilonstep/10)));
+                # rbirthstate = 1;
                 #Add individual to first state
-                state[1,Nloc] += 1;
+                state[rbirthstate,Nloc] += 1;
             end
             
             #Grow 
@@ -439,11 +483,18 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D)
         		println("tcum ",tcum/tmax,"; Juv site = ",pop[1]," Adult site = ",pop[2])
         	end
         	
+            #test for negative values
+            if any(state .< 0) == true
+                println("RULES OF UNIVERSE VIOLATED")
+                break
+            end
         
         end #end while
     end #end let
     
     popstate = [pop1 pop2];
+    
+    
     
     # R"""
     # plot($clock/60/60/24/365,$(popstate[:,1]),pch='.',ylim=c(0,max($popstate)))

@@ -1,0 +1,112 @@
+\documentclass[twocolumn,preprintnumbers,amsmath,amssymb,superscriptaddress]{revtex4}
+% Note that the use of elements such as single-column equations
+% may affect the guide line number alignment.
+% \templatetype{pnasresearcharticle} % Choose template
+% {pnasresearcharticle} = Template for a two-column research article
+% {pnasmathematics} = Template for a one-column mathematics article
+% {pnasinvited} = Template for a PNAS invited submission
+%\usepackage{graphicx}
+\usepackage{amsmath,amsfonts,amssymb}
+% \usepackage{fullpage}
+\usepackage{color}
+% \usepackage{subcaption}
+
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage[english]{babel}
+% \usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage{float}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{mathtools}
+\usepackage{stmaryrd}
+\usepackage{anyfontsize}
+\usepackage{changepage}
+
+\usepackage{natbib}
+\bibliographystyle{apsrev}
+
+\definecolor{darkblue}{rgb}{0,0,0.6}
+\definecolor{darkcyan}{rgb}{0.1,0.3,0.4}
+\definecolor{darkgreen}{rgb}{0,0.4,0}
+\definecolor{darkred}{rgb}{0.6,0,0}
+
+\newcommand{\uttam}[1]{\textcolor{darkred}{#1}}
+\newcommand{\jy}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\chris}[1]{\textcolor{darkgreen}{#1}}
+
+\newcommand{\beginsupplement}{%
+        \clearpage
+        \setcounter{table}{0}
+        \renewcommand{\thetable}{S\arabic{table}}%
+        \setcounter{figure}{0}
+        \renewcommand{\thefigure}{S\arabic{figure}}%
+     }
+
+
+
+\begin{document}
+
+\title{Caching in or falling back at the Sevilleta}
+
+\author{Sora Kim} \affiliation{School of Natural Sciences, University
+  of California, Merced, Merced, CA 95340, USA}
+
+\author{Justin Yeakel} \affiliation{School of Natural Sciences, University
+  of California, Merced, Merced, CA 95340, USA}
+
+
+\maketitle
+
+
+\section{Model Description}
+
+We constructed a two-site stage-class model that tracked shark population dynamics over time, where one site was designated the nursery.
+We considered four key dynamics to characterize changes in population size for both sites: reproduction, somatic growth, mortality, and migration.
+Vital rates controlling these dynamics were site- and temperature-specific, where temperatures oscillated annually.
+
+\noindent \textbf{Reproduction:} The per-capita reproductive rates $r_{\rm n,a}$ are assumed to differ between the nursery (n subscript) and adult (a subscript) site.
+%, were assumed to depend on body size [and temperature].
+We set the reproductive rate at the adult site $r_{\rm a} = 0$, whereas the reproductive rate at the nursery was scaled to seasonal ocean temperature, such that $r_{\rm n} = 0.47 \times 10^{-7}$ female pups per second during the warmest part of the year, and 1/2 that during the coldest. 
+
+\noindent \textbf{Somatic growth:}
+Partitioning of metabolism $B$ between growth and maintenance purposes can be used to derive a general equation for both the
+growth trajectories and growth rates of organisms ranging from bacteria to
+metazoans
+\citep{West:2001bv,moses2008rmo,gillooly2002esa,hou,Kempes:2012hy}. 
+This relation is derived from the balance condition 
+$B_{0}m^{\eta}=E_{m}\dot{m}+B_{m}m\,,$
+% \begin{eqnarray}
+% \label{balance}
+% B_{0}m^{\eta}=E_{m}\frac{dm}{dt}+B_{m}m\,,
+% \end{eqnarray}
+\citep{West:2001bv,moses2008rmo,gillooly2002esa,hou,Kempes:2012hy} where $E_{m}$ is the energy needed to synthesize a unit of mass, $B_{m}$ is the metabolic rate to support an existing unit of mass, and $m$ is the mass of the organism at any point in its development.  
+This balance has the general solution \citep{bettencourt,Kempes:2012hy}
+\begin{eqnarray}
+\label{m1}
+\left(\frac{m\left(t\right)}{M}\right)^{1-\eta}\!=1\!-\!\left[1\!-\!\left(\frac{m_{0}}{M}\right)^{1\!-\!\eta}\right]e^{-a\left(1\!-\!\eta\right)t/M^{1-\eta}},
+\end{eqnarray}
+where, for $\eta<1$, $M=(B_{0}/B_{m})^{1/(1-\eta)}$ is the asymptotic mass, $a=B_{0}/E_{m}$, and $m_0$ is mass at birth.  
+We now use this solution to define the timescale for reproduction and recovery from starvation (Fig.~\ref{fig:growth}; see \citep{moses2008rmo} for a detailed presentation of these timescales). 
+The time that it takes to reach a particular mass $\epsilon M$ is given by the timescale
+\begin{equation}
+\label{t1}
+\tau\left(\epsilon\right) = \ln\left[\frac{1-\left(m_{0}/M\right)^{1-\eta}}{1-\epsilon^{1-\eta}}\right]\frac{M^{1-\eta}}{a\left(1-\eta\right)},
+\end{equation}
+where $\epsilon$ is used to partition growth into discrete size classes. 
+
+% 
+% For the time to reproduce, $t_{\lambda}=\tau\left(\epsilon_{\lambda}\right)$, where $\epsilon_{\lambda}$ is the fraction of the asymptotic mass where an organism is reproductively mature and should be close to one (typically $\epsilon_{\lambda}\approx0.95$; \citep{West:2001bv}). The growth rate is then given by $\lambda=\ln\left(\upsilon\right)/t_{\lambda}$ where $\upsilon$ is the number of offspring produced, and for any constant value of $\epsilon_{\lambda}$, this rate will scale as $\lambda\propto M^{\eta-1}$ for $M\gg m_{0}$ \citep{West:2001bv,moses2008rmo,gillooly2002esa,hou,Kempes:2012hy}.
+
+\noindent \textbf{Mortality:}
+
+
+\noindent \textbf{Migration:}
+%From adult site to nursery (a function of time)
+%From nursery to adult site (a function of mass)
+
+\bibliography{aa_starving_supplement}
+
+\end{document}

@@ -1,0 +1,51 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: description.aux
+The style file: apsrev.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: aa_starving_supplement.bib
+Warning--I didn't find a database entry for "bettencourt"
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+You've used 5 entries,
+            3411 wiz_defined-function locations,
+            1189 strings with 11012 characters,
+and the built_in function-call counts, 4367 in all, are:
+= -- 217
+> -- 197
+< -- 24
++ -- 172
+- -- 48
+* -- 631
+:= -- 442
+add.period$ -- 5
+call.type$ -- 5
+change.case$ -- 20
+chr.to.int$ -- 5
+cite$ -- 5
+duplicate$ -- 388
+empty$ -- 340
+format.name$ -- 111
+if$ -- 798
+int.to.chr$ -- 1
+int.to.str$ -- 6
+missing$ -- 59
+newline$ -- 30
+num.names$ -- 15
+pop$ -- 108
+preamble$ -- 1
+purify$ -- 20
+quote$ -- 0
+skip$ -- 152
+stack$ -- 0
+substring$ -- 102
+swap$ -- 332
+text.length$ -- 24
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 30
+warning$ -- 0
+while$ -- 15
+width$ -- 0
+write$ -- 64
+(There was 1 warning)

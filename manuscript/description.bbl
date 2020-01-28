@@ -1,0 +1,64 @@
+\begin{thebibliography}{5}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\expandafter\ifx\csname bibnamefont\endcsname\relax
+  \def\bibnamefont#1{#1}\fi
+\expandafter\ifx\csname bibfnamefont\endcsname\relax
+  \def\bibfnamefont#1{#1}\fi
+\expandafter\ifx\csname citenamefont\endcsname\relax
+  \def\citenamefont#1{#1}\fi
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\providecommand{\bibinfo}[2]{#2}
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{\citenamefont{West et~al.}(2001)\citenamefont{West, Brown, and
+  Enquist}}]{West:2001bv}
+\bibinfo{author}{\bibfnamefont{G.~B.} \bibnamefont{West}},
+  \bibinfo{author}{\bibfnamefont{J.~H.} \bibnamefont{Brown}}, \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{B.~J.} \bibnamefont{Enquist}},
+  \bibinfo{journal}{Nature} \textbf{\bibinfo{volume}{413}},
+  \bibinfo{pages}{628} (\bibinfo{year}{2001}).
+
+\bibitem[{\citenamefont{Moses et~al.}(2008)\citenamefont{Moses, Hou, Woodruff,
+  West, Nekola, Zuo, and Brown}}]{moses2008rmo}
+\bibinfo{author}{\bibfnamefont{M.~E.} \bibnamefont{Moses}},
+  \bibinfo{author}{\bibfnamefont{C.}~\bibnamefont{Hou}},
+  \bibinfo{author}{\bibfnamefont{W.~H.} \bibnamefont{Woodruff}},
+  \bibinfo{author}{\bibfnamefont{G.~B.} \bibnamefont{West}},
+  \bibinfo{author}{\bibfnamefont{J.~C.} \bibnamefont{Nekola}},
+  \bibinfo{author}{\bibfnamefont{W.}~\bibnamefont{Zuo}}, \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{J.~H.} \bibnamefont{Brown}},
+  \bibinfo{journal}{http://dx.doi.org.proxy.lib.sfu.ca/10.1086/679735}
+  \textbf{\bibinfo{volume}{171}}, \bibinfo{pages}{632} (\bibinfo{year}{2008}).
+
+\bibitem[{\citenamefont{Gillooly et~al.}(2002)\citenamefont{Gillooly, Charnov,
+  West, Savage, and Brown}}]{gillooly2002esa}
+\bibinfo{author}{\bibfnamefont{J.~F.} \bibnamefont{Gillooly}},
+  \bibinfo{author}{\bibfnamefont{E.~L.} \bibnamefont{Charnov}},
+  \bibinfo{author}{\bibfnamefont{G.~B.} \bibnamefont{West}},
+  \bibinfo{author}{\bibfnamefont{V.~M.} \bibnamefont{Savage}},
+  \bibnamefont{and} \bibinfo{author}{\bibfnamefont{J.~H.} \bibnamefont{Brown}},
+  \bibinfo{journal}{Nature} \textbf{\bibinfo{volume}{417}}, \bibinfo{pages}{70}
+  (\bibinfo{year}{2002}).
+
+\bibitem[{\citenamefont{Hou et~al.}(2008)\citenamefont{Hou, Zuo, Moses,
+  Woodruff, Brown, and West}}]{hou}
+\bibinfo{author}{\bibfnamefont{C.}~\bibnamefont{Hou}},
+  \bibinfo{author}{\bibfnamefont{W.}~\bibnamefont{Zuo}},
+  \bibinfo{author}{\bibfnamefont{M.~E.} \bibnamefont{Moses}},
+  \bibinfo{author}{\bibfnamefont{W.~H.} \bibnamefont{Woodruff}},
+  \bibinfo{author}{\bibfnamefont{J.~H.} \bibnamefont{Brown}}, \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{G.~B.} \bibnamefont{West}},
+  \bibinfo{journal}{Science} \textbf{\bibinfo{volume}{322}},
+  \bibinfo{pages}{736} (\bibinfo{year}{2008}).
+
+\bibitem[{\citenamefont{Kempes et~al.}(2012)\citenamefont{Kempes, Dutkiewicz,
+  and Follows}}]{Kempes:2012hy}
+\bibinfo{author}{\bibfnamefont{C.~P.} \bibnamefont{Kempes}},
+  \bibinfo{author}{\bibfnamefont{S.}~\bibnamefont{Dutkiewicz}},
+  \bibnamefont{and} \bibinfo{author}{\bibfnamefont{M.~J.}
+  \bibnamefont{Follows}}, \bibinfo{journal}{PNAS}
+  \textbf{\bibinfo{volume}{109}}, \bibinfo{pages}{495} (\bibinfo{year}{2012}).
+
+\end{thebibliography}

@@ -18,7 +18,7 @@ logoing_func<-function(logo, x, y, size){
 #Size at birth (cm)
 l0 = 100.0;
 #Asymptotic size (cm)
-L = 295.0 #1500; #295.0;
+L = 295; #1500; #295.0;
 
 # # Mass from PRECAUDAL LENGTH (Schindler) 
 # m0 = 0.00538776*l0^3.102025622731644;
@@ -33,8 +33,11 @@ n0=1000;
 gen=1;
 
 #Temperature range (high latitude: 8-13; Low latitude 22-30)
-tempmin1 = 8+273.15; tempmax1 = 13+273.15;
-tempmin2 = 8+273.15; tempmax2 = 13+273.15;
+#Juvenile site
+tempmin1 = 11+273.15; tempmax1 = 19+273.15;
+#Adult site
+tempmin2 = 12+273.15; tempmax2 = 20+273.15;
+
 tempvec1 = Array{Float64}(undef,0);
 tempvec2 = Array{Float64}(undef,0);
 if tempmin1 == tempmax1
@@ -49,10 +52,15 @@ else
 end
 
 #distance between site (km * 1000)
-distance = 1500*1000; #3.779e6/10; #1500
+distance = 650*1000; #3.779e6/10; #1500
 #Shark velocity (m/s)
 velocity = 1;
-D = 10;
+D = 1;
+
+#Steepness of juvenile migration (function of mass)
+sigtau = 8.;
+#Steepness of adult migration (function of time)
+tau = 20.;
 
 
 mass1,
@@ -61,22 +69,91 @@ epsilonvec,
 clock,
 popstate,
 toothdrop,
-state = popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D);
+state = popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D,sigtau,tau);
+tpop = sum(popstate,dims=2);
+toothlength1 = 2.13337 .+ (0.187204 .* mass1.^(0.416667)); #mm
+toothlength2 = 2.13337 .+ (0.187204 .* mass2.^(0.416667)); #mm
 
-# R"""
-# par(mfrow=c(1,1))
-# plot($clock/60/60/24/365,$(popstate[:,1]),type='l',ylim=c(1,max($popstate)),log='y',xlab='years',ylab='Population')
-# lines($clock/60/60/24/365,$(popstate[:,2]),col='blue')
-# """
+println(dot(toothlength2[1,:],(toothdrop[:,1]/sum(toothdrop[:,1]))))
+println(dot(toothlength2[1,:],(toothdrop[:,2]/sum(toothdrop[:,2]))))
 
+
+
+namespace = "$(homedir())/Dropbox/PostDoc/2018_sharks/figures/fig_toothdist_650km_largewindow.pdf";
+sharklogo = "$(homedir())/Dropbox/PostDoc/2018_sharks/sharktooth.png";
 R"""
-par(mfrow=c(1,2))
-plot($(vec(mass1[1,:])),$(toothdrop[:,1])/sum($(toothdrop[:,1])),type='h',log='',lwd=3,ylim=c(0,max($(toothdrop[:,1])/sum($(toothdrop[:,1])))),xlab='Body size',ylab='Proportion (tooth drop)')
-plot($(vec(mass2[1,:])),$(toothdrop[:,2])/sum($(toothdrop[:,2])),type='h',log='',col='blue',lwd=3,ylim=c(0,max($(toothdrop[:,2])/sum($(toothdrop[:,2])))),xlab='Body size',ylab='Proportion (tooth drop)')
+library(png)
+library(RCurl)
+library(RColorBrewer)
+shark_logo <-  readPNG($sharklogo);
+pal = brewer.pal(3,'Set1')
+pdf($namespace, width = 8, height = 4)
+layout(matrix(c(1,2), 1, 2, byrow = TRUE), 
+             widths=c(1,1), heights=c(1,1))
+# par(mfrow=c(2,2))
+par(oma = c(2,2,1.5,1.6), mar = c(2,2,1,1))
+# par(mfrow=c(1,2))
+plot($(vec(toothlength1[1,:])),$(toothdrop[:,1])/sum($(toothdrop[:,1])),type='h',log='',lwd=3,ylim=c(0.0001,max($(toothdrop[:,1])/sum($(toothdrop[:,1])))),xlim=c(0,max(c($(toothlength1[1,:]),$(toothlength2[1,:])))),xlab='Body size',ylab='Proportion (tooth drop)',col=pal[1])
+logoing_func(shark_logo, x=0.90, y=0.90, size=0.15)
+plot($(vec(toothlength2[1,:])),$(toothdrop[:,2])/sum($(toothdrop[:,2])),type='h',log='',lwd=3,ylim=c(0.0001,max($(toothdrop[:,2])/sum($(toothdrop[:,2])))),xlim=c(0,max(c($(toothlength1[1,:]),$(toothlength2[1,:])))),xlab='Body size',ylab='Proportion (tooth drop)',col=pal[2])
+logoing_func(shark_logo, x=0.90, y=0.90, size=0.15)
+title(xlab='Tooth height (mm)',ylab='Frequency',outer=TRUE,line=0.70,cex.lab=1.25)
+dev.off()
 """
 
 
 
+
+
+
+namespace = "$(homedir())/Dropbox/PostDoc/2018_sharks/figures/fig_toothdist_group.pdf";
+R"""
+library(png)
+library(RCurl)
+library(RColorBrewer)
+shark_logo <-  readPNG($sharklogo);
+pal = brewer.pal(3,'Set1')
+pdf($namespace, width = 5, height = 5)
+par(mfrow=c(1,1))
+plot($(vec(toothlength2[1,:])),$(vec(sum(toothdrop,dims=2)))/$(sum(vec(sum(toothdrop,dims=2)))),type='h',log='',lwd=3,ylim=c(0.0001,max($(vec(sum(toothdrop,dims=2)))/$(sum(vec(sum(toothdrop,dims=2)))))),xlim=c(0,max(c($(toothlength1[1,:]),$(toothlength2[1,:])))),xlab='Body size',ylab='Proportion (tooth drop)',col=pal[3])
+logoing_func(shark_logo, x=0.90, y=0.90, size=0.15)
+dev.off()
+"""
+println(dot(toothlength2[1,:],(toothdrop[:,1]/sum(toothdrop[:,1]))))
+println(dot(toothlength2[1,:],(toothdrop[:,2]/sum(toothdrop[:,2]))))
+
+
+
+
+namespace = "$(homedir())/Dropbox/PostDoc/2018_sharks/figures/fig_population.pdf";
+sharklogo = "$(homedir())/Dropbox/PostDoc/2018_sharks/sharktooth.png";
+R"""
+library(png)
+library(RCurl)
+library(RColorBrewer)
+shark_logo <-  readPNG($sharklogo);
+pal = brewer.pal(3,'Set1')
+pdf($namespace, width = 12, height = 10)
+layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE), 
+             widths=c(1,1,1,1), heights=c(1,1,1,1))
+# par(mfrow=c(2,2))
+par(oma = c(2,2,1.5,1.6), mar = c(2,2,1,1))
+plot($clock/60/60/24/365,$(popstate[:,1]),type='l',ylim=c(1,max($tpop)),log='',xlab='years',ylab='Population',col=pal[1])
+lines($clock/60/60/24/365,$(popstate[:,2]),col=pal[2])
+lines($clock/60/60/24/365,$(tpop),col=pal[3])
+# par(mfrow=c(1,2))
+plot($(vec(toothlength1[1,:])),$(toothdrop[:,1])/sum($(toothdrop[:,1])),type='h',log='',lwd=3,ylim=c(0.0001,max($(toothdrop[:,1])/sum($(toothdrop[:,1])))),xlim=c(0,max(c($(toothlength1[1,:]),$(toothlength2[1,:])))),xlab='Body size',ylab='Proportion (tooth drop)',col=pal[1])
+logoing_func(shark_logo, x=0.90, y=0.90, size=0.15)
+plot($(vec(toothlength2[1,:])),$(toothdrop[:,2])/sum($(toothdrop[:,2])),type='h',log='',lwd=3,ylim=c(0.0001,max($(toothdrop[:,2])/sum($(toothdrop[:,2])))),xlim=c(0,max(c($(toothlength1[1,:]),$(toothlength2[1,:])))),xlab='Body size',ylab='Proportion (tooth drop)',col=pal[2])
+logoing_func(shark_logo, x=0.90, y=0.90, size=0.15)
+dev.off()
+"""
+
+
+R"""
+plot($(vec(toothlength2[1,:])),$(vec(sum(toothdrop,dims=2)))/$(sum(vec(sum(toothdrop,dims=2)))),type='h',log='x',lwd=5,xlab='Body size',ylab='Proportion (tooth drop)',col=pal[2])
+logoing_func(shark_logo, x=0.90, y=0.90, size=0.15)
+"""
 
 
 
