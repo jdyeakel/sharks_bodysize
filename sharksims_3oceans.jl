@@ -35,14 +35,11 @@ tauvec = collect(5:25);
 tauits = length(sigtauvec)*length(tauvec)*length(distvec);
 
 
-tempposvec = repeat(collect(1:3),inner = tauits);
-
 #3 paramters: distance, sigtau, tau
 distposvec = repeat(collect(1:3),inner = length(sigtauvec)*length(tauvec));
 sigtauposvec = repeat(collect(1:length(sigtauvec)),inner = length(tauvec),outer=length(distvec));
 tauposvec = repeat(collect(1:length(tauvec)),outer=length(distvec)*length(sigtauvec));
 paramposvec_pre = [distposvec sigtauposvec tauposvec];
-
 #temperature | distance | sigtauvec | tauposvec
 paramposvec = [repeat(collect(1:3),inner = size(paramposvec_pre)[1]) repeat(paramposvec_pre,outer=3)];
 
@@ -50,7 +47,7 @@ paramposvec = [repeat(collect(1:3),inner = size(paramposvec_pre)[1]) repeat(para
 
 its = size(paramposvec)[1];
 
-@sync @distributed for i=1:its
+@time @sync @distributed for i=1:its
     
     #set parameters
     pos = paramposvec[i,:];
