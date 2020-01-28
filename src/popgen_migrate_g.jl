@@ -479,9 +479,9 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D,sigt
             toothdrop .+= state .* (toothlossrate * dt);
             
             #Report
-        	if mod(tictoc,5000) == 0
-        		println("tcum ",tcum/tmax,"; Juv site = ",pop[1]," Adult site = ",pop[2])
-        	end
+        	# if mod(tictoc,5000) == 0
+        	# 	println("tcum ",tcum/tmax,"; Juv site = ",pop[1]," Adult site = ",pop[2])
+        	# end
         	
             #test for negative values
             if any(state .< 0) == true
