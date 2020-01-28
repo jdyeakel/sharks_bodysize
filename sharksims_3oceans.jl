@@ -1,5 +1,5 @@
 if homedir() == "/home/z840"
-    loadfunc = include("$(homedir())/2018_sharks/src/loadfuncs.jl");
+    loadfunc = include("$(homedir())/sharks_bodysize/src/loadfuncs.jl");
 else
     loadfunc = include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/loadfuncs.jl");
 end
