@@ -17,6 +17,7 @@ if homedir() == "/home/z840"
     @everywhere include("$(homedir())/sharks_bodysize/src/ts.jl")
     @everywhere include("$(homedir())/sharks_bodysize/src/F.jl")
     @everywhere include("$(homedir())/sharks_bodysize/src/smartpath.jl")
+    @everywhere include("$(homedir())/sharks_bodysize/src/findlocalmaxima.jl")
     
 else
     
@@ -24,5 +25,6 @@ else
     @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/ts.jl")
     @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/F.jl")
     @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/smartpath.jl")
-    
+    @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/findlocalmaxima.jl")
+
 end
