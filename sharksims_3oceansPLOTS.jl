@@ -213,6 +213,21 @@ image.plot(x=$sigtauvec,y=$tauvec,z=$(toothmatrix_adult),xlab='Juvenile migratio
 dev.off()
 """
 
+filename = "figures/fig_3oceans_peaks.pdf";
+namespace = smartpath(filename);
+R"""
+library(RColorBrewer)
+library(fields)
+pal = colorRampPalette(rev(brewer.pal(11,'Spectral')))(50)
+pdf($namespace,width=14,height=6)
+layout(matrix(c(1,2),1,2,byrow=TRUE))
+par(oma = c(2, 2, 2, 1), mar = c(4, 5, 2, 5)) #,mai=c(0.6,0.6,0,0.1)
+image.plot(x=$sigtauvec,y=$tauvec,z=$(peakjuv[3,1,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site tooth peaks',col=c('white','black'))
+image.plot(x=$sigtauvec,y=$tauvec,z=$(peakadult[3,1,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site tooth peaks',col=c('white','black'))
+dev.off()
+"""
+
+
 
 #CHECKING VARIANCE
 pj = (toothdrop[:,1]/sum(toothdrop[:,1]));
