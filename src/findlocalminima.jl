@@ -1,4 +1,4 @@
-function findlocalmaxima(signal::Vector)
+function findlocalminima(signal::Vector)
    inds = Int[]
    if length(signal)>1
        if signal[1]<signal[2]
