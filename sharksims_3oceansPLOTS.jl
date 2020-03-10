@@ -128,7 +128,7 @@ peakadult2 = SharedArray{Int64}(4,3,length(sigtauvec),length(tauvec));
     pj = (toothdrop[:,1]/sum(toothdrop[:,1]));
     pa = (toothdrop[:,2]/sum(toothdrop[:,2]));
     
-    lmax=findlocalmaxima(pa)
+    lmax=findlocalmaxima(pa) #
     lmin=findlocalminima(pa)
     #choose highest probability peaks
     peakprobs = pa[lmax];
