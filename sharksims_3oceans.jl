@@ -24,10 +24,10 @@ n0=1000;
 gen=1;
 
 
-mintemp_j = [8,20,9];
-maxtemp_j = [13,30,17];
-mintemp_a = [8,20,12];
-maxtemp_a = [13,30,24];
+mintemp_j = [8,20,9,12];
+maxtemp_j = [13,30,17,24];
+mintemp_a = [8,20,12,9];
+maxtemp_a = [13,30,24,17];
 
 distvec = [200,400,650];
 sigtauvec = collect(1:10);
@@ -41,7 +41,7 @@ sigtauposvec = repeat(collect(1:length(sigtauvec)),inner = length(tauvec),outer=
 tauposvec = repeat(collect(1:length(tauvec)),outer=length(distvec)*length(sigtauvec));
 paramposvec_pre = [distposvec sigtauposvec tauposvec];
 #temperature | distance | sigtauvec | tauposvec
-paramposvec = [repeat(collect(1:3),inner = size(paramposvec_pre)[1]) repeat(paramposvec_pre,outer=3)];
+paramposvec = [repeat(collect(1:4),inner = size(paramposvec_pre)[1]) repeat(paramposvec_pre,outer=4)];
 
 
 
