@@ -43,18 +43,21 @@ paramposvec_pre = [distposvec sigtauposvec tauposvec];
 #temperature | distance | sigtauvec | tauposvec
 paramposvec = [repeat(collect(1:4),inner = size(paramposvec_pre)[1]) repeat(paramposvec_pre,outer=4)];
 
+reps = 10;
+paramvec_pre = repeat(paramposvec,outer = reps);
+paramvec = [repeat(collect(1:reps),inner=size(paramposvec)[1]) paramvec_pre];
 
-
-its = size(paramposvec)[1];
+its = size(paramvec)[1];
 
 @time @sync @distributed for i=1:its
     
     #set parameters
     pos = paramposvec[i,:];
-    temp_pos = pos[1];
-    dist_pos = pos[2];
-    sigtau_pos = pos[3];
-    tau_pos = pos[4];
+    r = pos[1];
+    temp_pos = pos[2];
+    dist_pos = pos[3];
+    sigtau_pos = pos[4];
+    tau_pos = pos[5];
     
     #Temperature range (high latitude: 8-13; Low latitude 22-30)
     #Juvenile site
@@ -101,10 +104,12 @@ its = size(paramposvec)[1];
     
     #save data
     filename = "data/sharks_3oceans/simdata.jld";
-    indices = [temp_pos,dist_pos,sigtau_pos,tau_pos];
+    indices = [r,temp_pos,dist_pos,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
     
-    @save namespace mass1 mass2 epsilonvec clock popstate toothdrop state toothlength1 toothlength2;
+    # @save namespace mass1 mass2 epsilonvec clock popstate toothdrop state toothlength1 toothlength2;
+    
+    @save namespace mass1 mass2 toothdrop toothlength1 toothlength2;
     
 end
 

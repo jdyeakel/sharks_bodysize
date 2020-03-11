@@ -58,7 +58,7 @@ peakadult2 = SharedArray{Int64}(4,3,length(sigtauvec),length(tauvec));
 
 
 @time @sync @distributed for i=1:its
-    
+    # println(i)
     #set parameters
     pos = paramposvec[i,:];
     temp_pos = pos[1];
@@ -128,30 +128,93 @@ peakadult2 = SharedArray{Int64}(4,3,length(sigtauvec),length(tauvec));
     pj = (toothdrop[:,1]/sum(toothdrop[:,1]));
     pa = (toothdrop[:,2]/sum(toothdrop[:,2]));
     
-    lmax=findlocalmaxima(pa) #
-    lmin=findlocalminima(pa)
+    lmax=findlocalmaxima(pa); #
+    lmin=findlocalminima(pa);
     #choose highest probability peaks
     peakprobs = pa[lmax];
     troughprobs = pa[lmin];
-    sortedpeaks = pa[lmax[sortperm(peakprobs)]];
-    sortedtroughs = pa[lmin[sortperm(troughprobs)]];
+    sortlmax = lmax[sortperm(peakprobs)];
+    sortlmin = lmin[sortperm(troughprobs)];
+    sortedpeaks = pa[sortlmax];
+    sortedtroughs = pa[sortlmin];
     maxpeaka = last(sortedpeaks);
     sortedtooth = toothlength1[1,:][lmax[sortperm(peakprobs)]];
     maxtootha = last(sortedtooth);
     secondpeaka = 0.0;
     secondtootha = 0.0;
-    #need to determine second peak significance
-    if length(sortedpeaks) > 1
-        #threshold of 25% size of first peak
-        if (sortedpeaks[length(sortedpeaks)-1] / maxpeaka) > 0.25
-            secondpeaka = sortedpeaks[length(sortedpeaks)-1];
-            secondtootha = sortedtooth[length(sortedpeaks)-1];
+    troughtootha = 0.0;
+    troughmina = 0.0;
+    troughpos = Array{Int64}(undef,0) .* 0;
+    troughposbackup = Array{Int64}(undef,0) .* 0;
+    trougha1 = Array{Float64}(undef,0) .* 0;
+    trougha2 = Array{Float64}(undef,0) .* 0;
+    trougha3 = Array{Float64}(undef,0) .* 0;
+    trougha4 = Array{Float64}(undef,0) .* 0;
+    peakprop = (Array{Float64}(undef,2) .* 0) .- 1;
+    if length(sortlmin) > 1
+        #Which troughs are in the middle?
+        troughpos1 = sortlmin[findall(x->(x < sortlmax[end] && x > sortlmax[end-1]),sortlmin)];
+        troughpos2 = sortlmin[findall(x->(x > sortlmax[end] && x < sortlmax[end-1]),sortlmin)];
+        troughpos = [troughpos1;troughpos2];
+        
+        if length(sortlmax) > 2
+            troughpos3 = sortlmin[findall(x->(x < sortlmax[end] && x > sortlmax[end-2]),sortlmin)];
+            troughpos4 = sortlmin[findall(x->(x > sortlmax[end] && x < sortlmax[end-2]),sortlmin)];
+            troughposbackup = [troughpos3;troughpos4];
         end
+
+        trougha1 = pa[troughpos][findmin(pa[troughpos])[2]];
+        if length(troughposbackup) > 0
+            trougha2 = pa[troughposbackup][findmin(pa[troughposbackup])[2]];
+        end
+        
+        #need to determine second peak significance
+        if length(sortedpeaks) > 1
+            #threshold of 25% size of first peak
+            # if ((sortedpeaks[length(sortedpeaks)-1] / maxpeaka) > 0.25) && (maxpeaka - (trougha[1]/maxpeaka) > 0.25)
+            peakprop[1] = (sortedpeaks[end-1] - trougha1) / (maxpeaka - trougha1);
+            if length(troughposbackup) > 0
+                peakprop[2] = (sortedpeaks[end-2] - trougha2) / (maxpeaka - trougha2);
+            end
+            peakpos = 0;
+            if peakprop[1] > peakprop[2]
+                peakpos = 1
+            end
+            if peakprop[2] > peakprop[1]
+                peakpos = 2
+            end
+            
+            if peakprop[peakpos] > 0.10
+                # if length(sortedpeaks) > peakpos
+                    secondpeaka = sortedpeaks[end-peakpos];
+                    secondtootha = sortedtooth[end-peakpos];
+                # else 
+                #     println(i)
+                # end
+            end
+        end
+        
+        if length(troughposbackup) > 0
+            troughposmin = [troughpos[1], troughposbackup[1]][peakpos];
+        else
+            troughposmin = troughpos[1];
+        end
+        
+        troughmina = [trougha1,trougha2][peakpos];
+        troughtootha = toothlength1[1,:][troughposmin];
+    else
+        secondpeaka = 0.0;
+        secondtootha = 0.0;
+        troughtootha = 0.0;
+        troughmina = 0.0;
     end
+        
+        
     
-    pl = lineplot(toothlength1[1,:],pa)
-    lineplot!(pl,repeat([maxtootha],outer=2),[0,maxpeaka],color=:red)
-    lineplot!(pl,repeat([secondtootha],outer=2),[0,secondpeaka],color=:red)
+    # pl = lineplot(toothlength1[1,:],pa);
+    # lineplot!(pl,repeat([maxtootha],outer=2),[0,maxpeaka],color=:red)
+    # lineplot!(pl,repeat([secondtootha],outer=2),[0,secondpeaka],color=:red)
+    # lineplot!(pl,repeat([troughtootha],outer=2),[0,troughmina],color=:blue)
     
     # #Gaussian multi-mixture version
     # #generate data
@@ -202,23 +265,98 @@ peakadult2 = SharedArray{Int64}(4,3,length(sigtauvec),length(tauvec));
     # end
     # #JUVENILE PEAKS
     # 
-    lmax=findlocalmaxima(pj)
+    # 
+    
+    lmax=findlocalmaxima(pj); #
+    lmin=findlocalminima(pj);
     #choose highest probability peaks
     peakprobs = pj[lmax];
-    sortedpeaks = pj[lmax[sortperm(peakprobs)]];
+    troughprobs = pj[lmin];
+    sortlmax = lmax[sortperm(peakprobs)];
+    sortlmin = lmin[sortperm(troughprobs)];
+    sortedpeaks = pj[sortlmax];
+    sortedtroughs = pj[sortlmin];
     maxpeakj = last(sortedpeaks);
     sortedtooth = toothlength1[1,:][lmax[sortperm(peakprobs)]];
     maxtoothj = last(sortedtooth);
     secondpeakj = 0.0;
     secondtoothj = 0.0;
-    #need to determine second peak significance
-    if length(sortedpeaks) > 1
-        #threshold of 25% size of first peak
-        if (sortedpeaks[length(sortedpeaks)-1] / maxpeakj) > 0.25
-            secondpeakj = sortedpeaks[length(sortedpeaks)-1];
-            secondtoothj = sortedtooth[length(sortedpeaks)-1];
+    troughtoothj = 0.0;
+    troughminj = 0.0;
+    troughpos = Array{Int64}(undef,0) .* 0;
+    troughposbackup = Array{Int64}(undef,0) .* 0;
+    troughj1 = Array{Float64}(undef,0) .* 0;
+    troughj2 = Array{Float64}(undef,0) .* 0;
+    troughj3 = Array{Float64}(undef,0) .* 0;
+    troughj4 = Array{Float64}(undef,0) .* 0;
+    peakprop = (Array{Float64}(undef,2) .* 0) .- 1;
+    if length(sortlmin) > 1
+        #Which troughs are in the middle?
+        troughpos1 = sortlmin[findall(x->(x < sortlmax[end] && x > sortlmax[end-1]),sortlmin)];
+        troughpos2 = sortlmin[findall(x->(x > sortlmax[end] && x < sortlmax[end-1]),sortlmin)];
+        troughpos = [troughpos1;troughpos2];
+        
+        if length(sortlmax) > 2
+            troughpos3 = sortlmin[findall(x->(x < sortlmax[end] && x > sortlmax[end-2]),sortlmin)];
+            troughpos4 = sortlmin[findall(x->(x > sortlmax[end] && x < sortlmax[end-2]),sortlmin)];
+            troughposbackup = [troughpos3;troughpos4];
         end
+
+        troughj1 = pj[troughpos][findmin(pj[troughpos])[2]];
+        if length(troughposbackup) > 0
+            troughj2 = pj[troughposbackup][findmin(pj[troughposbackup])[2]];
+        end
+        
+        #need to determine second peak significance
+        if length(sortedpeaks) > 1
+            #threshold of 25% size of first peak
+            # if ((sortedpeaks[length(sortedpeaks)-1] / maxpeaka) > 0.25) && (maxpeaka - (trougha[1]/maxpeaka) > 0.25)
+            peakprop[1] = (sortedpeaks[end-1] - troughj1) / (maxpeakj - troughj1);
+            if length(troughposbackup) > 0
+                peakprop[2] = (sortedpeaks[end-2] - troughj2) / (maxpeakj - troughj2);
+            end
+            peakpos = 0;
+            if peakprop[1] > peakprop[2]
+                peakpos = 1
+            end
+            if peakprop[2] > peakprop[1]
+                peakpos = 2
+            end
+            
+            if peakprop[peakpos] > 0.10
+                # if length(sortedpeaks) > peakpos
+                    secondpeakj = sortedpeaks[end-peakpos];
+                    secondtoothj = sortedtooth[end-peakpos];
+                # else 
+                #     println(i)
+                # end
+            end
+        end
+        
+        if length(troughposbackup) > 0
+            troughposmin = [troughpos[1], troughposbackup[1]][peakpos];
+        else
+            troughposmin = troughpos[1];
+        end
+        
+        troughminj = [troughj1,troughj2][peakpos];
+        troughtoothj = toothlength1[1,:][troughposmin];
+    else
+        secondpeakj = 0.0;
+        secondtoothj = 0.0;
+        troughtoothj = 0.0;
+        troughminj = 0.0;
     end
+    
+    # 
+    # 
+    # 
+    # pl = lineplot(toothlength1[1,:],pj);
+    # lineplot!(pl,repeat([maxtoothj],outer=2),[0,maxpeakj],color=:red)
+    # lineplot!(pl,repeat([secondtoothj],outer=2),[0,secondpeakj],color=:red)
+    # lineplot!(pl,repeat([troughtoothj],outer=2),[0,troughminj],color=:blue)
+    # 
+        
     
     #Record presence of multiple modes
     if secondpeakj == 0.0
@@ -234,8 +372,8 @@ peakadult2 = SharedArray{Int64}(4,3,length(sigtauvec),length(tauvec));
     
 end
 
-tempposvec = repeat(collect(1:3),inner=3)
-distposvec = repeat(collect(1:3),outer=3)
+tempposvec = repeat(collect(1:4),inner=3)
+distposvec = repeat(collect(1:3),outer=4)
 ymin = 12;
 ymax = 20;
 
@@ -341,19 +479,54 @@ dev.off()
 """
 
 
-filename = "figures/fig_3oceans_peaks2.pdf";
+filename = "figures/fig_peaksjuv.pdf";
 namespace = smartpath(filename);
 R"""
 library(RColorBrewer)
 library(fields)
 pal = colorRampPalette(rev(brewer.pal(11,'Spectral')))(50)
-pdf($namespace,width=14,height=6)
-layout(matrix(c(1,2),1,2,byrow=TRUE))
-par(oma = c(2, 2, 2, 1), mar = c(4, 5, 2, 5)) #,mai=c(0.6,0.6,0,0.1)
-image.plot(x=$sigtauvec,y=$tauvec,z=$(peakjuv[3,1,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site tooth peaks',col=c('white','black'))
-image.plot(x=$sigtauvec,y=$tauvec,z=$(peakadult2[3,1,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site tooth peaks',col=c('white','black'))
+pdf($namespace,width=12,height=10)
+layout(matrix(seq(1,12), 4, 3, byrow = TRUE), 
+   widths=rep(1,9), heights=rep(1,9))
+par(oma = c(4, 5, 1, 1), mar = c(1, 0, 0, 1))
+"""
+for i=1:4
+    for j=1:3
+        R"""
+        image(x=$sigtauvec,y=$tauvec,z=$(peakjuv[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site tooth peaks',col=c('white','black'))
+        """
+    end
+end
+R"""
 dev.off()
 """
+
+filename = "figures/fig_peaksadult.pdf";
+namespace = smartpath(filename);
+R"""
+library(RColorBrewer)
+library(fields)
+pal = colorRampPalette(rev(brewer.pal(11,'Spectral')))(50)
+pdf($namespace,width=12,height=10)
+layout(matrix(seq(1,12), 4, 3, byrow = TRUE), 
+   widths=rep(1,9), heights=rep(1,9))
+par(oma = c(4, 5, 1, 1), mar = c(1, 0, 0, 1))
+"""
+for i=1:4
+    for j=1:3
+        R"""
+        image(x=$sigtauvec,y=$tauvec,z=$(peakadult[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site tooth peaks',col=c('white','black'))
+        """
+    end
+end
+R"""
+dev.off()
+"""
+
+
+
+
+image.plot(x=$sigtauvec,y=$tauvec,z=$(peakadult2[3,1,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site tooth peaks',col=c('white','black'))
 
 
 
