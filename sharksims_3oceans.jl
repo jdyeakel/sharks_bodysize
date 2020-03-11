@@ -52,7 +52,7 @@ its = size(paramvec)[1];
 @time @sync @distributed for i=1:its
     
     #set parameters
-    pos = paramposvec[i,:];
+    pos = paramvec[i,:];
     r = pos[1];
     temp_pos = pos[2];
     dist_pos = pos[3];
