@@ -43,28 +43,33 @@ paramposvec_pre = [distposvec sigtauposvec tauposvec];
 #temperature | distance | sigtauvec | tauposvec
 paramposvec = [repeat(collect(1:4),inner = size(paramposvec_pre)[1]) repeat(paramposvec_pre,outer=4)];
 
+reps = 10;
+paramvec_pre = repeat(paramposvec,outer = reps);
+paramvec = [repeat(collect(1:reps),inner=size(paramposvec)[1]) paramvec_pre];
 
 
-its = size(paramposvec)[1];
+
+its = size(paramvec)[1];
 
 
-meanjuv = SharedArray{Float64}(4,3,length(sigtauvec),length(tauvec));
-meanadult = SharedArray{Float64}(4,3,length(sigtauvec),length(tauvec));
-varjuv = SharedArray{Float64}(4,3,length(sigtauvec),length(tauvec));
-varadult = SharedArray{Float64}(4,3,length(sigtauvec),length(tauvec));
-peakjuv = SharedArray{Int64}(4,3,length(sigtauvec),length(tauvec));
-peakadult = SharedArray{Int64}(4,3,length(sigtauvec),length(tauvec));
-peakadult2 = SharedArray{Int64}(4,3,length(sigtauvec),length(tauvec));
+meanjuv = SharedArray{Float64}(reps,4,3,length(sigtauvec),length(tauvec));
+meanadult = SharedArray{Float64}(reps,4,3,length(sigtauvec),length(tauvec));
+varjuv = SharedArray{Float64}(reps,4,3,length(sigtauvec),length(tauvec));
+varadult = SharedArray{Float64}(reps,4,3,length(sigtauvec),length(tauvec));
+peakjuv = SharedArray{Int64}(reps,4,3,length(sigtauvec),length(tauvec));
+peakadult = SharedArray{Int64}(reps,4,3,length(sigtauvec),length(tauvec));
+peakadult2 = SharedArray{Int64}(reps,4,3,length(sigtauvec),length(tauvec));
 
 
 @time @sync @distributed for i=1:its
     # println(i)
     #set parameters
-    pos = paramposvec[i,:];
-    temp_pos = pos[1];
-    dist_pos = pos[2];
-    sigtau_pos = pos[3];
-    tau_pos = pos[4];
+    pos = paramvec[i,:];
+    r = pos[1];
+    temp_pos = pos[2];
+    dist_pos = pos[3];
+    sigtau_pos = pos[4];
+    tau_pos = pos[5];
     
     #Temperature range (high latitude: 8-13; Low latitude 22-30)
     #Juvenile site
@@ -98,29 +103,29 @@ peakadult2 = SharedArray{Int64}(4,3,length(sigtauvec),length(tauvec));
 
     #save data
     filename = "data/sharks_3oceans/simdata.jld";
-    indices = [temp_pos,dist_pos,sigtau_pos,tau_pos];
+    indices = [r,temp_pos,dist_pos,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
     
-    @load namespace mass1 mass2 epsilonvec clock popstate toothdrop state toothlength1 toothlength2;
+    @load namespace mass1 mass2 toothdrop toothlength1 toothlength2;
     
     
     #MEASURE SOMETHING
     mvj = dot(toothlength1[1,:],(toothdrop[:,1]/sum(toothdrop[:,1])));
     mva = dot(toothlength1[1,:],(toothdrop[:,2]/sum(toothdrop[:,2])));
     
-    meanjuv[temp_pos,dist_pos,sigtau_pos,tau_pos] = mvj;
-    meanadult[temp_pos,dist_pos,sigtau_pos,tau_pos] = mva;
+    meanjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mvj;
+    meanadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mva;
     
     #calculate variance
     meanofxsquared = dot(toothlength1[1,:].^2,(toothdrop[:,1]/sum(toothdrop[:,1])));
     squareofmeanofx = mvj^2;
     varj = meanofxsquared - squareofmeanofx;
-    varjuv[temp_pos,dist_pos,sigtau_pos,tau_pos] = varj;
+    varjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = varj;
     
     meanofxsquared = dot(toothlength1[1,:].^2,(toothdrop[:,2]/sum(toothdrop[:,2])));
     squareofmeanofx = mva^2;
     vara = meanofxsquared - squareofmeanofx;
-    varadult[temp_pos,dist_pos,sigtau_pos,tau_pos] = vara;
+    varadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = vara;
     
     #Detect multiple modes (yes, no)
     #How many modes, and rank by significance
@@ -258,10 +263,10 @@ peakadult2 = SharedArray{Int64}(4,3,length(sigtauvec),length(tauvec));
     # 
     # #accept null hypothesis of one mode
     # if likeratiotest > 0.05
-    #     peakadult2[temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
+    #     peakadult2[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
     # #else reject null hypothesis of one mode
     # else
-    #     peakadult2[temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
+    #     peakadult2[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
     # end
     # #JUVENILE PEAKS
     # 
@@ -360,14 +365,14 @@ peakadult2 = SharedArray{Int64}(4,3,length(sigtauvec),length(tauvec));
     
     #Record presence of multiple modes
     if secondpeakj == 0.0
-        peakjuv[temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
+        peakjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
     else
-        peakjuv[temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
+        peakjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
     end
     if secondpeaka == 0.0
-        peakadult[temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
+        peakadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
     else
-        peakadult[temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
+        peakadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
     end
     
 end
@@ -479,12 +484,16 @@ dev.off()
 """
 
 
-filename = "figures/fig_peaksjuv.pdf";
+#Take means across reps
+mpeakjuv = mean(peakjuv,dims=1)[1,:,:,:,:];
+mpeakadult = mean(peakadult,dims=1)[1,:,:,:,:];
+
+filename = "figures/fig_mpeaksjuv.pdf";
 namespace = smartpath(filename);
 R"""
 library(RColorBrewer)
 library(fields)
-pal = colorRampPalette(rev(brewer.pal(11,'Spectral')))(50)
+pal = colorRampPalette((brewer.pal(11,'Greys')))(10)
 pdf($namespace,width=12,height=10)
 layout(matrix(seq(1,12), 4, 3, byrow = TRUE), 
    widths=rep(1,9), heights=rep(1,9))
@@ -493,7 +502,7 @@ par(oma = c(4, 5, 1, 1), mar = c(1, 0, 0, 1))
 for i=1:4
     for j=1:3
         R"""
-        image(x=$sigtauvec,y=$tauvec,z=$(peakjuv[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site tooth peaks',col=c('white','black'))
+        image(x=$sigtauvec,y=$tauvec,z=$(mpeakjuv[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site tooth peaks',col=pal,zlim=c(0,1))
         """
     end
 end
@@ -501,12 +510,12 @@ R"""
 dev.off()
 """
 
-filename = "figures/fig_peaksadult.pdf";
+filename = "figures/fig_mpeaksadult.pdf";
 namespace = smartpath(filename);
 R"""
 library(RColorBrewer)
 library(fields)
-pal = colorRampPalette(rev(brewer.pal(11,'Spectral')))(50)
+pal = colorRampPalette((brewer.pal(11,'Greys')))(10)
 pdf($namespace,width=12,height=10)
 layout(matrix(seq(1,12), 4, 3, byrow = TRUE), 
    widths=rep(1,9), heights=rep(1,9))
@@ -515,7 +524,7 @@ par(oma = c(4, 5, 1, 1), mar = c(1, 0, 0, 1))
 for i=1:4
     for j=1:3
         R"""
-        image(x=$sigtauvec,y=$tauvec,z=$(peakadult[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site tooth peaks',col=c('white','black'))
+        image(x=$sigtauvec,y=$tauvec,z=$(mpeakadult[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site tooth peaks',col=pal,zlim=c(0,1))
         """
     end
 end
