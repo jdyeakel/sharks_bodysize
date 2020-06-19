@@ -6,6 +6,7 @@ end
 
 
 
+
 #Size at birth (cm)
 l0 = 100.0;
 #Asymptotic size (cm)
@@ -30,8 +31,8 @@ mintemp_a = [8,20,12,9];
 maxtemp_a = [13,30,24,17];
 
 distvec = [200,400,650];
-sigtauvec = collect(1:10);
-tauvec = collect(5:25);
+sigtauvec = collect(1:0.5:13);
+tauvec = collect(1:1:25);
 tauits = length(sigtauvec)*length(tauvec)*length(distvec);
 
 
@@ -43,11 +44,9 @@ paramposvec_pre = [distposvec sigtauposvec tauposvec];
 #temperature | distance | sigtauvec | tauposvec
 paramposvec = [repeat(collect(1:4),inner = size(paramposvec_pre)[1]) repeat(paramposvec_pre,outer=4)];
 
-reps = 10;
+reps = 25;
 paramvec_pre = repeat(paramposvec,outer = reps);
 paramvec = [repeat(collect(1:reps),inner=size(paramposvec)[1]) paramvec_pre];
-
-
 
 its = size(paramvec)[1];
 
@@ -60,6 +59,8 @@ peakjuv = SharedArray{Int64}(reps,4,3,length(sigtauvec),length(tauvec));
 peakadult = SharedArray{Int64}(reps,4,3,length(sigtauvec),length(tauvec));
 peakadult2 = SharedArray{Int64}(reps,4,3,length(sigtauvec),length(tauvec));
 
+peakjuvquant = SharedArray{Float64}(reps,4,3,length(sigtauvec),length(tauvec));
+peakadultquant = SharedArray{Float64}(reps,4,3,length(sigtauvec),length(tauvec));
 
 @time @sync @distributed for i=1:its
     # println(i)
@@ -366,21 +367,29 @@ peakadult2 = SharedArray{Int64}(reps,4,3,length(sigtauvec),length(tauvec));
     #Record presence of multiple modes
     if secondpeakj == 0.0
         peakjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
+        peakjuvquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
     else
         peakjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
+        peakjuvquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = abs(secondtoothj-maxtoothj);
     end
     if secondpeaka == 0.0
         peakadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
+        peakadultquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
     else
         peakadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
+        peakadultquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = abs(secondtootha-maxtootha);
     end
     
 end
 
 tempposvec = repeat(collect(1:4),inner=3)
 distposvec = repeat(collect(1:3),outer=4)
-ymin = 12;
+ymin = 10;
 ymax = 20;
+
+#Take means across reps
+mrjuv = mean(meanjuv,dims=1)[1,:,:,:,:];
+mradult = mean(meanadult,dims=1)[1,:,:,:,:];
 
 #Inset histogram
 filename = "figures/fig_mean.pdf";
@@ -397,35 +406,35 @@ xt = c('n','n','n','n','n','n','s','s','s');
 yt = c('s','n','n','s','n','n','s','n','n');
 
 #t1 d1
-plot(x=$sigtauvec,y=$(meanjuv[1,1,:,1]),pch=16,xlab='Juvenile migration window',ylab='Mean tooth size',ylim=c($ymin,$ymax),xaxt = 'n',yaxt='s',las=1)
-lines(x = $sigtauvec,y=$(meanjuv[1,1,:,1]))
-points(x=$sigtauvec,y=$(meanjuv[1,1,:,10]),pch=17)
-lines(x = $sigtauvec,y=$(meanjuv[1,1,:,10]))
-points(x=$sigtauvec,y=$(meanjuv[1,1,:,21]),pch=18)
-lines(x = $sigtauvec,y=$(meanjuv[1,1,:,21]))
+plot(x=$sigtauvec,y=$(mrjuv[1,1,:,1]),type='l',lwd=5,xlab='Juvenile migration window',ylab='Mean tooth size',ylim=c($ymin,$ymax),xaxt = 'n',yaxt='s',las=1,col=paste("#000000","25",sep=""))
+# lines(x = $sigtauvec,y=$(mrjuv[1,1,:,1]),lwd=3,col=paste("#000000","100",sep=""))
+# points(x=$sigtauvec,y=$(mrjuv[1,1,:,12]),pch=17)
+lines(x = $sigtauvec,y=$(mrjuv[1,1,:,12]),lwd=5,col=paste("#000000","75",sep=""))
+# points(x=$sigtauvec,y=$(mrjuv[1,1,:,25]),pch=18)
+lines(x = $sigtauvec,y=$(mrjuv[1,1,:,25]),lwd=5,col=paste("#000000",sep=""))
 
-points(x=$sigtauvec,y=$(meanadult[1,1,:,1]),pch=16,col=pal[1])
-lines(x = $sigtauvec,y=$(meanadult[1,1,:,1]),col=pal[1])
-points(x=$sigtauvec,y=$(meanadult[1,1,:,10]),pch=17,col=pal[1])
-lines(x = $sigtauvec,y=$(meanadult[1,1,:,10]),col=pal[1])
-points(x=$sigtauvec,y=$(meanadult[1,1,:,21]),pch=18,col=pal[1])
-lines(x = $sigtauvec,y=$(meanadult[1,1,:,21]),col=pal[1])
+# points(x=$sigtauvec,y=$(mradult[1,1,:,1]),pch=16,col=paste(pal[1],"50",sep=""))
+lines(x = $sigtauvec,y=$(mradult[1,1,:,1]),col=paste(pal[1],"25",sep=""),lwd=5)
+# points(x=$sigtauvec,y=$(mradult[1,1,:,12]),pch=17,col=paste(pal[1],"75",sep=""))
+lines(x = $sigtauvec,y=$(mradult[1,1,:,12]),col=paste(pal[1],"75",sep=""),lwd=5)
+# points(x=$sigtauvec,y=$(mradult[1,1,:,25]),pch=18,col=paste(pal[1],"100",sep=""))
+lines(x = $sigtauvec,y=$(mradult[1,1,:,25]),col=paste(pal[1],sep=""),lwd=5)
 """
 for i=2:9
     R"""
-    plot(x=$sigtauvec,y=$(meanjuv[tempposvec[i],distposvec[i],:,1]),pch=16,xlab='Juvenile migration window',ylab='Mean tooth size',ylim=c($ymin,$ymax),,xaxt = xt[$i],yaxt=yt[$i],las=1)
-    lines(x = $sigtauvec,y=$(meanjuv[tempposvec[i],distposvec[i],:,1]))
-    points(x=$sigtauvec,y=$(meanjuv[tempposvec[i],distposvec[i],:,10]),pch=17)
-    lines(x = $sigtauvec,y=$(meanjuv[tempposvec[i],distposvec[i],:,10]))
-    points(x=$sigtauvec,y=$(meanjuv[tempposvec[i],distposvec[i],:,21]),pch=18)
-    lines(x = $sigtauvec,y=$(meanjuv[tempposvec[i],distposvec[i],:,21]))
+    plot(x=$sigtauvec,y=$(mrjuv[tempposvec[i],distposvec[i],:,1]),type='l',lwd=5,xlab='Juvenile migration window',ylab='Mean tooth size',ylim=c($ymin,$ymax),,xaxt = xt[$i],yaxt=yt[$i],las=1,col=paste("#000000","25",sep=""))
+    # lines(x = $sigtauvec,y=$(mrjuv[tempposvec[i],distposvec[i],:,1]),col=paste(pal[1],"25",sep=""),lwd=5)
+    # points(x=$sigtauvec,y=$(mrjuv[tempposvec[i],distposvec[i],:,12]),pch=17)
+    lines(x = $sigtauvec,y=$(mrjuv[tempposvec[i],distposvec[i],:,12]),col=paste("#000000","75",sep=""),lwd=5)
+    # points(x=$sigtauvec,y=$(mrjuv[tempposvec[i],distposvec[i],:,25]),pch=18)
+    lines(x = $sigtauvec,y=$(mrjuv[tempposvec[i],distposvec[i],:,25]),col=paste("#000000",sep=""),lwd=5)
 
-    points(x=$sigtauvec,y=$(meanadult[tempposvec[i],distposvec[i],:,1]),pch=16,col=pal[1])
-    lines(x = $sigtauvec,y=$(meanadult[tempposvec[i],distposvec[i],:,1]),col=pal[1])
-    points(x=$sigtauvec,y=$(meanadult[tempposvec[i],distposvec[i],:,10]),pch=17,col=pal[1])
-    lines(x = $sigtauvec,y=$(meanadult[tempposvec[i],distposvec[i],:,10]),col=pal[1])
-    points(x=$sigtauvec,y=$(meanadult[tempposvec[i],distposvec[i],:,21]),pch=18,col=pal[1])
-    lines(x = $sigtauvec,y=$(meanadult[tempposvec[i],distposvec[i],:,21]),col=pal[1])
+    # points(x=$sigtauvec,y=$(mradult[tempposvec[i],distposvec[i],:,1]),pch=16,col=pal[1])
+    lines(x = $sigtauvec,y=$(mradult[tempposvec[i],distposvec[i],:,1]),col=paste(pal[1],"25",sep=""),lwd=5)
+    # points(x=$sigtauvec,y=$(mradult[tempposvec[i],distposvec[i],:,12]),pch=17,col=pal[1])
+    lines(x = $sigtauvec,y=$(mradult[tempposvec[i],distposvec[i],:,12]),col=paste(pal[1],"75",sep=""),lwd=5)
+    # points(x=$sigtauvec,y=$(mradult[tempposvec[i],distposvec[i],:,25]),pch=18,col=pal[1])
+    lines(x = $sigtauvec,y=$(mradult[tempposvec[i],distposvec[i],:,25]),col=paste(pal[1],sep=""),lwd=5)
     """
 end
 R"""
@@ -531,6 +540,91 @@ end
 R"""
 dev.off()
 """
+
+#QUANTITATIVE PEAKS
+
+#Take means across reps
+mpeakjuvquant = mean(peakjuvquant,dims=1)[1,:,:,:,:];
+mpeakadultquant = mean(peakadultquant,dims=1)[1,:,:,:,:];
+maxpeakquant = maximum([mpeakjuvquant;mpeakadultquant]);
+
+filename = "figures/fig_mpeaksjuvquant.pdf";
+namespace = smartpath(filename);
+R"""
+library(RColorBrewer)
+library(fields)
+pal = c('white',colorRampPalette((brewer.pal(11,'YlGnBu')))(20))
+pdf($namespace,width=12,height=10)
+layout(matrix(seq(1,12), 4, 3, byrow = TRUE), 
+   widths=rep(1,9), heights=rep(1,9))
+par(oma = c(4, 5, 1, 1), mar = c(1, 0, 0, 1))
+"""
+for i=1:4
+    for j=1:3
+        R"""
+        image(x=$sigtauvec,y=$tauvec,z=$(mpeakjuvquant[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site tooth peaks',col=pal,zlim=c(0,$maxpeakquant))
+        """
+    end
+end
+R"""
+dev.off()
+"""
+
+filename = "figures/fig_mpeaksadultquant.pdf";
+namespace = smartpath(filename);
+R"""
+library(RColorBrewer)
+library(fields)
+pal = c('white',colorRampPalette((brewer.pal(11,'YlGnBu')))(20))
+pdf($namespace,width=12,height=10)
+layout(matrix(seq(1,12), 4, 3, byrow = TRUE), 
+   widths=rep(1,9), heights=rep(1,9))
+par(oma = c(4, 5, 1, 1), mar = c(1, 0, 0, 1))
+"""
+for i=1:4
+    for j=1:3
+        R"""
+        image(x=$sigtauvec,y=$tauvec,z=$(mpeakadultquant[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site tooth peaks',col=pal,zlim=c(0,$maxpeakquant))
+        """
+    end
+end
+R"""
+dev.off()
+"""
+
+
+# SHOWCASE A SINGLE TREATMENT!
+filename = "figures/fig_means_peaks.pdf";
+namespace = smartpath(filename);
+i = 4; #temp regime
+j = 2; #dist regime
+mmeanjuv = mean(meanjuv,dims=1)[1,:,:,:,:];
+mmeanadult = mean(meanadult,dims=1)[1,:,:,:,:];
+minsize = minimum([mmeanjuv[i,j,:,:]; mmeanadult[i,j,:,:]]);
+maxsize = maximum([mmeanjuv[i,j,:,:]; mmeanadult[i,j,:,:]]);
+R"""
+library(RColorBrewer)
+library(fields)
+pal = colorRampPalette(rev(brewer.pal(11,'Spectral')))(50)
+pdf($namespace,width=10,height=8)
+layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
+par(oma = c(2, 2, 2, 1), mar = c(4, 5, 2, 5)) #,mai=c(0.6,0.6,0,0.1)
+image.plot(x=$sigtauvec,y=$tauvec,z=$(mmeanjuv[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c($minsize,$maxsize))
+image.plot(x=$sigtauvec,y=$tauvec,z=$(mmeanadult[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c($minsize,$maxsize))
+"""
+mpeakjuvquant = mean(peakjuvquant,dims=1)[1,:,:,:,:];
+mpeakadultquant = mean(peakadultquant,dims=1)[1,:,:,:,:];
+maxpeakquant = maximum([mpeakjuvquant;mpeakadultquant]);
+
+R"""
+pal = c('white',colorRampPalette((brewer.pal(11,'YlGnBu')))(50))
+image.plot(x=$sigtauvec,y=$tauvec,z=$(mpeakjuvquant[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c(0,$maxpeakquant))
+image.plot(x=$sigtauvec,y=$tauvec,z=$(mpeakadultquant[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c(0,$maxpeakquant))
+dev.off()
+"""
+
+
+
 
 
 
