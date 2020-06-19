@@ -63,7 +63,7 @@ its = size(paramvec)[1];
     #Juvenile site
     tempmin1 = mintemp_j[temp_pos]+273.15; tempmax1 = maxtemp_j[temp_pos]+273.15;
     #Adult site
-    tempmin2 = mintemp_a[temp_pos]+273.15; tempmax2 = maxtemp_j[temp_pos]+273.15;
+    tempmin2 = mintemp_a[temp_pos]+273.15; tempmax2 = maxtemp_a[temp_pos]+273.15; #fixed mistake (max temp)
 
     tempvec1 = Array{Float64}(undef,0);
     tempvec2 = Array{Float64}(undef,0);
