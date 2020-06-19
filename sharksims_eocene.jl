@@ -45,7 +45,7 @@ paramposvec_pre = [sigtauposvec tauposvec];
 
 reps = 25;
 paramvec_pre = repeat(paramposvec_pre,outer = reps);
-paramvec = [repeat(collect(1:reps),inner=size(paramposvec)[1]) paramvec_pre];
+paramvec = [repeat(collect(1:reps),inner=size(paramposvec_pre)[1]) paramvec_pre];
 
 its = size(paramvec)[1];
 
