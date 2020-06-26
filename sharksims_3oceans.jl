@@ -103,7 +103,7 @@ its = size(paramvec)[1];
     toothlength2 = 2.13337 .+ (0.187204 .* mass2.^(0.416667)); #mm
     
     #save data
-    filename = "data/sharks_3oceans/simdata.jld";
+    filename = "data/sharks_3oceans2/simdata.jld";
     indices = [r,temp_pos,dist_pos,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
     
