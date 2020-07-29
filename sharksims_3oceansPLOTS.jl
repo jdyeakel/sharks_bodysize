@@ -103,7 +103,7 @@ peakadultquant = SharedArray{Float64}(reps,4,3,length(sigtauvec),length(tauvec))
     tau = tauvec[tau_pos];
 
     #save data
-    filename = "data/sharks_3oceans/simdata.jld";
+    filename = "data/sharks_3oceans2/simdata.jld";
     indices = [r,temp_pos,dist_pos,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
     
@@ -392,7 +392,7 @@ mrjuv = mean(meanjuv,dims=1)[1,:,:,:,:];
 mradult = mean(meanadult,dims=1)[1,:,:,:,:];
 
 #Inset histogram
-filename = "figures/fig_mean.pdf";
+filename = "figures/fig_mean2.pdf";
 namespace = smartpath(filename);
 R"""
 library(RColorBrewer)
@@ -443,7 +443,7 @@ dev.off()
 """
 
 
-filename = "figures/fig_3oceans_means.pdf";
+filename = "figures/fig_3oceans_means2.pdf";
 namespace = smartpath(filename);
 toothmatrix_juv = (meanjuv[1,1,:,:]);
 toothmatrix_adult = meanadult[1,1,:,:];
@@ -478,7 +478,7 @@ image.plot(x=$sigtauvec,y=$tauvec,z=$(toothmatrix_adult),xlab='Juvenile migratio
 dev.off()
 """
 
-filename = "figures/fig_3oceans_peaks.pdf";
+filename = "figures/fig_3oceans_peaks2.pdf";
 namespace = smartpath(filename);
 R"""
 library(RColorBrewer)
@@ -497,7 +497,7 @@ dev.off()
 mpeakjuv = mean(peakjuv,dims=1)[1,:,:,:,:];
 mpeakadult = mean(peakadult,dims=1)[1,:,:,:,:];
 
-filename = "figures/fig_mpeaksjuv.pdf";
+filename = "figures/fig_mpeaksjuv2.pdf";
 namespace = smartpath(filename);
 R"""
 library(RColorBrewer)
@@ -519,7 +519,7 @@ R"""
 dev.off()
 """
 
-filename = "figures/fig_mpeaksadult.pdf";
+filename = "figures/fig_mpeaksadult2.pdf";
 namespace = smartpath(filename);
 R"""
 library(RColorBrewer)
@@ -548,7 +548,7 @@ mpeakjuvquant = mean(peakjuvquant,dims=1)[1,:,:,:,:];
 mpeakadultquant = mean(peakadultquant,dims=1)[1,:,:,:,:];
 maxpeakquant = maximum([mpeakjuvquant;mpeakadultquant]);
 
-filename = "figures/fig_mpeaksjuvquant.pdf";
+filename = "figures/fig_mpeaksjuvquant2.pdf";
 namespace = smartpath(filename);
 R"""
 library(RColorBrewer)
@@ -570,7 +570,7 @@ R"""
 dev.off()
 """
 
-filename = "figures/fig_mpeaksadultquant.pdf";
+filename = "figures/fig_mpeaksadultquant2.pdf";
 namespace = smartpath(filename);
 R"""
 library(RColorBrewer)
@@ -594,7 +594,7 @@ dev.off()
 
 
 # SHOWCASE A SINGLE TREATMENT!
-filename = "figures/fig_means_peaks.pdf";
+filename = "figures/fig_means_peaks2.pdf";
 namespace = smartpath(filename);
 i = 4; #temp regime
 j = 2; #dist regime
