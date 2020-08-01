@@ -506,10 +506,244 @@ namespace = smartpath(filename);
 
 
 #Import Site Data
-data = CSV.read("$(homedir())/Dropbox/2018_sharks/SandTiger_all.csv",header=true)
+df = CSV.read("$(homedir())/sharks_bodysize/SandTiger_all.csv",header=true)
+sites = ["Bashi_Tusc","StoneCity_all","Banks","Antarctica","modern_DE"];
 #Construct likelihood surface
 #Right now, we will construct a likelihood for *both* adult and juv distributions... agnostic to data source.
 #Not sure (doubt) if likelihoods can be directly compared since they are from 2 different likelihood functions? Kind of but not, because the unimodal likelihood is the same as the bimodal likelihood except one weight is zero. So maybe the same and directly comparable!
+mnegllG1_juv = Array{Float64}(undef,length(sigtauvec),length(tauvec));
+mnegllG2_juv = Array{Float64}(undef,length(sigtauvec),length(tauvec));
+mnegllG1_adult = Array{Float64}(undef,length(sigtauvec),length(tauvec));
+mnegllG2_adult = Array{Float64}(undef,length(sigtauvec),length(tauvec));
+
+mR_juv = Array{Float64}(undef,length(sigtauvec),length(tauvec));
+mR_adult = Array{Float64}(undef,length(sigtauvec),length(tauvec));
+
+compllG2 = Array{Float64}(undef,length(sigtauvec),length(tauvec));
+
+filename = string("figures/ll_densitycompare.pdf");
+namespace = smartpath(filename);
+R"""
+# pal = colorRampPalette(rev(brewer.pal(11,'Spectral')))(50)
+pdf($namespace,width=8,height=6)
+par(mfrow=c(2,3))
+"""
+
+nd = names(df);
+ld = length(nd);
+for k=1:ld
+    dr = df[!,nd[k]];
+    data = Array{Float64}(dr[vec(findall(!ismissing,dr))]);
+    
+    temp_pos = 4;
+    dist_pos = 2;
+    for i = 1:length(sigtauvec)
+        sigtau_pos = copy(i);
+        for j = 1:length(tauvec)
+            tau_pos = copy(j);
+            
+            negllG1_juv = Array{Float64}(undef,reps);
+            negllG2_juv = Array{Float64}(undef,reps);
+            negllG1_adult = Array{Float64}(undef,reps);
+            negllG2_adult = Array{Float64}(undef,reps);
+            for r=1:reps
+                
+                
+                # if jweight[1] > 1
+                    #Unimodal
+                    #JUVENILE LIKELIHOOD
+                    jmean = estmeanjuvG1[r,temp_pos,dist_pos,sigtau_pos,tau_pos,1];
+                    jvar = estvarjuvG1[r,temp_pos,dist_pos,sigtau_pos,tau_pos,1];
+                    jweight = estweightjuvG1[r,temp_pos,dist_pos,sigtau_pos,tau_pos,1];
+                    
+                    mu1 = jmean[1];
+                    sigma1 = sqrt(jvar[1]);
+                    # for x=1:length(data)
+                    #     x1 = data[x];
+                    #     logllvec_juv[x] = log(exp(-(x1-mu1)^2/(2*sigma1^2))/(sqrt(2*pi)*sigma1));
+                    # end
+                    negllG1_juv[r] = sum(((data .- mu1).^2) ./ (2*sigma1^2)) + length(data)*(log(sigma1) + 0.5*log(2*pi));
+                    # negll_juv[r] = -sum(logllvec_juv,dims=2);
+                # else
+                    jmean = estmeanjuvG2[r,temp_pos,dist_pos,sigtau_pos,tau_pos,:];
+                    jvar = estvarjuvG2[r,temp_pos,dist_pos,sigtau_pos,tau_pos,:];
+                    jweight = estweightjuvG2[r,temp_pos,dist_pos,sigtau_pos,tau_pos,:];
+                    
+                    
+                    #Bimodal
+                    #JUVENILE LIKELIHOOD
+                    mu1 = jmean[1];
+                    mu2 = jmean[2];
+                    sigma1 = sqrt(jvar[1]);
+                    sigma2 = sqrt(jvar[2]);
+                    w1 = jweight[1];
+                    w2 = jweight[2];
+                    logllvec_juv = Array{Float64}(undef,length(data));
+                    for x=1:length(data)
+                        x1 = data[x];
+                        logllvec_juv[x] = log((exp(-(x1-mu1)^2/(2*sigma1^2))*w1)/(sqrt(2*pi)*sigma1*(w1 + w2)) + (exp(-(x1-mu2)^2/(2*sigma2^2))*w2)/(sqrt(2*pi)*sigma2*(w1 + w2)));
+                    end
+                    negllG2_juv[r] = -sum(logllvec_juv);
+                # end
+                # if aweight[1] > 1
+                    #Unimodal
+                    #ADULT LIKELIHOOD
+                    amean = estmeanadultG1[r,temp_pos,dist_pos,sigtau_pos,tau_pos,1];
+                    avar = estvaradultG1[r,temp_pos,dist_pos,sigtau_pos,tau_pos,1];
+                    aweight = estweightadultG1[r,temp_pos,dist_pos,sigtau_pos,tau_pos,1];
+                    mu1 = amean[1];
+                    sigma1 = sqrt(avar[1]);
+                    negllG1_adult[r] = sum(((data .- mu1).^2) ./ (2*sigma1^2)) + length(data)*(log(sigma1) + 0.5*log(2*pi));
+                    # for x=1:length(data)
+                    #     x1 = data[x];
+                    #     logllvec_adult[x] = log(exp(-(x1-mu1)^2/(2*sigma1^2))/(sqrt(2*pi)*sigma1));
+                    # end
+                    # negll_adult[r] = -sum(logllvec_adult);
+                # else
+                    #Bimodal
+                    #Adult LIKELIHOOD
+                    amean = estmeanadultG2[r,temp_pos,dist_pos,sigtau_pos,tau_pos,:];
+                    avar = estvaradultG2[r,temp_pos,dist_pos,sigtau_pos,tau_pos,:];
+                    aweight = estweightadultG2[r,temp_pos,dist_pos,sigtau_pos,tau_pos,:];
+                    mu1 = amean[1];
+                    mu2 = amean[2];
+                    sigma1 = sqrt(avar[1]);
+                    sigma2 = sqrt(avar[2]);
+                    w1 = aweight[1];
+                    w2 = aweight[2];
+                    logllvec_adult = Array{Float64}(undef,length(data));
+                    for x=1:length(data)
+                        x1 = data[x];
+                        logllvec_adult[x] = log((exp(-(x1-mu1)^2/(2*sigma1^2))*w1)/(sqrt(2*pi)*sigma1*(w1 + w2)) + (exp(-(x1-mu2)^2/(2*sigma2^2))*w2)/(sqrt(2*pi)*sigma2*(w1 + w2)));
+                    end
+                    negllG2_adult[r] = -sum(logllvec_adult);
+                # end
+            end
+            #sum to get likelihood, take mean across reps
+            mnegllG1_juv[i,j] = mean(negllG1_juv);
+            mnegllG2_juv[i,j] = mean(negllG2_juv);
+            mnegllG1_adult[i,j] = mean(negllG1_adult);
+            mnegllG2_adult[i,j] = mean(negllG2_adult);
+            
+            compllG2[i,j] = mean(negllG2_juv .+ negllG2_adult);
+            
+            
+            mR_juv[i,j] = mean(2*(negllG1_juv .- negllG2_juv));
+            mR_adult[i,j] = mean(2*(negllG1_adult .- negllG2_adult));
+        end
+    end
+    
+    #let's assume G2
+    #Is the juv or adult site more likely?
+    minlljuvG2 = findmin(mnegllG2_juv);
+    minlladultG2 = findmin(mnegllG2_adult);
+    
+    minlljuvG1 = findmin(mnegllG1_juv);
+    minlladultG1 = findmin(mnegllG1_adult);
+    # 
+    # findmin(mnegllG1_juv)
+    # findmin(mnegllG2_juv)
+    # 
+    # findmin(mnegllG1_adult)
+    # findmin(mnegllG2_adult)
+    # 
+    
+    # llvec = [minlljuvG1[1],minlljuvG2[1],minlladultG1[1],minlladultG2[1]];
+    llvec = [minlljuvG2[1],minlladultG2[1]];
+    llmin = findmin(llvec);
+    
+    #Juvenile likelihood is lower than adult likelihood...
+    if llmin[2] == 1 #|| llmin[2] == 2
+        sigtau_pos = minlljuvG2[2][1];
+        tau_pos = minlljuvG2[2][2];
+        println([sigtau_pos,tau_pos])
+    else
+        sigtau_pos = minlladultG2[2][1];
+        tau_pos = minlladultG2[2][2];
+        println([sigtau_pos,tau_pos])
+    end
+        
+        # if llmin[2] == 1
+        #     minlljuv = minlljuvG1;
+        # else
+        #     minlljuv = minlljuvG2;
+        # end
+        # 
+        # minlljuv = minlljuvG2;
+    
+        R"""
+        hist($data,freq=FALSE)
+        """
+    
+        
+        #Load in dist
+        # println([sigtauvec[sigtau_pos],tauvec[tau_pos]])
+    
+        for r=1:reps
+            filename = "data/sharks_3oceans2/simdata.jld";
+            indices = [r,temp_pos,dist_pos,sigtau_pos,tau_pos];
+            namespacer = smartpath(filename,indices);
+            @load namespacer mass1 mass2 toothdrop toothlength1 toothlength2;
+            pj = (toothdrop[:,1]/sum(toothdrop[:,1]));
+            # pa = (toothdrop[:,2]/sum(toothdrop[:,2]));
+    
+    
+            # filename = string("figures/ll_densitycompare_",sites[k],".pdf");
+            # namespace = smartpath(filename);
+            R"""
+            lines($(toothlength1[1,:]),$pj,lwd=2,col='red')
+            """
+        end
+    
+    
+    
+    
+    # else
+        #adult
+        # if llmin[2] == 3
+        #     minlladult = minlladultG1;
+        # else
+        #     minlladult = minlladultG2;
+        # end
+        # minlladult = minlladultG2;
+    
+        # R"""
+        # hist($data,freq=FALSE)
+        # """
+        # 
+        # 
+        # #Load in dist
+        # # println([sigtauvec[sigtau_pos],tauvec[tau_pos]])
+        # for r = 1:reps
+        # 
+        #     filename = "data/sharks_3oceans2/simdata.jld";
+        #     indices = [r,temp_pos,dist_pos,sigtau_pos,tau_pos];
+        #     namespacer = smartpath(filename,indices);
+        #     @load namespacer mass1 mass2 toothdrop toothlength1 toothlength2;
+        #     # pj = (toothdrop[:,1]/sum(toothdrop[:,1]));
+        #     pa = (toothdrop[:,2]/sum(toothdrop[:,2]));
+        # 
+        # 
+        #     # filename = string("figures/ll_densitycompare_",sites[k],".pdf");
+        #     # namespace = smartpath(filename);
+        #     R"""
+        #     lines($(toothlength1[1,:]),$pa,lwd=2,col='red')
+        #     """
+        # 
+        # end
+        # 
+    
+    
+    # end
+    
+    println(string("k=",k))
+    
+end #End k
+R"""
+dev.off()
+"""
+
+
 
 #NOTE: TESING A SINGLE DATASET
 #Does the max likelihood point back to the correct parameters???
