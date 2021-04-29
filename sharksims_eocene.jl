@@ -9,13 +9,16 @@ end
 #Size at birth (cm)
 l0 = 100.0;
 #Asymptotic size (cm)
-L = 295; #1500; #295.0;
+# L = 295; #1500; #295.0;
+L = 477;
 
 # # Mass from PRECAUDAL LENGTH (Schindler) 
 # m0 = 0.00538776*l0^3.102025622731644;
 # M = 0.00538776*L^3.102025622731644;
 
 # Mass (kg) from TOTAL LENGTH (Goldman et al. 2006)
+# NOTE: Mass of 350 KG (350000g) results in a tooth length of 40 mm (max emp. length)
+# NOTE: Mass of 350 KG results in L = 477 cm = 15.65 ft
 m0 = (0.00013*l0^2.4)*1000;
 M = (0.00013*L^2.4)*1000;
 
@@ -30,8 +33,8 @@ mintemp_a = 9;
 maxtemp_a = 17;
 
 distvec = 400;
-sigtauvec = collect(0.5:0.5:25);
-tauvec = collect(1:1:50);
+sigtauvec = collect(0.5:2:25); # collect(0.5:0.5:25)
+tauvec = collect(1:5:50); #collect(1:1:50);
 tauits = length(sigtauvec)*length(tauvec);
 
 
@@ -103,7 +106,7 @@ its = size(paramvec)[1];
     toothlength2 = 2.13337 .+ (0.187204 .* mass2.^(0.416667)); #mm
     
     #save data
-    filename = "data/sharks_eocene/simdata.jld";
+    filename = "data/sharks_eocene2/simdata.jld";
     indices = [r,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
     
