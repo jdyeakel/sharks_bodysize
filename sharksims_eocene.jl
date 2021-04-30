@@ -10,6 +10,7 @@ end
 l0 = 100.0;
 #Asymptotic size (cm)
 # L = 295; #1500; #295.0;
+# NOTE: L = 477 cm (15.65 ft) -> Mass 350 KG -> max tooth length 40 mm
 L = 477;
 
 # # Mass from PRECAUDAL LENGTH (Schindler) 
@@ -33,8 +34,8 @@ mintemp_a = 9;
 maxtemp_a = 17;
 
 distvec = 400;
-sigtauvec = collect(0.5:2:25); # collect(0.5:0.5:25)
-tauvec = collect(1:5:50); #collect(1:1:50);
+sigtauvec = collect(0.5:0.5:25); # collect(0.5:0.5:25)
+tauvec = collect(1:1:50); #collect(1:1:50);
 tauits = length(sigtauvec)*length(tauvec);
 
 

@@ -7,7 +7,9 @@ end
 #Size at birth (cm)
 l0 = 100.0;
 #Asymptotic size (cm)
-L = 295; #1500; #295.0;
+# L = 295; #1500; #295.0;
+# NOTE: L = 477 cm (15.65 ft) -> Mass 350 KG -> max tooth length 40 mm
+L = 477;
 
 # # Mass from PRECAUDAL LENGTH (Schindler) 
 # m0 = 0.00538776*l0^3.102025622731644;
@@ -28,8 +30,8 @@ mintemp_a = 9;
 maxtemp_a = 17;
 
 distvec = 400;
-sigtauvec = collect(0.5:0.5:25);
-tauvec = collect(1:1:50);
+sigtauvec = collect(0.5:2:25); # collect(0.5:0.5:25)
+tauvec = collect(1:5:50); #collect(1:1:50);
 tauits = length(sigtauvec)*length(tauvec);
 
 
@@ -100,7 +102,7 @@ peakadultquant = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
     tau = tauvec[tau_pos];
 
     #save data
-    filename = "data/sharks_eocene/simdata.jld";
+    filename = "data/sharks_eocene2/simdata.jld";
     indices = [r,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
     
@@ -111,19 +113,23 @@ peakadultquant = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
     mvj = dot(toothlength1[1,:],(toothdrop[:,1]/sum(toothdrop[:,1])));
     mva = dot(toothlength1[1,:],(toothdrop[:,2]/sum(toothdrop[:,2])));
     
-    meanjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mvj;
-    meanadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mva;
+    # meanjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mvj;
+    # meanadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mva;
+    meanjuv[r,sigtau_pos,tau_pos] = mvj;
+    meanadult[r,sigtau_pos,tau_pos] = mva;
     
     #calculate variance
     meanofxsquared = dot(toothlength1[1,:].^2,(toothdrop[:,1]/sum(toothdrop[:,1])));
     squareofmeanofx = mvj^2;
     varj = meanofxsquared - squareofmeanofx;
-    varjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = varj;
+    # varjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = varj;
+    varjuv[r,sigtau_pos,tau_pos] = varj;
     
     meanofxsquared = dot(toothlength1[1,:].^2,(toothdrop[:,2]/sum(toothdrop[:,2])));
     squareofmeanofx = mva^2;
     vara = meanofxsquared - squareofmeanofx;
-    varadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = vara;
+    # varadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = vara;
+    varadult[r,sigtau_pos,tau_pos] = vara;
     
     #Detect multiple modes (yes, no)
     #How many modes, and rank by significance
@@ -363,31 +369,39 @@ peakadultquant = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
     
     #Record presence of multiple modes
     if secondpeakj == 0.0
-        peakjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
-        peakjuvquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
+        # peakjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
+        # peakjuvquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
+        peakjuv[r,sigtau_pos,tau_pos] = 0;
+        peakjuvquant[r,sigtau_pos,tau_pos] = 0;
     else
-        peakjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
-        peakjuvquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = abs(secondtoothj-maxtoothj);
+        # peakjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
+        # peakjuvquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = abs(secondtoothj-maxtoothj);
+        peakjuv[r,sigtau_pos,tau_pos] = 1;
+        peakjuvquant[r,sigtau_pos,tau_pos] = abs(secondtoothj-maxtoothj);
     end
     if secondpeaka == 0.0
-        peakadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
-        peakadultquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
+        # peakadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
+        # peakadultquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 0;
+        peakadult[r,sigtau_pos,tau_pos] = 0;
+        peakadultquant[r,sigtau_pos,tau_pos] = 0;
     else
-        peakadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
-        peakadultquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = abs(secondtootha-maxtootha);
+        # peakadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = 1;
+        # peakadultquant[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = abs(secondtootha-maxtootha);
+        peakadult[r,sigtau_pos,tau_pos] = 1;
+        peakadultquant[r,sigtau_pos,tau_pos] = abs(secondtootha-maxtootha);
     end
     
 end
 
 # Eocene Figure
-filename = "figures/fig_means_peaks.pdf";
+filename = "figures/fig_means_peaks2.pdf";
 namespace = smartpath(filename);
 i = 4; #temp regime
 j = 2; #dist regime
-mmeanjuv = mean(meanjuv,dims=1)[1,:,:,:,:];
-mmeanadult = mean(meanadult,dims=1)[1,:,:,:,:];
-minsize = minimum([mmeanjuv[i,j,:,:]; mmeanadult[i,j,:,:]]);
-maxsize = maximum([mmeanjuv[i,j,:,:]; mmeanadult[i,j,:,:]]);
+mmeanjuv = mean(meanjuv,dims=1)[1,:,:];
+mmeanadult = mean(meanadult,dims=1)[1,:,:];
+minsize = minimum([mmeanjuv[:,:]; mmeanadult[:,:]]);
+maxsize = maximum([mmeanjuv[:,:]; mmeanadult[:,:]]);
 R"""
 library(RColorBrewer)
 library(fields)
@@ -395,17 +409,17 @@ pal = colorRampPalette(rev(brewer.pal(11,'Spectral')))(50)
 pdf($namespace,width=10,height=8)
 layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
 par(oma = c(2, 2, 2, 1), mar = c(4, 5, 2, 5)) #,mai=c(0.6,0.6,0,0.1)
-image.plot(x=$sigtauvec,y=$tauvec,z=$(mmeanjuv[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c($minsize,$maxsize))
-image.plot(x=$sigtauvec,y=$tauvec,z=$(mmeanadult[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c($minsize,$maxsize))
+image.plot(x=$sigtauvec,y=$tauvec,z=$(mmeanjuv[:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c($minsize,$maxsize))
+image.plot(x=$sigtauvec,y=$tauvec,z=$(mmeanadult[:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c($minsize,$maxsize))
 """
-mpeakjuvquant = mean(peakjuvquant,dims=1)[1,:,:,:,:];
-mpeakadultquant = mean(peakadultquant,dims=1)[1,:,:,:,:];
+mpeakjuvquant = mean(peakjuvquant,dims=1)[1,:,:];
+mpeakadultquant = mean(peakadultquant,dims=1)[1,:,:];
 maxpeakquant = maximum([mpeakjuvquant;mpeakadultquant]);
 
 R"""
 pal = c('white',colorRampPalette((brewer.pal(11,'YlGnBu')))(50))
-image.plot(x=$sigtauvec,y=$tauvec,z=$(mpeakjuvquant[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c(0,$maxpeakquant))
-image.plot(x=$sigtauvec,y=$tauvec,z=$(mpeakadultquant[i,j,:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c(0,$maxpeakquant))
+image.plot(x=$sigtauvec,y=$tauvec,z=$(mpeakjuvquant[:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c(0,$maxpeakquant))
+image.plot(x=$sigtauvec,y=$tauvec,z=$(mpeakadultquant[:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c(0,$maxpeakquant))
 dev.off()
 """
 
