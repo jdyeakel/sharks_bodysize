@@ -11,7 +11,9 @@ l0 = 100.0;
 #Asymptotic size (cm)
 # L = 295; #1500; #295.0;
 # NOTE: L = 477 cm (15.65 ft) -> Mass 350 KG -> max tooth length 40 mm
-L = 477;
+
+L = 300;
+# L = 477;
 
 # # Mass from PRECAUDAL LENGTH (Schindler) 
 # m0 = 0.00538776*l0^3.102025622731644;
