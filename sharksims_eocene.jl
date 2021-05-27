@@ -7,7 +7,7 @@ end
 
 
 #Size at birth (cm)
-l0 = 100.0;
+l0 = 50.0; #100
 #Asymptotic size (cm)
 # L = 295; #1500; #295.0;
 # NOTE: L = 477 cm (15.65 ft) -> Mass 350 KG -> max tooth length 40 mm
