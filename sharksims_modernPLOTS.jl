@@ -24,14 +24,14 @@ n0=1000;
 gen=1;
 
 
-mintemp_j = 12;
-maxtemp_j = 24;
-mintemp_a = 9;
-maxtemp_a = 17;
+mintemp_j = 17;
+maxtemp_j = 25;
+mintemp_a = 13;
+maxtemp_a = 23;
 
-distvec = 400;
-sigtauvec = collect(0.5:0.5:25); # collect(0.5:0.5:25)
-tauvec = collect(1:1:50); #collect(1:1:50);
+distvec = 700;
+sigtauvec = collect(0.5:3:25); # collect(0.5:0.5:25)
+tauvec = collect(1:5:50); #collect(1:1:50);
 tauits = length(sigtauvec)*length(tauvec);
 
 
@@ -102,7 +102,7 @@ peakadultquant = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
     tau = tauvec[tau_pos];
 
     #save data
-    filename = "data/sharks_eocene2/simdata.jld";
+    filename = "data/sharks_modern/simdata.jld";
     indices = [r,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
     
@@ -121,11 +121,11 @@ peakadultquant = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 
     peakjuvquant[r,sigtau_pos,tau_pos] = peakjuvdist;
     peakadultquant[r,sigtau_pos,tau_pos] = peakadultdist;
-    
+
 end
 
 # Eocene Figure
-filename = "figures/fig_means_peaks_eocene.pdf";
+filename = "figures/fig_means_peaks2.pdf";
 namespace = smartpath(filename);
 i = 4; #temp regime
 j = 2; #dist regime
