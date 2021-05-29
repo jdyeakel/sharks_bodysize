@@ -261,10 +261,11 @@ function toothdist_analysis(toothdrop,toothlength1)
         peakadultdist = abs(secondtootha-maxtootha);
     end
 
+    modesj = sort([secondtoothj,maxtoothj]);
+    modesa = sort([secondtootha,maxtootha]);
 
 
-
-    return mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist
+    return mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist, modesj, modesa
 
 
 

@@ -43,7 +43,7 @@ paramposvec_pre = [sigtauposvec tauposvec];
 #temperature | distance | sigtauvec | tauposvec
 # paramposvec = [repeat(collect(1:4),inner = size(paramposvec_pre)[1]) repeat(paramposvec_pre,outer=4)];
 
-reps = 25;
+reps = 5;
 paramvec_pre = repeat(paramposvec_pre,outer = reps);
 paramvec = [repeat(collect(1:reps),inner=size(paramposvec_pre)[1]) paramvec_pre];
 
@@ -108,7 +108,7 @@ peakadultquant = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
     
     @load namespace mass1 mass2 toothdrop toothlength1 toothlength2;
     
-    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist = toothdist_analysis(toothdrop,toothlength1);
+    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist, modesj, modesa = toothdist_analysis(toothdrop,toothlength1);
 
     meanjuv[r,sigtau_pos,tau_pos] = mvj;
     meanadult[r,sigtau_pos,tau_pos] = mva;

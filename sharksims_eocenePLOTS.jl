@@ -108,7 +108,7 @@ peakadultquant = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
     
     @load namespace mass1 mass2 toothdrop toothlength1 toothlength2;
     
-    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist = toothdist_analysis(toothdrop,toothlength1);
+    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist, modesj, modesa = toothdist_analysis(toothdrop,toothlength1);
 
     meanjuv[r,sigtau_pos,tau_pos] = mvj;
     meanadult[r,sigtau_pos,tau_pos] = mva;
@@ -126,7 +126,7 @@ end
 
 # Eocene Figure
 filename = "figures/fig_means_peaks_eocene.pdf";
-namespace = smartpath(filename);
+namespace = string("$(homedir())/Dropbox/Postdoc/2018_sharks/",filename);
 i = 4; #temp regime
 j = 2; #dist regime
 mmeanjuv = mean(meanjuv,dims=1)[1,:,:];

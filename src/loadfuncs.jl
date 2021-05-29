@@ -7,6 +7,8 @@ using Distributed
 @everywhere using DataFrames
 @everywhere using LinearAlgebra
 @everywhere using SharedArrays
+@everywhere using CSV
+@everywhere using KernelDensity
 # @everywhere using EcologicalNetworks
 
 
