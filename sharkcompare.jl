@@ -36,8 +36,8 @@ for i=1:num
 
     its = size(paramvec)[1];
 
-    for i=1:its
-        pos = paramvec[i,:];
+    for j=1:its
+        pos = paramvec[j,:];
         r = pos[1];
         # temp_pos = pos[2];
         # dist_pos = pos[3];
