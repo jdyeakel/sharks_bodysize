@@ -65,9 +65,12 @@ for i=1:num
         toothlength = toothlength1[1,:];
         
         #plot it!
-        simdensity = toothdrop[:,1]./sum(toothdrop[:,1]);
-        ply = lineplot(toothlength,simdensity,xlim::Vector = [0, 40])
+        simdensity_juv = toothdrop[:,1]./sum(toothdrop[:,1]);
+        simdensity_adult = toothdrop[:,2]./sum(toothdrop[:,2]);
         U = kde(measures);
+        maxy = maximum([simdensity_juv; simdensity_adult; U.density]);
+        ply = lineplot(toothlength,simdensity_juv,xlim = [0, 40],ylim=[0,maxy])
+        lineplot!(ply,toothlength,simdensity_adult,color=:green)
         lineplot!(ply,U.x,U.density)
 
         empirical_sim_comparison(toothdrop,toothlength,measures)

@@ -11,7 +11,8 @@ function empirical_sim_comparison(toothdrop,toothlength,measures)
     mve, vare, pe, peakebin, peakedist = toothdist_emp_analysis(emp_toothdrop,emp_toothlength);
 
     #Measure the distance
-    meandist
+    meandist_juv = sqrt((mvj - mve)^2);
+    meandist_adult = sqrt((mva - mve)^2);
 
     modedist1
 
