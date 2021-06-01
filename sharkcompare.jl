@@ -1,12 +1,19 @@
 if homedir() == "/home/z840"
     loadfunc = include("$(homedir())/sharks_bodysize/src/loadfuncs.jl");
+    filename = "SandTiger_all.csv";
+    namespace = string("$(homedir())/sharks_bodysize/",filename);
+    data = CSV.read(namespace,header=true,DataFrame)
 else
     loadfunc = include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/loadfuncs.jl");
+    filename = "SandTiger_all.csv";
+    namespace = string("$(homedir())/Dropbox/PostDoc/2018_sharks/",filename);
+    data = CSV.read(namespace,header=true,DataFrame)
 end
 
-filename = "SandTiger_all.csv";
-namespace = string("$(homedir())/Dropbox/PostDoc/2018_sharks/",filename);
-data = CSV.read(namespace,header=true,DataFrame)
+# filename = "SandTiger_all.csv";
+# namespace = string("$(homedir())/Dropbox/PostDoc/2018_sharks/",filename);
+# namespace = string("$(homedir())/sharks_bodysize/",filename);
+# data = CSV.read(namespace,header=true,DataFrame)
 
 num = length(names(data));
 
@@ -57,5 +64,11 @@ for i=1:num
         @load namespace mass1 mass2 toothdrop toothlength1 toothlength2;
         toothlength = toothlength1[1,:];
         
+        #plot it!
+        simdensity = toothdrop[:,1]./sum(toothdrop[:,1]);
+        ply = lineplot(toothlength,simdensity,xlim::Vector = [0, 40])
+        U = kde(measures);
+        lineplot!(ply,U.x,U.density)
+
         empirical_sim_comparison(toothdrop,toothlength,measures)
 

@@ -49,7 +49,7 @@ function toothdist_emp_analysis(emp_toothdrop,emp_toothlength)
 
     modes = sort([secondtoothe,maxtoothe]);
 
-    return mve, vare, pe, peakevbin, peakedist, modes
+    return mve, vare, pe, peakebin, peakedist, modes
 
 
 
