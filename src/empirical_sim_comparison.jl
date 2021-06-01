@@ -1,7 +1,7 @@
-function empirical_sim_comparison(toothdrop,toothlength1,measures)
+function empirical_sim_comparison(toothdrop,toothlength,measures)
 
 
-    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist = toothdist_analysis(toothdrop,toothlength1);
+    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist = toothdist_analysis(toothdrop,toothlength);
 
 
     #derive empirical toothdrop and toothlength vectors

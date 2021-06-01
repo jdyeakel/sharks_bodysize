@@ -1,8 +1,8 @@
-function toothdist_analysis(toothdrop,toothlength1)
+function toothdist_analysis(toothdrop,toothlength)
 
     #MEASURE SOMETHING
-    mvj = dot(toothlength1[1,:],(toothdrop[:,1]/sum(toothdrop[:,1])));
-    mva = dot(toothlength1[1,:],(toothdrop[:,2]/sum(toothdrop[:,2])));
+    mvj = dot(toothlength,(toothdrop[:,1]/sum(toothdrop[:,1])));
+    mva = dot(toothlength,(toothdrop[:,2]/sum(toothdrop[:,2])));
     
     # meanjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mvj;
     # meanadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mva;
@@ -12,14 +12,14 @@ function toothdist_analysis(toothdrop,toothlength1)
     # meanadult[r,sigtau_pos,tau_pos] = mva;
     
     #calculate variance
-    meanofxsquared = dot(toothlength1[1,:].^2,(toothdrop[:,1]/sum(toothdrop[:,1])));
+    meanofxsquared = dot(toothlength.^2,(toothdrop[:,1]/sum(toothdrop[:,1])));
     squareofmeanofx = mvj^2;
     varj = meanofxsquared - squareofmeanofx;
     # varjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = varj;
     #NOTE: collect later
     # varjuv[r,sigtau_pos,tau_pos] = varj;
     
-    meanofxsquared = dot(toothlength1[1,:].^2,(toothdrop[:,2]/sum(toothdrop[:,2])));
+    meanofxsquared = dot(toothlength.^2,(toothdrop[:,2]/sum(toothdrop[:,2])));
     squareofmeanofx = mva^2;
     vara = meanofxsquared - squareofmeanofx;
     # varadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = vara;
@@ -30,8 +30,8 @@ function toothdist_analysis(toothdrop,toothlength1)
     pa = (toothdrop[:,2]/sum(toothdrop[:,2]));
 
     #NOTE: place modality analysis as function
-    secondpeakj, secondtoothj, troughtoothj, troughminj, maxtoothj = modality_analysis(pj,toothlength1);
-    secondpeaka, secondtootha, troughtootha, troughmina, maxtootha = modality_analysis(pa,toothlength1);
+    secondpeakj, secondtoothj, troughtoothj, troughminj, maxtoothj = modality_analysis(pj,toothlength);
+    secondpeaka, secondtootha, troughtootha, troughmina, maxtootha = modality_analysis(pa,toothlength);
 
     
 
@@ -45,7 +45,7 @@ function toothdist_analysis(toothdrop,toothlength1)
     # sortedpeaks = pa[sortlmax];
     # sortedtroughs = pa[sortlmin];
     # maxpeaka = last(sortedpeaks);
-    # sortedtooth = toothlength1[1,:][lmax[sortperm(peakprobs)]];
+    # sortedtooth = toothlength[lmax[sortperm(peakprobs)]];
     # maxtootha = last(sortedtooth);
     # secondpeaka = 0.0;
     # secondtootha = 0.0;
@@ -108,7 +108,7 @@ function toothdist_analysis(toothdrop,toothlength1)
     #     end
         
     #     troughmina = [trougha1,trougha2][peakpos];
-    #     troughtootha = toothlength1[1,:][troughposmin];
+    #     troughtootha = toothlength[troughposmin];
     # else
     #     secondpeaka = 0.0;
     #     secondtootha = 0.0;
@@ -131,7 +131,7 @@ function toothdist_analysis(toothdrop,toothlength1)
     # sortedpeaks = pj[sortlmax];
     # sortedtroughs = pj[sortlmin];
     # maxpeakj = last(sortedpeaks);
-    # sortedtooth = toothlength1[1,:][lmax[sortperm(peakprobs)]];
+    # sortedtooth = toothlength[lmax[sortperm(peakprobs)]];
     # maxtoothj = last(sortedtooth);
     # secondpeakj = 0.0;
     # secondtoothj = 0.0;
@@ -194,7 +194,7 @@ function toothdist_analysis(toothdrop,toothlength1)
     #     end
         
     #     troughminj = [troughj1,troughj2][peakpos];
-    #     troughtoothj = toothlength1[1,:][troughposmin];
+    #     troughtoothj = toothlength[troughposmin];
     # else
     #     secondpeakj = 0.0;
     #     secondtoothj = 0.0;
@@ -206,14 +206,14 @@ function toothdist_analysis(toothdrop,toothlength1)
 
 
 
-    # pl = lineplot(toothlength1[1,:],pa);
+    # pl = lineplot(toothlength,pa);
     # lineplot!(pl,repeat([maxtootha],outer=2),[0,maxpeaka],color=:red)
     # lineplot!(pl,repeat([secondtootha],outer=2),[0,secondpeaka],color=:red)
     # lineplot!(pl,repeat([troughtootha],outer=2),[0,troughmina],color=:blue)
     # 
     # 
     # 
-    # pl = lineplot(toothlength1[1,:],pj);
+    # pl = lineplot(toothlength,pj);
     # lineplot!(pl,repeat([maxtoothj],outer=2),[0,maxpeakj],color=:red)
     # lineplot!(pl,repeat([secondtoothj],outer=2),[0,secondpeakj],color=:red)
     # lineplot!(pl,repeat([troughtoothj],outer=2),[0,troughminj],color=:blue)

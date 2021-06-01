@@ -55,7 +55,7 @@ for i=1:num
         namespace = smartpath(filename,indices);
         
         @load namespace mass1 mass2 toothdrop toothlength1 toothlength2;
+        toothlength = toothlength1[1,:];
         
-
-        empirical_sim_comparison(toothdrop,toothlength1,measures)
+        empirical_sim_comparison(toothdrop,toothlength,measures)
 

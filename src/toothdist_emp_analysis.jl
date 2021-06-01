@@ -1,7 +1,7 @@
-function toothdist_analysis(toothdrop,toothlength)
+function toothdist_emp_analysis(emp_toothdrop,emp_toothlength)
 
     #MEASURE SOMETHING
-    mve = dot(toothlength,(toothdrop/sum(toothdrop)));
+    mve = dot(emp_toothlength,(emp_toothdrop/sum(emp_toothdrop)));
     
     # meanjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mvj;
     # meanadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mva;
@@ -11,7 +11,7 @@ function toothdist_analysis(toothdrop,toothlength)
     # meanadult[r,sigtau_pos,tau_pos] = mva;
     
     #calculate variance
-    meanofxsquared = dot(toothlength.^2,(toothdrop/sum(toothdrop)));
+    meanofxsquared = dot(emp_toothlength.^2,(emp_toothdrop/sum(emp_toothdrop)));
     squareofmeanofx = mve^2;
     vare = meanofxsquared - squareofmeanofx;
     # varjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = varj;
@@ -19,10 +19,10 @@ function toothdist_analysis(toothdrop,toothlength)
     # varjuv[r,sigtau_pos,tau_pos] = varj;
     
    
-    pe = (toothdrop/sum(toothdrop));
+    pe = (emp_toothdrop/sum(emp_toothdrop));
 
     #NOTE: place modality analysis as function
-    secondpeake, secondtoothe, troughtoothe, troughmine, maxtoothe = modality_analysis(pe,toothlength);
+    secondpeake, secondtoothe, troughtoothe, troughmine, maxtoothe = modality_analysis(pe,collect(emp_toothlength));
 
     
     #Record presence of multiple modes

@@ -1,4 +1,4 @@
-function modality_analysis(pdist,toothlength1)
+function modality_analysis(pdist,toothlength)
 
 
     lmax=findlocalmaxima(pdist); #
@@ -11,7 +11,7 @@ function modality_analysis(pdist,toothlength1)
     sortedpeaks = pdist[sortlmax];
     sortedtroughs = pdist[sortlmin];
     maxpeaka = last(sortedpeaks);
-    sortedtooth = toothlength1[1,:][lmax[sortperm(peakprobs)]];
+    sortedtooth = toothlength[lmax[sortperm(peakprobs)]];
     maxtooth = last(sortedtooth);
     secondpeak = 0.0;
     secondtooth = 0.0;
@@ -74,7 +74,7 @@ function modality_analysis(pdist,toothlength1)
         end
         
         troughmin = [trougha1,trougha2][peakpos];
-        troughtooth = toothlength1[1,:][troughposmin];
+        troughtooth = toothlength[troughposmin];
     else
         secondpeak = 0.0;
         secondtooth = 0.0;

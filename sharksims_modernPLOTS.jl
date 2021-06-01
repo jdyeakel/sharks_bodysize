@@ -107,8 +107,9 @@ peakadultquant = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
     namespace = smartpath(filename,indices);
     
     @load namespace mass1 mass2 toothdrop toothlength1 toothlength2;
+    toothlength = toothlength1[1,:];
     
-    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist, modesj, modesa = toothdist_analysis(toothdrop,toothlength1);
+    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist, modesj, modesa = toothdist_analysis(toothdrop,toothlength);
 
     meanjuv[r,sigtau_pos,tau_pos] = mvj;
     meanadult[r,sigtau_pos,tau_pos] = mva;
