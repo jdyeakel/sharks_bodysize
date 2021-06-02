@@ -69,9 +69,9 @@ for i=1:num
         simdensity_adult = toothdrop[:,2]./sum(toothdrop[:,2]);
         U = kde(measures);
         maxy = maximum([simdensity_juv; simdensity_adult; U.density]);
-        ply = lineplot(toothlength,simdensity_juv,xlim = [0, 40],ylim=[0,maxy])
+        ply = lineplot(toothlength,simdensity_juv,xlim = [0, 40],ylim=[0,maxy],color=:green)
         lineplot!(ply,toothlength,simdensity_adult,color=:green)
-        lineplot!(ply,U.x,U.density)
+        lineplot!(ply,U.x,U.density,color=:blue)
 
-        empirical_sim_comparison(toothdrop,toothlength,measures)
+        meanchij, meanchia, modechij, modechia = empirical_sim_comparison(toothdrop,toothlength,measures)
 

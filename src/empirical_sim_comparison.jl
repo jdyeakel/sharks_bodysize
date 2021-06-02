@@ -1,21 +1,38 @@
 function empirical_sim_comparison(toothdrop,toothlength,measures)
 
 
-    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist = toothdist_analysis(toothdrop,toothlength);
+    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist, modesj, modesa = toothdist_analysis(toothdrop,toothlength);
 
 
     #derive empirical toothdrop and toothlength vectors
     U = kde(measures);
     emp_toothlength = U.x;
     emp_toothdrop = U.density;
-    mve, vare, pe, peakebin, peakedist = toothdist_emp_analysis(emp_toothdrop,emp_toothlength);
+    mve, vare, pe, peakebin, peakedist, modes = toothdist_emp_analysis(emp_toothdrop,emp_toothlength);
 
     #Measure the distance
-    meandist_juv = sqrt((mvj - mve)^2);
-    meandist_adult = sqrt((mva - mve)^2);
+    meanchij = (mvj - mve)/mve;
+    meanchia = (mva - mve)/mve;
 
-    modedist1
+    #HA! THIS IS CHI SQUARE STAT
+    # meandist_juv = 1 - (mve - sqrt((mvj - mve)^2))/mve; 
+    # meandist_adult = 1 - (mve - sqrt((mva - mve)^2))/mve;
 
-    modedist2
+    if peakebin == 0
+        modechij = (maximum(modesj) - maximum(modes))/maximum(modes)
+
+        modechia = (maximum(modesa) - maximum(modes))/maximum(modes)
+    else
+        modechij = ((minimum(modesj) - minimum(modes))/minimum(modes)) + ((maximum(modesj) - maximum(modes))/maximum(modes));
+
+        modechia = ((minimum(modesa) - minimum(modes))/minimum(modes)) + ((maximum(modesj) - maximum(modes))/maximum(modes));
+    end
+
+    return meanchij, meanchia, modechij, modechia
+
+end
+
+
+
 
 
