@@ -73,5 +73,5 @@ for i=1:num
         lineplot!(ply,toothlength,simdensity_adult,color=:green)
         lineplot!(ply,U.x,U.density,color=:blue)
 
-        meanchij, meanchia, modechij, modechia = empirical_sim_comparison(toothdrop,toothlength,measures)
+        meanchij, meanchia, modechij, modechia, modedistchij, modedistchia = empirical_sim_comparison(toothdrop,toothlength,measures)
 

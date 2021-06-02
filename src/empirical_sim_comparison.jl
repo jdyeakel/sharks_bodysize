@@ -22,13 +22,27 @@ function empirical_sim_comparison(toothdrop,toothlength,measures)
         modechij = (maximum(modesj) - maximum(modes))/maximum(modes)
 
         modechia = (maximum(modesa) - maximum(modes))/maximum(modes)
+
+        if peakjuvbin == 0
+            modedistchij = 0;
+        else
+            modedistchij = 1;
+        end
+        if peakadultbin == 0
+            modedistchia = 0;
+        else
+            modedistchia = 1;
+        end
     else
         modechij = ((minimum(modesj) - minimum(modes))/minimum(modes)) + ((maximum(modesj) - maximum(modes))/maximum(modes));
 
         modechia = ((minimum(modesa) - minimum(modes))/minimum(modes)) + ((maximum(modesj) - maximum(modes))/maximum(modes));
+
+        modedistchij = (peakjuvdist - peakedist)/peakedist;
+        modedistchia = (peakadultdist - peakedist)/peakedist;
     end
 
-    return meanchij, meanchia, modechij, modechia
+    return meanchij, meanchia, modechij, modechia, modedistchij, modedistchia
 
 end
 
