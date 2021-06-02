@@ -10,19 +10,28 @@ function empirical_sim_comparison(toothdrop,toothlength,measures)
     emp_toothdrop = U.density;
     mve, vare, pe, peakebin, peakedist, modes = toothdist_emp_analysis(emp_toothdrop,emp_toothlength);
 
+    #Error function
+    function errorfunc(pred,obs)
+        err = sum(((pred .- obs) ./ obs));
+        return err
+    end
+
     #Measure the distance
-    meanchij = (mvj - mve)/mve;
-    meanchia = (mva - mve)/mve;
+    meanchij = errorfunc(mvj,mve);
+    meanchia = errorfunc(mva,mve);
 
     #HA! THIS IS CHI SQUARE STAT
     # meandist_juv = 1 - (mve - sqrt((mvj - mve)^2))/mve; 
     # meandist_adult = 1 - (mve - sqrt((mva - mve)^2))/mve;
 
     if peakebin == 0
-        modechij = (maximum(modesj) - maximum(modes))/maximum(modes)
+        # modechij = (maximum(modesj) - maximum(modes))/maximum(modes);
+        modechij = errorfunc(maximum(modesj),maximum(modes));
 
-        modechia = (maximum(modesa) - maximum(modes))/maximum(modes)
+        # modechia = (maximum(modesa) - maximum(modes))/maximum(modes);
+        modechia = errorfunc(maximum(modesa),maximum(modes));
 
+        #Binary matching
         if peakjuvbin == 0
             modedistchij = 0.;
         else
@@ -34,12 +43,18 @@ function empirical_sim_comparison(toothdrop,toothlength,measures)
             modedistchia = 1.;
         end
     else
-        modechij = ((minimum(modesj) - minimum(modes))/minimum(modes)) + ((maximum(modesj) - maximum(modes))/maximum(modes));
+        # modechij = ((minimum(modesj) - minimum(modes))/minimum(modes)) + ((maximum(modesj) - maximum(modes))/maximum(modes));
+        modechij = errorfunc(sort(modesj),sort(modes));
 
-        modechia = ((minimum(modesa) - minimum(modes))/minimum(modes)) + ((maximum(modesj) - maximum(modes))/maximum(modes));
+        # modechia = ((minimum(modesa) - minimum(modes))/minimum(modes)) + ((maximum(modesj) - maximum(modes))/maximum(modes));
+        modechia = errorfunc(sort(modesa),sort(modes));
 
-        modedistchij = (peakjuvdist - peakedist)/peakedist;
-        modedistchia = (peakadultdist - peakedist)/peakedist;
+
+        # modedistchij = (peakjuvdist - peakedist)/peakedist;
+        modedistchij = errorfunc(peakjuvdist,peakedist);
+        # modedistchia = (peakadultdist - peakedist)/peakedist;
+        modedistchia = errorfunc(peakadultdist,peakedist);
+
     end
 
     return meanchij, meanchia, modechij, modechia, modedistchij, modedistchia
