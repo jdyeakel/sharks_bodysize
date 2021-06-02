@@ -17,6 +17,13 @@ end
 
 num = length(names(data));
 
+mchij = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+mchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+modchij = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+modchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+moddistchij = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+moddistchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+
 for i=1:num
 
     measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
@@ -75,3 +82,14 @@ for i=1:num
 
         meanchij, meanchia, modechij, modechia, modedistchij, modedistchia = empirical_sim_comparison(toothdrop,toothlength,measures)
 
+        mchij[i,r,sigtau_pos,tau_pos] = meachij;
+        mchia[i,r,sigtau_pos,tau_pos] = meachia;
+        modchij[i,r,sigtau_pos,tau_pos] = modechij;
+        modchia[i,r,sigtau_pos,tau_pos] = modechia;
+        moddistchij[i,r,sigtau_pos,tau_pos] = modedistchij;
+        moddistchia[i,r,sigtau_pos,tau_pos] = modedistchia;
+    end
+
+    
+
+end
