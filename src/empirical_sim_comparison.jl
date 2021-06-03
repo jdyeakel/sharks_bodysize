@@ -12,7 +12,8 @@ function empirical_sim_comparison(toothdrop,toothlength,measures)
 
     #Error function
     function errorfunc(pred,obs)
-        err = sum(((pred .- obs) ./ obs));
+        #NOTE: this is a symmetric measure. abs() means that pred+e and pred-e will give the same err value
+        err = abs(sum(((pred .- obs) ./ obs)));
         return err
     end
 
