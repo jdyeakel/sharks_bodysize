@@ -31,8 +31,8 @@ moddistchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
 @time @sync @distributed for i=1:num
 
     measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
-    U = kde(measures);
-    lineplot(U.x,U.density)
+    # U = kde(measures);
+    # lineplot(U.x,U.density)
 
     #Now walk through the simulation results
 
@@ -107,8 +107,43 @@ filename = "data/sharks_eocene2/analysisdata.jld";
 namespace = smartpath(filename);
 @save namespace mcj mca mdj mda distj dista
 
-i=1
-cof = 0.2
-binmatrixj = (mcj .< cof)[i,:,:] .* (mdj .< cof)[i,:,:] .* (distj .< cof)[i,:,:];
-binmatrixa = (mca .< cof)[i,:,:] .* (mda .< cof)[i,:,:] .* (dista .< cof)[i,:,:];
-heatmap(binmatrixj)
+binmatrixj = Array{Int64}(undef,num,length(sigtauvec),length(tauvec));
+binmatrixa = Array{Int64}(undef,num,length(sigtauvec),length(tauvec));
+cof = 0.5
+for i=1:5
+    binmatrixj[i,:,:] = (mcj .< cof)[i,:,:] .* (mdj .< cof)[i,:,:] .* (distj .< cof)[i,:,:];
+    binmatrixa[i,:,:] = (mca .< cof)[i,:,:] .* (mda .< cof)[i,:,:] .* (dista .< cof)[i,:,:];
+
+    binmatrixj[i,:,:] = (mcj .< cof)[i,:,:] .* (mdj .< cof)[i,:,:] .* (distj .< cof)[i,:,:];
+    binmatrixa[i,:,:] = (mca .< cof)[i,:,:] .* (mda .< cof)[i,:,:] .* (dista .< cof)[i,:,:];
+end
+i=1; M = binmatrixj[i,:,:];
+filename = "data/sharks_eocene2/simdata.jld";
+measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
+heatmap(M); 
+datadensity.x, datadensity.density, toothlenth, scaledsimdensity = plotcompare(M,filename,measures);
+ply = lineplot(datadensity.x,datadensity.density/maximum(datadensity.density))
+lineplot!(ply,toothlength,scaledsimdensity,color=:red)
+
+
+
+filename = "figures/fig_empirical_comp.pdf";
+namespace = smartpath(filename);
+R"""
+library(fields)
+library(RColorBrewer)
+pdf($namespace,width=8,height=15)
+par(mfrow=c(5,2))
+image(x=$sigtauvec,y=$tauvec,z=t($(binmatrixj[1,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site')
+image(x=$sigtauvec,y=$tauvec,z=t($(binmatrixa[1,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
+"""
+for i=2:num
+    R"""
+    image(x=$sigtauvec,y=$tauvec,z=t($(binmatrixj[i,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window')
+    image(x=$sigtauvec,y=$tauvec,z=t($(binmatrixa[i,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window')
+    """
+end
+R"dev.off()"
+
+
+
