@@ -118,10 +118,10 @@ for i=1:5
     binmatrixa[i,:,:] = (mca .< cof)[i,:,:] .* (mda .< cof)[i,:,:] .* (dista .< cof)[i,:,:];
 end
 i=1; M = binmatrixj[i,:,:];
-filename = "data/sharks_eocene2/simdata.jld";
+filename_data = "data/sharks_eocene2/simdata.jld";
 measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
 heatmap(M)
-datadensity, toothlength, scaledsimdensity = plotcompare(M,filename,measures);
+datadensity, toothlength, scaledsimdensity = plotcompare(M,filename_data,measures);
 ply = lineplot(datadensity.x,datadensity.density/maximum(datadensity.density))
 lineplot!(ply,toothlength,scaledsimdensity,color=:red)
 
@@ -129,18 +129,35 @@ lineplot!(ply,toothlength,scaledsimdensity,color=:red)
 
 filename = "figures/fig_empirical_comp.pdf";
 namespace = smartpath(filename);
+filename_data = "data/sharks_eocene2/simdata.jld";
+i=1; Mj = binmatrixj[i,:,:]; Ma = binmatrixa[i,:,:];
+measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
+datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,filename_data,measures);
+datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,filename_data,measures);
 R"""
 library(fields)
 library(RColorBrewer)
 pdf($namespace,width=8,height=15)
-par(mfrow=c(5,2))
+par(mfrow=c(5,4))
 image(x=$sigtauvec,y=$tauvec,z=t($(binmatrixj[1,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site')
 image(x=$sigtauvec,y=$tauvec,z=t($(binmatrixa[1,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
+plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l')
+lines($toothlengthj,$scaledsimdensityj,lty=2)
+plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l')
+lines($toothlengtha,$scaledsimdensitya,lty=2)
 """
 for i=2:num
+    Mj = binmatrixj[i,:,:]; Ma = binmatrixa[i,:,:];
+    measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
+    datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,filename_data,measures);
+    datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,filename_data,measures);
     R"""
     image(x=$sigtauvec,y=$tauvec,z=t($(binmatrixj[i,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window')
     image(x=$sigtauvec,y=$tauvec,z=t($(binmatrixa[i,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window')
+    plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l')
+    lines($toothlengthj,$scaledsimdensityj,lty=2)
+    plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l')
+    lines($toothlengtha,$scaledsimdensitya,lty=2)
     """
 end
 R"dev.off()"
