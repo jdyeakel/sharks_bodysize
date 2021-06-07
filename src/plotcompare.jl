@@ -1,8 +1,8 @@
-function plotcompare(M,filename,measures)
+function plotcompare(M,qM,filename,measures)
     datadensity = kde(measures);
     matchparams = findall(x->x==1,M)
     if length(matchparams) > 0
-        rmatch = rand(matchparams);
+        rmatch = findmin(qM)[2];
 
         indices = [1,rmatch[1],rmatch[2]];
         namespace = smartpath(filename,indices);
@@ -15,7 +15,7 @@ function plotcompare(M,filename,measures)
         toothlength = collect(0:1:40);
         scaledsimdensity = repeat([0],inner=length(toothlength));
     end
-    
+
     
 
     return datadensity, toothlength, scaledsimdensity
