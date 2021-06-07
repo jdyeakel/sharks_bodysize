@@ -120,8 +120,8 @@ end
 i=1; M = binmatrixj[i,:,:];
 filename = "data/sharks_eocene2/simdata.jld";
 measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
-heatmap(M); 
-datadensity.x, datadensity.density, toothlenth, scaledsimdensity = plotcompare(M,filename,measures);
+heatmap(M)
+datadensity.x, datadensity.density, toothlength, scaledsimdensity = plotcompare(M,filename,measures);
 ply = lineplot(datadensity.x,datadensity.density/maximum(datadensity.density))
 lineplot!(ply,toothlength,scaledsimdensity,color=:red)
 

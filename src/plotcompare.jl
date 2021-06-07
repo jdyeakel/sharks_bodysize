@@ -14,6 +14,6 @@ function plotcompare(M,filename,measures)
     scaledsimdensity = simdensity ./ maximum(simdensity);
     
 
-    return datadensity.x, datadensity.density, toothlenth, scaledsimdensity
+    return datadensity.x, datadensity.density, toothlength, scaledsimdensity
 
 end
