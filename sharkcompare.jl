@@ -144,10 +144,24 @@ par(mfrow=c(5,4))
 image(x=$sigtauvec,y=$tauvec,z=t($(binmatrixj[1,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site')
 image(x=$sigtauvec,y=$tauvec,z=t($(binmatrixa[1,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
 plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Juvenile site')
-lines($toothlengthj,$scaledsimdensityj,lty=2)
-plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Adult site')
-lines($toothlengtha,$scaledsimdensitya,lty=2)
+lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
 """
+for r=2:reps
+    datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r);
+    R"""
+    lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
+    """
+end
+R"""
+plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Adult site')
+lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
+"""
+for r=2:reps
+    datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r);
+    R"""
+    lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
+    """
+end
 for i=2:num
     Mj = binmatrixj[i,:,:]; Ma = binmatrixa[i,:,:];
     qMj = qmatrixj[i,:,:]; qMa = qmatrixa[i,:,:];
@@ -172,7 +186,6 @@ for i=2:num
     lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
     """
     for r=2:reps
-        datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r);
         datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r);
         R"""
         lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
