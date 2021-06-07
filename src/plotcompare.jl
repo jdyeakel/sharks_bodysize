@@ -1,10 +1,10 @@
-function plotcompare(M,qM,filename,measures)
+function plotcompare(M,qM,filename,measures,r)
     datadensity = kde(measures);
     matchparams = findall(x->x==1,M)
     if length(matchparams) > 0
         rmatch = findmin(qM)[2];
 
-        indices = [1,rmatch[1],rmatch[2]];
+        indices = [r,rmatch[1],rmatch[2]];
         namespace = smartpath(filename,indices);
         @load namespace mass1 mass2 toothdrop toothlength1 toothlength2;
         toothlength = toothlength1[1,:];
