@@ -117,6 +117,14 @@ end
 
 qmatrixj = mcj .+ mdj .+ distj;
 qmatrixa = mca .+ mda .+ dista;
+bfcoordsj = Array{Int64}(undef,num,2);
+bfcoordsa = Array{Int64}(undef,num,2);
+for i=1:num
+    cartj = findmin(qmatrixj[i,:,:]); carta = findmin(qmatrixa[i,:,:]);
+    coordsj = [cartj[2][1],cartj[2][2]]; coordsa = [carta[2][1],carta[2][2]];
+    bfcoordsj[i,:] = coordsj; bfcoordsa[i,:] = coordsa;
+end
+
 
 i=1; M = binmatrixj[i,:,:];
 filename_data = "data/sharks_eocene2/simdata.jld";
