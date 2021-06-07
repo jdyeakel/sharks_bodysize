@@ -18,6 +18,6 @@ function plotcompare(M,qM,filename,measures,r)
 
     
 
-    return datadensity, toothlength, scaledsimdensity
+    return datadensity, toothlength, scaledsimdensity, [rmatch[1],rmatch[2]]
 
 end
