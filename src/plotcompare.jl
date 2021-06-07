@@ -16,8 +16,8 @@ function plotcompare(M,qM,filename,measures,r)
         scaledsimdensity = repeat([0],inner=length(toothlength));
     end
 
-    
+    bfcoords = [rmatch[1],rmatch[2]];
 
-    return datadensity, toothlength, scaledsimdensity, [rmatch[1],rmatch[2]]
+    return datadensity, toothlength, scaledsimdensity, bfcoords
 
 end
