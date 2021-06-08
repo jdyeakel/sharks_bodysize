@@ -12,7 +12,7 @@ l0 = 90.0;
 # L = 295; #1500; #295.0;
 # NOTE: L = 477 cm (15.65 ft) -> Mass 350 KG -> max tooth length 40 mm
 
-L = 300;
+L = 300.;
 # L = 477;
 
 # # Mass from PRECAUDAL LENGTH (Schindler) 
@@ -36,8 +36,8 @@ mintemp_a = 13;
 maxtemp_a = 23;
 
 distvec = 700;
-sigtauvec = collect(0.5:3:25); # collect(0.5:0.5:25)
-tauvec = collect(1:5:50); #collect(1:1:50);
+sigtauvec = collect(0.5:2:20); #collect(0.5:3:25); # collect(0.5:0.5:25)
+tauvec = collect(1:4:40); #collect(1:5:50); #collect(1:1:50);
 tauits = length(sigtauvec)*length(tauvec);
 
 
@@ -54,6 +54,10 @@ paramvec_pre = repeat(paramposvec_pre,outer = reps);
 paramvec = [repeat(collect(1:reps),inner=size(paramposvec_pre)[1]) paramvec_pre];
 
 its = size(paramvec)[1];
+
+filename_settings = "data/sharks_modern/simsettings.jld";
+namespace = smartpath(filename_settings);
+@save namespace l0 L n0 gen mintemp_j maxtemp_j mintemp_a maxtemp_a distvec sigtauvec tauvec reps paramvec its
 
 @time @sync @distributed for i=1:its
     
@@ -116,6 +120,7 @@ its = size(paramvec)[1];
     # @save namespace mass1 mass2 epsilonvec clock popstate toothdrop state toothlength1 toothlength2;
     
     @save namespace mass1 mass2 toothdrop toothlength1 toothlength2;
+    println(string("saved: ",[r,sigtauvec[sigtau_pos],tauvec[tau_pos]]))
     
 end
 
