@@ -103,6 +103,8 @@ mda = mean(modchia,dims=2)[:,1,:,:];
 distj = mean(moddistchij,dims=2)[:,1,:,:];
 dista = mean(moddistchia,dims=2)[:,1,:,:];
 
+ndata = names(data);
+
 filename = "data/sharks_eocene2/analysisdata.jld";
 namespace = smartpath(filename);
 @save namespace mcj mca mdj mda distj dista
@@ -148,12 +150,15 @@ R"""
 library(fields)
 library(RColorBrewer)
 pal = brewer.pal(5,'Set1')
+ncol = c('black','black','black','white','white')
 pdf($namespace,width=12,height=15)
 par(mfrow=c(5,4))
 image(x=$sigtauvec,y=$tauvec,z=($(binmatrixj[1,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site')
 points($(bfcoordsj[1,1]),$(bfcoordsj[1,2]),pch=21,col='white',bg=pal[1],cex=2)
+text(12.5,48,$(ndata[1]),col=ncol[1])
 image(x=$sigtauvec,y=$tauvec,z=($(binmatrixa[1,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
 points($(bfcoordsa[1,1]),$(bfcoordsa[1,2]),pch=21,col='white',bg=pal[1],cex=2)
+text(12.5,48,$(ndata[1]),col=ncol[1])
 plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Juvenile site',col=pal[1],lwd=2)
 lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
 """
@@ -182,8 +187,10 @@ for i=2:num
     datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r);
     R"""
     image(x=$sigtauvec,y=$tauvec,z=($(Mj)),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window')
+    text(12.5,48,$(ndata[i]),col=ncol[$i])
     points($(bfcoordsj[i,1]),$(bfcoordsj[i,2]),pch=21,col='white',bg=pal[$i],cex=2)
     image(x=$sigtauvec,y=$tauvec,z=($(Ma)),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window')
+    text(12.5,48,$(ndata[i]),col=ncol[$i])
     points($(bfcoordsa[i,1]),$(bfcoordsa[i,2]),pch=21,col='white',bg=pal[$i],cex=2)
     plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',col=pal[$i],lwd=2)
     lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
