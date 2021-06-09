@@ -128,13 +128,13 @@ end
 
 
 ##################
-i=1; M = binmatrixj[i,:,:];
-filename_data = "data/sharks_eocene2/simdata.jld";
-measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
-heatmap(M)
-datadensity, toothlength, scaledsimdensity = plotcompare(M,filename_data,measures);
-ply = lineplot(datadensity.x,datadensity.density/maximum(datadensity.density))
-lineplot!(ply,toothlength,scaledsimdensity,color=:red)
+# i=1; M = binmatrixj[i,:,:];
+# filename_data = "data/sharks_eocene2/simdata.jld";
+# measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
+# heatmap(M)
+# datadensity, toothlength, scaledsimdensity = plotcompare(M,filename_data,measures);
+# ply = lineplot(datadensity.x,datadensity.density/maximum(datadensity.density))
+# lineplot!(ply,toothlength,scaledsimdensity,color=:red)
 ###################
 
 
@@ -145,8 +145,8 @@ Mj = binmatrixj[1,:,:]; Ma = binmatrixa[1,:,:];
 qMj = qmatrixj[1,:,:]; qMa = qmatrixa[1,:,:];
 measures = Array{Float64}(data[!,1][findall(!ismissing,data[!,1])]);
 r=1;
-datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r);
-datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r);
+datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
+datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
 R"""
 library(fields)
 library(RColorBrewer)
@@ -164,7 +164,7 @@ plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),typ
 lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
 """
 for r=2:reps
-    datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r);
+    datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
     R"""
     lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
     """
@@ -174,7 +174,7 @@ plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),typ
 lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
 """
 for r=2:reps
-    datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r);
+    datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
     R"""
     lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
     """
@@ -184,8 +184,8 @@ for i=2:num
     qMj = qmatrixj[i,:,:]; qMa = qmatrixa[i,:,:];
     measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
     r=1;
-    datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r);
-    datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r);
+    datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
+    datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
     R"""
     image(x=$sigtauvec,y=$tauvec,z=($(Mj)),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window')
     text(12.5,48,$(ndata[i]),col=ncol[$i])
@@ -197,7 +197,7 @@ for i=2:num
     lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
     """
     for r=2:reps
-        datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r);
+        datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
         R"""
         lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
         """
@@ -207,7 +207,7 @@ for i=2:num
     lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
     """
     for r=2:reps
-        datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r);
+        datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
         R"""
         lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
         """

@@ -142,8 +142,8 @@ Mj = binmatrixj[:,:]; Ma = binmatrixa[:,:];
 qMj = qmatrixj[:,:]; qMa = qmatrixa[:,:];
 measures = Array{Float64}(data[!,5][findall(!ismissing,data[!,5])]);
 r=1;
-datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,site_type="juv");
-datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,site_type="adult");
+datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
+datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
 R"""
 library(fields)
 library(RColorBrewer)
@@ -161,7 +161,7 @@ plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),typ
 lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
 """
 for r=2:reps
-    datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,site_type="juv");
+    datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
     R"""
     lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
     """
@@ -171,7 +171,7 @@ plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),typ
 lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
 """
 for r=2:reps
-    datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,site_type="adult");
+    datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
     R"""
     lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
     """
