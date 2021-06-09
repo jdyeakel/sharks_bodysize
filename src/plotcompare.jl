@@ -12,9 +12,9 @@ function plotcompare(M,qM,filename,measures,r,site_type)
         if site_type == "juv"
             simdensity = ((toothdrop[:,1])/sum(toothdrop[:,1])) #/maximum(toothdrop[:,1]);
         else
-            simdensity = ((toothdrop[:,1])/sum(toothdrop[:,1])) #/maximum(toothdrop[:,1]);
+            simdensity = ((toothdrop[:,2])/sum(toothdrop[:,2])) #/maximum(toothdrop[:,1]);
         end
-        
+
         scaledsimdensity = simdensity ./ maximum(simdensity);
     else
         toothlength = collect(0:1:40);
