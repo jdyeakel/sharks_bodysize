@@ -4,50 +4,9 @@ else
     loadfunc = include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/loadfuncs.jl");
 end
 
-#Size at birth (cm)
-l0 = 100.0;
-#Asymptotic size (cm)
-# L = 295; #1500; #295.0;
-# NOTE: L = 477 cm (15.65 ft) -> Mass 350 KG -> max tooth length 40 mm
-L = 477;
-
-# # Mass from PRECAUDAL LENGTH (Schindler) 
-# m0 = 0.00538776*l0^3.102025622731644;
-# M = 0.00538776*L^3.102025622731644;
-
-# Mass (kg) from TOTAL LENGTH (Goldman et al. 2006)
-m0 = (0.00013*l0^2.4)*1000;
-M = (0.00013*L^2.4)*1000;
-
-#Sim params
-n0=1000;
-gen=1;
-
-
-mintemp_j = 17;
-maxtemp_j = 25;
-mintemp_a = 13;
-maxtemp_a = 23;
-
-distvec = 700;
-sigtauvec = collect(0.5:3:25); # collect(0.5:0.5:25)
-tauvec = collect(1:5:50); #collect(1:1:50);
-tauits = length(sigtauvec)*length(tauvec);
-
-
-#3 paramters: distance, sigtau, tau
-# distposvec = repeat(collect(1:3),inner = length(sigtauvec)*length(tauvec));
-sigtauposvec = repeat(collect(1:length(sigtauvec)),inner = length(tauvec));
-tauposvec = repeat(collect(1:length(tauvec)),outer=length(sigtauvec));
-paramposvec_pre = [sigtauposvec tauposvec];
-#temperature | distance | sigtauvec | tauposvec
-# paramposvec = [repeat(collect(1:4),inner = size(paramposvec_pre)[1]) repeat(paramposvec_pre,outer=4)];
-
-reps = 5;
-paramvec_pre = repeat(paramposvec_pre,outer = reps);
-paramvec = [repeat(collect(1:reps),inner=size(paramposvec_pre)[1]) paramvec_pre];
-
-its = size(paramvec)[1];
+filename_settings = "data/sharks_modern/simsettings.jld";
+namespace = smartpath(filename_settings);
+@load namespace l0 L n0 gen mintemp_j maxtemp_j mintemp_a maxtemp_a distvec sigtauvec tauvec reps paramvec its
 
 
 meanjuv = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
@@ -126,7 +85,7 @@ peakadultquant = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 end
 
 # Eocene Figure
-filename = "figures/fig_means_peaks2.pdf";
+filename = "figures/fig_means_peaks2_modern.pdf";
 namespace = smartpath(filename);
 i = 4; #temp regime
 j = 2; #dist regime

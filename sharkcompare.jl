@@ -144,8 +144,9 @@ filename_data = "data/sharks_eocene2/simdata.jld";
 Mj = binmatrixj[1,:,:]; Ma = binmatrixa[1,:,:];
 qMj = qmatrixj[1,:,:]; qMa = qmatrixa[1,:,:];
 measures = Array{Float64}(data[!,1][findall(!ismissing,data[!,1])]);
-datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures);
-datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures);
+r=1;
+datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r);
+datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r);
 R"""
 library(fields)
 library(RColorBrewer)
@@ -159,7 +160,7 @@ text(12.5,48,$(ndata[1]),col=ncol[1])
 image(x=$sigtauvec,y=$tauvec,z=($(binmatrixa[1,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
 points($(bfcoordsa[1,1]),$(bfcoordsa[1,2]),pch=21,col='white',bg=pal[1],cex=2)
 text(12.5,48,$(ndata[1]),col=ncol[1])
-plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Juvenile site',col=pal[1],lwd=2)
+plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Juvenile site',col=pal[1],lwd=2,xlim=c(0,40))
 lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
 """
 for r=2:reps
@@ -169,7 +170,7 @@ for r=2:reps
     """
 end
 R"""
-plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Adult site',col=pal[1],lwd=2)
+plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Adult site',col=pal[1],lwd=2,xlim=c(0,40))
 lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
 """
 for r=2:reps
@@ -192,7 +193,7 @@ for i=2:num
     image(x=$sigtauvec,y=$tauvec,z=($(Ma)),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window')
     text(12.5,48,$(ndata[i]),col=ncol[$i])
     points($(bfcoordsa[i,1]),$(bfcoordsa[i,2]),pch=21,col='white',bg=pal[$i],cex=2)
-    plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',col=pal[$i],lwd=2)
+    plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',col=pal[$i],lwd=2,xlim=c(0,40))
     lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
     """
     for r=2:reps
@@ -202,7 +203,7 @@ for i=2:num
         """
     end
     R"""
-    plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',col=pal[$i],lwd=2)
+    plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',col=pal[$i],lwd=2,xlim=c(0,40))
     lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
     """
     for r=2:reps
