@@ -53,6 +53,11 @@ paramvec = [repeat(collect(1:reps),inner=size(paramposvec_pre)[1]) paramvec_pre]
 
 its = size(paramvec)[1];
 
+filename_settings = "data/sharks_eocene_lowlatitude/simsettings.jld";
+namespace = smartpath(filename_settings);
+@save namespace l0 L n0 gen mintemp_j maxtemp_j mintemp_a maxtemp_a distvec sigtauvec tauvec reps paramvec its
+
+
 @time @sync @distributed for i=1:its
     
     #set parameters
