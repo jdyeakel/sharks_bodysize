@@ -34,8 +34,8 @@ mintemp_a = 23;
 maxtemp_a = 30;
 
 distvec = 400;
-sigtauvec = collect(0.5:0.5:25); # collect(0.5:0.5:25)
-tauvec = collect(1:1:50); #collect(1:1:50);
+sigtauvec = collect(0.5:1:25); # collect(0.5:0.5:25)
+tauvec = collect(1:2:50); #collect(1:1:50);
 tauits = length(sigtauvec)*length(tauvec);
 
 
@@ -47,7 +47,7 @@ paramposvec_pre = [sigtauposvec tauposvec];
 #temperature | distance | sigtauvec | tauposvec
 # paramposvec = [repeat(collect(1:4),inner = size(paramposvec_pre)[1]) repeat(paramposvec_pre,outer=4)];
 
-reps = 25;
+reps = 5;
 paramvec_pre = repeat(paramposvec_pre,outer = reps);
 paramvec = [repeat(collect(1:reps),inner=size(paramposvec_pre)[1]) paramvec_pre];
 
