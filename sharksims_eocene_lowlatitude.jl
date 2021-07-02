@@ -34,8 +34,8 @@ mintemp_a = 23;
 maxtemp_a = 30;
 
 distvec = 400;
-sigtauvec = collect(0.5:1:25); # collect(0.5:0.5:25)
-tauvec = collect(1:2:50); #collect(1:1:50);
+sigtauvec = collect(0.5:1:20); # collect(0.5:0.5:25)
+tauvec = collect(1:2:40); #collect(1:1:50);
 tauits = length(sigtauvec)*length(tauvec);
 
 
