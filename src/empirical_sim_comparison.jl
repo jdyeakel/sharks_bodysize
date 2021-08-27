@@ -17,9 +17,13 @@ function empirical_sim_comparison(toothdrop,toothlength,measures)
         return err
     end
 
-    #Measure the distance
+    #Means
     meanchij = errorfunc(mvj,mve);
     meanchia = errorfunc(mva,mve);
+
+    #SDs
+    sdchij = errorfunc(sqrt(varj),sqrt(vare));
+    sdchia = errorfunc(sqrt(vara),sqrt(vare));
 
     #HA! THIS IS CHI SQUARE STAT
     # meandist_juv = 1 - (mve - sqrt((mvj - mve)^2))/mve; 
@@ -58,7 +62,7 @@ function empirical_sim_comparison(toothdrop,toothlength,measures)
 
     end
 
-    return meanchij, meanchia, modechij, modechia, modedistchij, modedistchia
+    return meanchij, meanchia, modechij, modechia, modedistchij, modedistchia, sdchij, sdchia
 
 end
 

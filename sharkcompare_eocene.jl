@@ -27,6 +27,8 @@ modchij = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
 modchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
 moddistchij = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
 moddistchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+sddistchij = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+sddistchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
 
 @time @sync @distributed for i=1:num
 
@@ -90,6 +92,9 @@ moddistchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
         modchia[i,r,sigtau_pos,tau_pos] = modechia;
         moddistchij[i,r,sigtau_pos,tau_pos] = modedistchij;
         moddistchia[i,r,sigtau_pos,tau_pos] = modedistchia;
+
+        sddistchij[i,r,sigtau_pos,tau_pos] = sdchij;
+        sddistchia[i,r,sigtau_pos,tau_pos] = sdchia;
     end
 
 
@@ -102,6 +107,8 @@ mdj = mean(modchij,dims=2)[:,1,:,:];
 mda = mean(modchia,dims=2)[:,1,:,:];
 distj = mean(moddistchij,dims=2)[:,1,:,:];
 dista = mean(moddistchia,dims=2)[:,1,:,:];
+msdj = mean(sddistchij,dims=2)[:,1,:,:];
+msda = mean(sddistchia,dims=2)[:,1,:,:];
 
 ndata = names(data);
 
@@ -113,11 +120,11 @@ binmatrixj = Array{Int64}(undef,num,length(sigtauvec),length(tauvec));
 binmatrixa = Array{Int64}(undef,num,length(sigtauvec),length(tauvec));
 cof = 0.5
 for i=1:5
-    binmatrixj[i,:,:] = (mcj .< cof)[i,:,:] .* (mdj .< cof)[i,:,:] .* (distj .< cof)[i,:,:];
-    binmatrixa[i,:,:] = (mca .< cof)[i,:,:] .* (mda .< cof)[i,:,:] .* (dista .< cof)[i,:,:];
+    binmatrixj[i,:,:] = (mcj .< cof)[i,:,:] .* (mdj .< cof)[i,:,:] .* (distj .< cof)[i,:,:] .* (msdj .< cof)[i,:,:];
+    binmatrixa[i,:,:] = (mca .< cof)[i,:,:] .* (mda .< cof)[i,:,:] .* (dista .< cof)[i,:,:] .* (msda .< cof)[i,:,:];
 end
-qmatrixj = mcj .+ mdj .+ distj;
-qmatrixa = mca .+ mda .+ dista;
+qmatrixj = mcj .+ mdj .+ distj .+ msdj;
+qmatrixa = mca .+ mda .+ dista .+ msda;
 bfcoordsj = Array{Float64}(undef,num,2);
 bfcoordsa = Array{Float64}(undef,num,2);
 for i=1:num
@@ -138,7 +145,7 @@ end
 ###################
 
 
-filename = "figures/fig_empirical_comp.pdf";
+filename = "figures/fig_empirical_comp2.pdf";
 namespace = smartpath(filename);
 filename_data = "data/sharks_eocene2/simdata.jld";
 Mj = binmatrixj[1,:,:]; Ma = binmatrixa[1,:,:];

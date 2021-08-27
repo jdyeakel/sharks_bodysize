@@ -25,6 +25,8 @@ modchij = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 modchia = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 moddistchij = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 moddistchia = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
+sddistchij = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
+sddistchia = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 
 
 measures = Array{Float64}(data[!,5][findall(!ismissing,data[!,5])]);
@@ -79,7 +81,7 @@ its = size(paramvec)[1];
     # lineplot!(ply,toothlength,simdensity_adult,color=:green)
     # lineplot!(ply,U.x,U.density,color=:blue)
 
-    meanchij, meanchia, modechij, modechia, modedistchij, modedistchia = empirical_sim_comparison(toothdrop,toothlength,measures)
+    meanchij, meanchia, modechij, modechia, modedistchij, modedistchia, sdchij, sdchia  = empirical_sim_comparison(toothdrop,toothlength,measures)
 
     mchij[r,sigtau_pos,tau_pos] = meanchij;
     mchia[r,sigtau_pos,tau_pos] = meanchia;
@@ -87,6 +89,8 @@ its = size(paramvec)[1];
     modchia[r,sigtau_pos,tau_pos] = modechia;
     moddistchij[r,sigtau_pos,tau_pos] = modedistchij;
     moddistchia[r,sigtau_pos,tau_pos] = modedistchia;
+    sddistchij[r,sigtau_pos,tau_pos] = sdchij;
+    sddistchia[r,sigtau_pos,tau_pos] = sdchia;
 end
 
 
@@ -109,11 +113,12 @@ binmatrixj = Array{Int64}(undef,length(sigtauvec),length(tauvec));
 binmatrixa = Array{Int64}(undef,length(sigtauvec),length(tauvec));
 cof = 0.5
 
-binmatrixj = (mcj .< cof) .* (mdj .< cof) .* (distj .< cof);
-binmatrixa = (mca .< cof) .* (mda .< cof) .* (dista .< cof);
+binmatrixj = (mcj .< cof) .* (mdj .< cof) .* (distj .< cof) .* (msdj .< cof);
+binmatrixa = (mca .< cof) .* (mda .< cof) .* (dista .< cof) .* (msda .< cof);
 
-qmatrixj = mcj .+ mdj .+ distj;
-qmatrixa = mca .+ mda .+ dista;
+qmatrixj = mcj .+ mdj .+ distj .+ msdj;
+qmatrixa = mca .+ mda .+ dista .+ msda;
+
 bfcoordsj = Array{Float64}(undef,2);
 bfcoordsa = Array{Float64}(undef,2);
 cartj = findmin(qmatrixj); carta = findmin(qmatrixa);
@@ -135,7 +140,7 @@ lineplot!(ply,toothlength,scaledsimdensity,color=:red)
 ###################
 
 
-filename = "figures/fig_empirical_comp_modern.pdf";
+filename = "figures/fig_empirical_comp_modern2.pdf";
 namespace = smartpath(filename);
 filename_data = "data/sharks_modern/simdata.jld";
 Mj = binmatrixj[:,:]; Ma = binmatrixa[:,:];
