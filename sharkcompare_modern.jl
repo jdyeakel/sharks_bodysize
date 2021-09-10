@@ -102,10 +102,12 @@ mdj = mean(modchij,dims=1)[1,:,:];
 mda = mean(modchia,dims=1)[1,:,:];
 distj = mean(moddistchij,dims=1)[1,:,:];
 dista = mean(moddistchia,dims=1)[1,:,:];
+msdj = mean(sddistchij,dims=2)[1,:,:];
+msda = mean(sddistchia,dims=2)[1,:,:];
 
 ndata = names(data);
 
-filename = "data/sharks_modern/analysisdata.jld";
+filename = "data/sharks_modern/analysisdata2.jld";
 namespace = smartpath(filename);
 @save namespace mcj mca mdj mda distj dista
 
@@ -122,6 +124,8 @@ qmatrixa = mca .+ mda .+ dista .+ msda;
 bfcoordsj = Array{Float64}(undef,2);
 bfcoordsa = Array{Float64}(undef,2);
 cartj = findmin(qmatrixj); carta = findmin(qmatrixa);
+bfvaluej = cartj[1];
+bfvaluea = carta[1];
 coordsj = [sigtauvec[cartj[2][1]],tauvec[cartj[2][2]]]; coordsa = [sigtauvec[carta[2][1]],tauvec[carta[2][2]]];
 bfcoordsj = coordsj; bfcoordsa = coordsa;
 
@@ -145,6 +149,8 @@ namespace = smartpath(filename);
 filename_data = "data/sharks_modern/simdata.jld";
 Mj = binmatrixj[:,:]; Ma = binmatrixa[:,:];
 qMj = qmatrixj[:,:]; qMa = qmatrixa[:,:];
+zmin = minimum([qMj;qMa]);
+zmax = maximum([qMj;qMa]);
 measures = Array{Float64}(data[!,5][findall(!ismissing,data[!,5])]);
 r=1;
 datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
@@ -154,14 +160,15 @@ library(fields)
 library(RColorBrewer)
 pal = brewer.pal(5,'Set1')
 ncol = c('black','black','black','white','white')
+palq = brewer.pal(11,'Spectral')
 pdf($namespace,width=12,height=3)
 par(mfrow=c(1,4))
-image(x=$sigtauvec,y=$tauvec,z=($(binmatrixj[:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site')
+image(x=$sigtauvec,y=$tauvec,z=($(qmatrixj[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site')
 points($(bfcoordsj[1]),$(bfcoordsj[2]),pch=21,col='white',bg=pal[5],cex=2)
-text(12.5,48,$(ndata[5]),col=ncol[5])
-image(x=$sigtauvec,y=$tauvec,z=($(binmatrixa[:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
+text(10,36,paste($(ndata[5]),': ',round($(bfvaluej),2),sep=''),col=ncol[5])
+image(x=$sigtauvec,y=$tauvec,z=($(qmatrixa[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
 points($(bfcoordsa[1]),$(bfcoordsa[2]),pch=21,col='white',bg=pal[5],cex=2)
-text(12.5,48,$(ndata[5]),col=ncol[5])
+text(10,36,paste($(ndata[5]),': ',round($(bfvaluea),2),sep=''),col=ncol[5])
 plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Juvenile site',col=pal[5],lwd=2,xlim=c(0,40))
 lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
 """

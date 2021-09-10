@@ -157,6 +157,8 @@ namespace = smartpath(filename);
 filename_data = "data/sharks_eocene_lowlatitude/simdata.jld";
 Mj = binmatrixj[1,:,:]; Ma = binmatrixa[1,:,:];
 qMj = qmatrixj[1,:,:]; qMa = qmatrixa[1,:,:];
+zmin = minimum([qmatrixj[1,:,:];qmatrixa[1,:,:]]);
+zmax = maximum([qmatrixj[1,:,:];qmatrixa[1,:,:]]);
 measures = Array{Float64}(data[!,1][findall(!ismissing,data[!,1])]);
 r=1;
 datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
@@ -169,10 +171,10 @@ palq = brewer.pal(11,'Spectral')
 ncol = c('black','black','black','white','white')
 pdf($namespace,width=12,height=6)
 par(mfrow=c($num,4))
-image(x=$sigtauvec,y=$tauvec,z=($(qmatrixj[1,:,:])),col=palq,xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site')
+image(x=$sigtauvec,y=$tauvec,z=($(qmatrixj[1,:,:])),zlim=c($zmin,$zmax),col=palq,xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site')
 points($(bfcoordsj[1,1]),$(bfcoordsj[1,2]),pch=21,col='white',bg=pal[1],cex=2)
 text(10,38,paste($(ndata[1]),': ',round($(bfvaluej[1]),2),sep=''),col=ncol[1])
-image(x=$sigtauvec,y=$tauvec,z=($(qmatrixa[1,:,:])),col=palq,xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
+image(x=$sigtauvec,y=$tauvec,z=($(qmatrixa[1,:,:])),zlim=c($zmin,$zmax),col=palq,xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
 points($(bfcoordsa[1,1]),$(bfcoordsa[1,2]),pch=21,col='white',bg=pal[1],cex=2)
 text(10,38,paste($(ndata[1]),': ',round($(bfvaluea[1]),2),sep=''),col=ncol[1])
 plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Juvenile site',col=pal[1],lwd=2,xlim=c(0,40))
@@ -197,15 +199,17 @@ end
 for i=2:num
     Mj = binmatrixj[i,:,:]; Ma = binmatrixa[i,:,:];
     qMj = qmatrixj[i,:,:]; qMa = qmatrixa[i,:,:];
+    zmin = minimum([qMj;qMa]);
+    zmax = maximum([qMj;qMa]);
     measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
     r=1;
     datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
     datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
     R"""
-    image(x=$sigtauvec,y=$tauvec,z=($(qMj)),col=palq,xlab='Juvenile migration window',ylab='Adult migration window')
+    image(x=$sigtauvec,y=$tauvec,z=($(qMj)),zlim=c($zmin,$zmax),col=palq,xlab='Juvenile migration window',ylab='Adult migration window')
     text(10,38,paste($(ndata[i]),': ',round($(bfvaluej[i]),2),sep=''),col=ncol[$i])
     points($(bfcoordsj[i,1]),$(bfcoordsj[i,2]),pch=21,col='white',bg=pal[$i],cex=2)
-    image(x=$sigtauvec,y=$tauvec,z=($(qMa)),col=palq,xlab='Juvenile migration window',ylab='Adult migration window')
+    image(x=$sigtauvec,y=$tauvec,z=($(qMa)),zlim=c($zmin,$zmax),col=palq,xlab='Juvenile migration window',ylab='Adult migration window')
     text(10,38,paste($(ndata[i]),': ',round($(bfvaluea[i]),2),sep=''),col=ncol[$i])
     points($(bfcoordsa[i,1]),$(bfcoordsa[i,2]),pch=21,col='white',bg=pal[$i],cex=2)
     plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',col=pal[$i],lwd=2,xlim=c(0,40))
