@@ -36,8 +36,8 @@ mintemp_a = 13;
 maxtemp_a = 23;
 
 distvec = 700;
-sigtauvec = collect(0.5:2:20); #collect(0.5:3:25); # collect(0.5:0.5:25)
-tauvec = collect(1:4:40); #collect(1:5:50); #collect(1:1:50);
+sigtauvec = collect(0.5:1:20); #collect(0.5:3:25); # collect(0.5:0.5:25)
+tauvec = collect(1:2:40); #collect(1:5:50); #collect(1:1:50);
 tauits = length(sigtauvec)*length(tauvec);
 
 
@@ -55,7 +55,7 @@ paramvec = [repeat(collect(1:reps),inner=size(paramposvec_pre)[1]) paramvec_pre]
 
 its = size(paramvec)[1];
 
-filename_settings = "data/sharks_modern/simsettings.jld";
+filename_settings = "data/sharks_modern2/simsettings.jld";
 namespace = smartpath(filename_settings);
 @save namespace l0 L n0 gen mintemp_j maxtemp_j mintemp_a maxtemp_a distvec sigtauvec tauvec reps paramvec its
 
@@ -113,7 +113,7 @@ namespace = smartpath(filename_settings);
     toothlength2 = 2.13337 .+ (0.187204 .* mass2.^(0.416667)); #mm
     
     #save data
-    filename = "data/sharks_modern/simdata.jld";
+    filename = "data/sharks_modern2/simdata.jld";
     indices = [r,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
     
