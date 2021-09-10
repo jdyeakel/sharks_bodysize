@@ -15,6 +15,13 @@ end
 # namespace = string("$(homedir())/sharks_bodysize/",filename);
 # data = CSV.read(namespace,header=true,DataFrame)
 
+#Trim data so only the lowlatitude sites are analyzed
+#1 Banks Island (3)
+#2 Antarctica = la meseta (4)
+
+data = data[:,3:4]
+
+
 num = length(names(data));
 reps = 25;
 sigtauvec = collect(0.5:0.5:25); # collect(0.5:0.5:25)
@@ -84,7 +91,7 @@ sddistchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
         # lineplot!(ply,toothlength,simdensity_adult,color=:green)
         # lineplot!(ply,U.x,U.density,color=:blue)
 
-        meanchij, meanchia, modechij, modechia, modedistchij, modedistchia = empirical_sim_comparison(toothdrop,toothlength,measures)
+        meanchij, meanchia, modechij, modechia, modedistchij, modedistchia, sdchij, sdchia = empirical_sim_comparison(toothdrop,toothlength,measures)
 
         mchij[i,r,sigtau_pos,tau_pos] = meanchij;
         mchia[i,r,sigtau_pos,tau_pos] = meanchia;

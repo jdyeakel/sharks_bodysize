@@ -10,6 +10,11 @@ else
     data = CSV.read(namespace,header=true,DataFrame)
 end
 
+#Trim data so only the lowlatitude sites are analyzed
+#1 Bashi_Tusc (1)
+#2 StoneCity (2)
+
+data = data[:,1:2]
 
 num = length(names(data));
 
