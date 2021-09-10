@@ -113,23 +113,29 @@ msda = mean(sddistchia,dims=2)[:,1,:,:];
 
 ndata = names(data);
 
-filename = "data/sharks_eocene_lowlatitude/analysisdata.jld";
+filename = "data/sharks_eocene_lowlatitude/analysisdata2.jld";
 namespace = smartpath(filename);
-@save namespace mcj mca mdj mda distj dista
+@save namespace mcj mca mdj mda distj dista msdj msda
 
 binmatrixj = Array{Int64}(undef,num,length(sigtauvec),length(tauvec));
 binmatrixa = Array{Int64}(undef,num,length(sigtauvec),length(tauvec));
 cof = 0.5
-for i=1:5
+for i=1:num
     binmatrixj[i,:,:] = (mcj .< cof)[i,:,:] .* (mdj .< cof)[i,:,:] .* (distj .< cof)[i,:,:] .* (msdj .< cof)[i,:,:];
     binmatrixa[i,:,:] = (mca .< cof)[i,:,:] .* (mda .< cof)[i,:,:] .* (dista .< cof)[i,:,:] .* (msda .< cof)[i,:,:];
 end
 qmatrixj = mcj .+ mdj .+ distj .+ msdj;
 qmatrixa = mca .+ mda .+ dista .+ msda;
+
+# Best fit
 bfcoordsj = Array{Float64}(undef,num,2);
 bfcoordsa = Array{Float64}(undef,num,2);
+bfvaluej = Array{Float64}(undef,num);
+bfvaluea = Array{Float64}(undef,num);
 for i=1:num
     cartj = findmin(qmatrixj[i,:,:]); carta = findmin(qmatrixa[i,:,:]);
+    bfvaluej[i] = cartj[1];
+    bfvaluea[i] = carta[1];
     coordsj = [sigtauvec[cartj[2][1]],tauvec[cartj[2][2]]]; coordsa = [sigtauvec[carta[2][1]],tauvec[carta[2][2]]];
     bfcoordsj[i,:] = coordsj; bfcoordsa[i,:] = coordsa;
 end
@@ -159,15 +165,16 @@ R"""
 library(fields)
 library(RColorBrewer)
 pal = brewer.pal(5,'Set1')
+palq = brewer.pal(11,'Spectral')
 ncol = c('black','black','black','white','white')
-pdf($namespace,width=12,height=15)
-par(mfrow=c(5,4))
-image(x=$sigtauvec,y=$tauvec,z=($(binmatrixj[1,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site')
+pdf($namespace,width=12,height=6)
+par(mfrow=c($num,4))
+image(x=$sigtauvec,y=$tauvec,z=($(qmatrixj[1,:,:])),col=palq,xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site')
 points($(bfcoordsj[1,1]),$(bfcoordsj[1,2]),pch=21,col='white',bg=pal[1],cex=2)
-text(10,38,$(ndata[1]),col=ncol[1])
-image(x=$sigtauvec,y=$tauvec,z=($(binmatrixa[1,:,:])),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
+text(10,38,paste($(ndata[1]),': ',round($(bfvaluej[1]),2),sep=''),col=ncol[1])
+image(x=$sigtauvec,y=$tauvec,z=($(qmatrixa[1,:,:])),col=palq,xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
 points($(bfcoordsa[1,1]),$(bfcoordsa[1,2]),pch=21,col='white',bg=pal[1],cex=2)
-text(12.5,38,$(ndata[1]),col=ncol[1])
+text(10,38,paste($(ndata[1]),': ',round($(bfvaluea[1]),2),sep=''),col=ncol[1])
 plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Juvenile site',col=pal[1],lwd=2,xlim=c(0,40))
 lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
 """
@@ -195,11 +202,11 @@ for i=2:num
     datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
     datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
     R"""
-    image(x=$sigtauvec,y=$tauvec,z=($(Mj)),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window')
-    text(10,38,$(ndata[i]),col=ncol[$i])
+    image(x=$sigtauvec,y=$tauvec,z=($(qMj)),col=palq,xlab='Juvenile migration window',ylab='Adult migration window')
+    text(10,38,paste($(ndata[i]),': ',round($(bfvaluej[i]),2),sep=''),col=ncol[$i])
     points($(bfcoordsj[i,1]),$(bfcoordsj[i,2]),pch=21,col='white',bg=pal[$i],cex=2)
-    image(x=$sigtauvec,y=$tauvec,z=($(Ma)),col=c('white','black'),xlab='Juvenile migration window',ylab='Adult migration window')
-    text(10,38,$(ndata[i]),col=ncol[$i])
+    image(x=$sigtauvec,y=$tauvec,z=($(qMa)),col=palq,xlab='Juvenile migration window',ylab='Adult migration window')
+    text(10,38,paste($(ndata[i]),': ',round($(bfvaluea[i]),2),sep=''),col=ncol[$i])
     points($(bfcoordsa[i,1]),$(bfcoordsa[i,2]),pch=21,col='white',bg=pal[$i],cex=2)
     plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',col=pal[$i],lwd=2,xlim=c(0,40))
     lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
