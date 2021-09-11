@@ -60,7 +60,7 @@ namespace = smartpath(filename_settings);
 @save namespace l0 L n0 gen mintemp_j maxtemp_j mintemp_a maxtemp_a distvec sigtauvec tauvec reps paramvec its
 
 @time @sync @distributed for i=1:its
-    
+
     #set parameters
     pos = paramvec[i,:];
     r = pos[1];
@@ -69,58 +69,70 @@ namespace = smartpath(filename_settings);
     sigtau_pos = pos[2];
     tau_pos = pos[3];
     
-    #Temperature range (high latitude: 8-13; Low latitude 22-30)
-    #Juvenile site
-    tempmin1 = mintemp_j+273.15; tempmax1 = maxtemp_j+273.15;
-    #Adult site
-    tempmin2 = mintemp_a+273.15; tempmax2 = maxtemp_a+273.15;
 
-    tempvec1 = Array{Float64}(undef,0);
-    tempvec2 = Array{Float64}(undef,0);
-    if tempmin1 == tempmax1
-        tempvec1 = repeat([tempmin1],inner=100);
-    else
-        tempvec1 = collect(tempmin1:((tempmax1-tempmin1)/(100-1)):tempmax1);
-    end;
-    if tempmin2 == tempmax2
-        tempvec2 = repeat([tempmin2],inner=100);
-    else
-        tempvec2 = collect(tempmin2:((tempmax2-tempmin2)/(100-1)):tempmax2);
-    end;
-
-    #distance between site (km * 1000)
-    distance = distvec*1000; #3.779e6/10; #1500
-    #Shark velocity (m/s)
-    velocity = 1;
-    D = 1;
-
-    #Steepness of juvenile migration (function of mass)
-    sigtau = sigtauvec[sigtau_pos];
-    #Steepness of adult migration (function of time)
-    tau = tauvec[tau_pos];
-
-    #run sim
-    mass1,
-    mass2,
-    epsilonvec,
-    clock,
-    popstate,
-    toothdrop,
-    state = popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D,sigtau,tau);
-    tpop = sum(popstate,dims=2);
-    
-    toothlength1 = 2.13337 .+ (0.187204 .* mass1.^(0.416667)); #mm
-    toothlength2 = 2.13337 .+ (0.187204 .* mass2.^(0.416667)); #mm
-    
-    #save data
+    #Does the file exist? If not, continue
     filename = "data/sharks_modern2/simdata.jld";
     indices = [r,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
+    check = isfile(namespace);
     
-    # @save namespace mass1 mass2 epsilonvec clock popstate toothdrop state toothlength1 toothlength2;
-    
-    @save namespace mass1 mass2 toothdrop toothlength1 toothlength2;
-    println(string("saved: ",[r,sigtauvec[sigtau_pos],tauvec[tau_pos]]))
+    # If not, continue
+    if check == false
+        
+        
+        #Temperature range (high latitude: 8-13; Low latitude 22-30)
+        #Juvenile site
+        tempmin1 = mintemp_j+273.15; tempmax1 = maxtemp_j+273.15;
+        #Adult site
+        tempmin2 = mintemp_a+273.15; tempmax2 = maxtemp_a+273.15;
+
+        tempvec1 = Array{Float64}(undef,0);
+        tempvec2 = Array{Float64}(undef,0);
+        if tempmin1 == tempmax1
+            tempvec1 = repeat([tempmin1],inner=100);
+        else
+            tempvec1 = collect(tempmin1:((tempmax1-tempmin1)/(100-1)):tempmax1);
+        end;
+        if tempmin2 == tempmax2
+            tempvec2 = repeat([tempmin2],inner=100);
+        else
+            tempvec2 = collect(tempmin2:((tempmax2-tempmin2)/(100-1)):tempmax2);
+        end;
+
+        #distance between site (km * 1000)
+        distance = distvec*1000; #3.779e6/10; #1500
+        #Shark velocity (m/s)
+        velocity = 1;
+        D = 1;
+
+        #Steepness of juvenile migration (function of mass)
+        sigtau = sigtauvec[sigtau_pos];
+        #Steepness of adult migration (function of time)
+        tau = tauvec[tau_pos];
+
+        #run sim
+        mass1,
+        mass2,
+        epsilonvec,
+        clock,
+        popstate,
+        toothdrop,
+        state = popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D,sigtau,tau);
+        tpop = sum(popstate,dims=2);
+        
+        toothlength1 = 2.13337 .+ (0.187204 .* mass1.^(0.416667)); #mm
+        toothlength2 = 2.13337 .+ (0.187204 .* mass2.^(0.416667)); #mm
+        
+        #save data
+        filename = "data/sharks_modern2/simdata.jld";
+        indices = [r,sigtau_pos,tau_pos];
+        namespace = smartpath(filename,indices);
+        
+        # @save namespace mass1 mass2 epsilonvec clock popstate toothdrop state toothlength1 toothlength2;
+        
+        @save namespace mass1 mass2 toothdrop toothlength1 toothlength2;
+        println(string("saved: ",[r,sigtauvec[sigtau_pos],tauvec[tau_pos]]))
+    end
     
 end
 
