@@ -78,7 +78,7 @@ namespace = smartpath(filename_settings);
     
     # If not, continue
     if check == false
-        
+        println(string("running: ",[r,sigtauvec[sigtau_pos],tauvec[tau_pos]]))
         
         #Temperature range (high latitude: 8-13; Low latitude 22-30)
         #Juvenile site
