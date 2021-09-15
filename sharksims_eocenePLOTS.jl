@@ -4,50 +4,18 @@ else
     loadfunc = include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/loadfuncs.jl");
 end
 
-#Size at birth (cm)
-l0 = 100.0;
-#Asymptotic size (cm)
-# L = 295; #1500; #295.0;
-# NOTE: L = 477 cm (15.65 ft) -> Mass 350 KG -> max tooth length 40 mm
-L = 477;
+# Highlatitude
+foldername = "sharks_eocene2";
+figfilename = "eocene_highlatitude";
 
-# # Mass from PRECAUDAL LENGTH (Schindler) 
-# m0 = 0.00538776*l0^3.102025622731644;
-# M = 0.00538776*L^3.102025622731644;
-
-# Mass (kg) from TOTAL LENGTH (Goldman et al. 2006)
-m0 = (0.00013*l0^2.4)*1000;
-M = (0.00013*L^2.4)*1000;
-
-#Sim params
-n0=1000;
-gen=1;
+# LowLatitude
+# foldername = "sharks_eocene_lowlatitude";
+# figfilename = "eocene_lowlatitude";
 
 
-mintemp_j = 12;
-maxtemp_j = 24;
-mintemp_a = 9;
-maxtemp_a = 17;
-
-distvec = 400;
-sigtauvec = collect(0.5:0.5:25); # collect(0.5:0.5:25)
-tauvec = collect(1:1:50); #collect(1:1:50);
-tauits = length(sigtauvec)*length(tauvec);
-
-
-#3 paramters: distance, sigtau, tau
-# distposvec = repeat(collect(1:3),inner = length(sigtauvec)*length(tauvec));
-sigtauposvec = repeat(collect(1:length(sigtauvec)),inner = length(tauvec));
-tauposvec = repeat(collect(1:length(tauvec)),outer=length(sigtauvec));
-paramposvec_pre = [sigtauposvec tauposvec];
-#temperature | distance | sigtauvec | tauposvec
-# paramposvec = [repeat(collect(1:4),inner = size(paramposvec_pre)[1]) repeat(paramposvec_pre,outer=4)];
-
-reps = 25;
-paramvec_pre = repeat(paramposvec_pre,outer = reps);
-paramvec = [repeat(collect(1:reps),inner=size(paramposvec_pre)[1]) paramvec_pre];
-
-its = size(paramvec)[1];
+filename_settings = string("data/",foldername,"/simsettings.jld");
+namespace = smartpath(filename_settings);
+@load namespace l0 L n0 gen mintemp_j maxtemp_j mintemp_a maxtemp_a distvec sigtauvec tauvec reps paramvec its
 
 
 meanjuv = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
@@ -102,7 +70,7 @@ peakadultquant = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
     tau = tauvec[tau_pos];
 
     #save data
-    filename = "data/sharks_eocene2/simdata.jld";
+    filename = string("data/",foldername,"/simdata.jld");
     indices = [r,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
     
@@ -125,33 +93,134 @@ peakadultquant = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
     
 end
 
+filename = string("data/",foldername,"/simdata.jld");
+#Upper Left
+indices = [1,1,length(tauvec)]
+tlj1, dj1 = plotdensityreturn(filename,indices,"juv");
+tla1, da1 = plotdensityreturn(filename,indices,"adult");
+
+#Upper Right
+indices = [1,length(sigtauvec),length(tauvec)]
+tlj2, dj2 = plotdensityreturn(filename,indices,"juv");
+tla2, da2 = plotdensityreturn(filename,indices,"adult");
+
+#Lower Left
+indices = [1,1,1]
+tlj3, dj3 = plotdensityreturn(filename,indices,"juv");
+tla3, da3 = plotdensityreturn(filename,indices,"adult");
+
+#Lower Right
+indices = [1,length(sigtauvec),1]
+tlj4, dj4 = plotdensityreturn(filename,indices,"juv");
+tla4, da4 = plotdensityreturn(filename,indices,"adult");
+
+
+
 # Eocene Figure
-filename = "figures/fig_means_peaks_eocene.pdf";
-namespace = string("$(homedir())/Dropbox/Postdoc/2018_sharks/",filename);
-i = 4; #temp regime
-j = 2; #dist regime
+filename = string("figures/fig_means_peaks_",figfilename,".pdf");
+namespace = smartpath(filename);
+# i = 4; #temp regime
+# j = 2; #dist regime
 mmeanjuv = mean(meanjuv,dims=1)[1,:,:];
 mmeanadult = mean(meanadult,dims=1)[1,:,:];
 minsize = minimum([mmeanjuv[:,:]; mmeanadult[:,:]]);
 maxsize = maximum([mmeanjuv[:,:]; mmeanadult[:,:]]);
 R"""
 library(RColorBrewer)
+library(wesanderson)
 library(fields)
-pal = colorRampPalette(rev(brewer.pal(11,'Spectral')))(50)
+# pal = colorRampPalette(rev(brewer.pal(11,'Spectral')))(50)
+# pal <- wes_palette("FantasticFox1", 100, type = "continuous")
+pal = colorRampPalette((brewer.pal(9,'YlGnBu')))(50)
+palpoints = brewer.pal(9,'Set1'); palpoints[6]=palpoints[9];
 pdf($namespace,width=10,height=8)
-layout(matrix(c(1,2,3,4),2,2,byrow=TRUE))
-par(oma = c(2, 2, 2, 1), mar = c(4, 5, 2, 5)) #,mai=c(0.6,0.6,0,0.1)
-image.plot(x=$sigtauvec,y=$tauvec,z=$(mmeanjuv[:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c($minsize,$maxsize))
-image.plot(x=$sigtauvec,y=$tauvec,z=$(mmeanadult[:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c($minsize,$maxsize))
+par(list(oma = c(1, 3, 0, 0), mar = c(1, 3, 1, 2)))
+par(list(new=TRUE, plt=c(0.02, 0.35, .63, 0.98)))
+image(x=$sigtauvec,y=$tauvec,z=$(mmeanjuv[:,:]),xlab='',ylab='',col=pal,zlim=c($minsize,$maxsize),xaxt='n',yaxt='n')
+points(head($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[1],col='black',cex=3)
+points(tail($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[2],col='black',cex=3)
+points(head($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[3],col='black',cex=3)
+points(tail($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[4],col='black',cex=3)
+axis(side=2,at =NULL,mgp=c(3, 0.75, 0),las=2)
+# title(ylab = 'Adult migration window', cex.lab = 1, line = 0.8)
+mtext('Adult migration window',side=2,outer=TRUE,adj=0.6,padj=-1.5,cex=1.5)
+par(list(new=TRUE, plt=c(0.36, 0.68, .63, 0.98)))
+image.plot(x=$sigtauvec,y=$tauvec,z=$(mmeanadult[:,:]),xlab='',ylab='',col=pal,zlim=c($minsize,$maxsize),yaxt='n',xaxt='n',legend.line=2.5)
+points(head($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[5],col='black',cex=3)
+points(tail($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[6],col='black',cex=3)
+points(head($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[7],col='black',cex=3)
+points(tail($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[8],col='black',cex=3)
 """
 mpeakjuvquant = mean(peakjuvquant,dims=1)[1,:,:];
 mpeakadultquant = mean(peakadultquant,dims=1)[1,:,:];
 maxpeakquant = maximum([mpeakjuvquant;mpeakadultquant]);
 
 R"""
-pal = c('white',colorRampPalette((brewer.pal(11,'YlGnBu')))(50))
-image.plot(x=$sigtauvec,y=$tauvec,z=$(mpeakjuvquant[:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c(0,$maxpeakquant))
-image.plot(x=$sigtauvec,y=$tauvec,z=$(mpeakadultquant[:,:]),xlab='Juvenile migration window',ylab='Adult migration window',col=pal,zlim=c(0,$maxpeakquant))
+pal = c('white',colorRampPalette((brewer.pal(9,'YlGnBu')))(50))
+par(list(new=TRUE, plt=c(0.02, 0.35, .26, 0.61)))
+image(x=$sigtauvec,y=$tauvec,z=$(mpeakjuvquant[:,:]),xlab='',ylab='',col=pal,zlim=c(0,$maxpeakquant),yaxt='n',xaxt='n')
+points(head($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[1],col='black',cex=3)
+points(tail($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[2],col='black',cex=3)
+points(head($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[3],col='black',cex=3)
+points(tail($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[4],col='black',cex=3)
+axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
+axis(side=2,at =NULL,mgp=c(3, 0.75, 0),las=2)
+mtext('Juvenile migration window',side=1,outer=TRUE,adj=0.32,padj=-9,cex=1.5)
+# title(xlab = 'Juvenile migration window', cex.lab = 1, line = 1.75)
+# mtext('Adult migration window',side=2,outer=FALSE,adj=0.5,padj=-4)
+par(list(new=TRUE, plt=c(0.36, 0.68, .26, 0.61)))
+image.plot(x=$sigtauvec,y=$tauvec,z=$(mpeakadultquant[:,:]),xlab='',ylab='',col=pal,zlim=c(0,$maxpeakquant),yaxt='n',xaxt='n')
+points(head($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[5],col='black',cex=3)
+points(tail($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[6],col='black',cex=3)
+points(head($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[7],col='black',cex=3)
+points(tail($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[8],col='black',cex=3)
+axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
+# title(xlab = 'Juvenile migration window', cex.lab = 1, line = 1.75)
+
+par(list(new=TRUE, plt=c(0.01, 0.2, .05, 0.19)))
+plot($tlj1, $dj1,xlim=c(0,40),type='l',lwd=2,yaxt='n',xaxt='n',ylab='',xlab='',axes=FALSE,col=palpoints[1])
+polygon(c($tlj1,rev($tlj1)),c($dj1,rep(0,length($dj1))),col=paste(palpoints[1],50,sep=''),border=NA)
+axis(side=1,at =NULL,mgp=c(3, 0.5, 0),las=1,cex.axis=0.8)
+
+
+par(list(new=TRUE, plt=c(0.2, 0.4, .05, 0.19)))
+plot($tlj2, $dj2,xlim=c(0,40),type='l',lwd=2,yaxt='n',xaxt='n',ylab='',xlab='',axes=FALSE,col=palpoints[2])
+polygon(c($tlj2,rev($tlj2)),c($dj2,rep(0,length($dj2))),col=paste(palpoints[2],50,sep=''),border=NA)
+axis(side=1,at =NULL,mgp=c(3, 0.5, 0),las=1,cex.axis=0.8)
+
+par(list(new=TRUE, plt=c(0.4, 0.6, .05, 0.19)))
+plot($tlj3, $dj3,xlim=c(0,40),type='l',lwd=2,yaxt='n',xaxt='n',ylab='',xlab='',axes=FALSE,col=palpoints[3])
+polygon(c($tlj3,rev($tlj3)),c($dj3,rep(0,length($dj3))),col=paste(palpoints[3],50,sep=''),border=NA)
+axis(side=1,at =NULL,mgp=c(3, 0.5, 0),las=1,cex.axis=0.8)
+
+par(list(new=TRUE, plt=c(0.6, 0.8, .05, 0.19)))
+plot($tlj4, $dj4,xlim=c(0,40),type='l',lwd=2,yaxt='n',xaxt='n',ylab='',xlab='',axes=FALSE,col=palpoints[4])
+polygon(c($tlj4,rev($tlj4)),c($dj4,rep(0,length($dj4))),col=paste(palpoints[4],50,sep=''),border=NA)
+axis(side=1,at =NULL,mgp=c(3, 0.5, 0),las=1,cex.axis=0.8)
+mtext('Juvenile site tooth length',side=1,outer=TRUE,adj=0.4,padj=-0.1,cex=-0.5)
+
+
+par(list(new=TRUE, plt=c(0.77, 0.97, 0.84, 0.98)))
+plot($tla1, $da1,xlim=c(0,40),type='l',lwd=2,yaxt='n',xaxt='n',ylab='',xlab='',axes=FALSE,col=palpoints[5])
+polygon(c($tla1,rev($tla1)),c($da1,rep(0,length($da1))),col=paste(palpoints[5],50,sep=''),border=NA)
+axis(side=1,at =NULL,mgp=c(3, 0.5, 0),las=1,cex.axis=0.8)
+
+par(list(new=TRUE, plt=c(0.77, 0.97, 0.64, 0.78)))
+plot($tla2, $da2,xlim=c(0,40),type='l',lwd=2,yaxt='n',xaxt='n',ylab='',xlab='',axes=FALSE,col=palpoints[6])
+polygon(c($tla2,rev($tla2)),c($da2,rep(0,length($da2))),col=paste(palpoints[6],50,sep=''),border=NA)
+axis(side=1,at =NULL,mgp=c(3, 0.5, 0),las=1,cex.axis=0.8)
+
+par(list(new=TRUE, plt=c(0.77, 0.97, 0.44, 0.58)))
+plot($tla3, $da3,xlim=c(0,40),type='l',lwd=2,yaxt='n',xaxt='n',ylab='',xlab='',axes=FALSE,col=palpoints[7])
+polygon(c($tla3,rev($tla3)),c($da3,rep(0,length($da3))),col=paste(palpoints[7],50,sep=''),border=NA)
+axis(side=1,at =NULL,mgp=c(3, 0.5, 0),las=1,cex.axis=0.8)
+
+par(list(new=TRUE, plt=c(0.77, 0.97, 0.24, 0.38)))
+plot($tla4, $da4,xlim=c(0,40),type='l',lwd=2,yaxt='n',xaxt='n',ylab='',axes=FALSE,col=palpoints[8],xlab='Adult site tooth length')
+polygon(c($tla4,rev($tla4)),c($da4,rep(0,length($da4))),col=paste(palpoints[8],50,sep=''),border=NA)
+axis(side=1,at =NULL,mgp=c(3, 0.5, 0),las=1,cex.axis=0.8)
+
+
 dev.off()
 """
 

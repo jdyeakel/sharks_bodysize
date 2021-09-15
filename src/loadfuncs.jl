@@ -27,6 +27,7 @@ if homedir() == "/home/z840"
     @everywhere include("$(homedir())/sharks_bodysize/src/modality_analysis.jl")
     @everywhere include("$(homedir())/sharks_bodysize/src/empirical_sim_comparison.jl")
     @everywhere include("$(homedir())/sharks_bodysize/src/plotcompare.jl")
+    @everywhere include("$(homedir())/sharks_bodysize/src/plotdensityreturn.jl")
 
 else
     
@@ -41,5 +42,6 @@ else
     @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/modality_analysis.jl")
     @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/empirical_sim_comparison.jl")
     @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/plotcompare.jl")
+    @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/plotdensityreturn.jl")
     
 end
