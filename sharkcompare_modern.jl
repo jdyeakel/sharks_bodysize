@@ -161,14 +161,15 @@ datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data
 R"""
 library(fields)
 library(RColorBrewer)
-pal = brewer.pal(5,'Set1')
+# pal = brewer.pal(5,'Set1')
+pal = c('black','black')
 ncol = c('black','black','black','white','white')
 palq = brewer.pal(11,'Spectral')
 pdf($namespace,width=12,height=3)
 par(mfrow=c(1,4))
 par(list(oma = c(4, 4, 0, 0), mar = c(1, 1, 1, 2)))
 image(x=$sigtauvec,y=$tauvec,z=($(qmatrixj[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='',ylab='',xaxt='n',yaxt='n')
-points($(bfcoordsj[1]),$(bfcoordsj[2]),pch=21,col='white',bg=pal[5],cex=2)
+points($(bfcoordsj[1]),$(bfcoordsj[2]),pch=21,col='white',bg=pal[1],cex=3)
 # text(10,38,paste($(ndata[5]),': ',round($(bfvaluej),2),sep=''),col=ncol[5])
 axis(side=2,at =NULL,mgp=c(3, 0.75, 0),las=2)
 axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
@@ -176,16 +177,16 @@ mtext('Adult migration window',side=2,outer=TRUE,adj=0.5,padj=-1.5,cex=1.2)
 
 
 image(x=$sigtauvec,y=$tauvec,z=($(qmatrixa[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='',ylab='',xaxt='n',yaxt='n')
-points($(bfcoordsa[1]),$(bfcoordsa[2]),pch=21,col='white',bg=pal[5],cex=2)
+points($(bfcoordsa[1]),$(bfcoordsa[2]),pch=21,col='white',bg=pal[1],cex=3)
 # text(10,38,paste($(ndata[5]),': ',round($(bfvaluea),2),sep=''),col=ncol[5])
 axis(side=2,at =NULL,mgp=c(3, 0.75, 0),las=2)
 axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
 mtext('Juvenile migration window',side=1,outer=TRUE,adj=0.18,padj=1.5,cex=1.2)
 
 
-plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='',ylab='',main='',col=pal[5],lwd=2,xlim=c(0,40),xaxt='n',yaxt='n')
+plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='',ylab='',main='',col=pal[1],lwd=3,xlim=c(0,40),xaxt='n',yaxt='n')
 text(42, 0.9, paste($(ndata[1]),"\nJuvenile site","\n","Error = ",round($(bfvaluej[1]),2),sep=''), pos = 2)
-lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
+lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000050')
 axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
 mtext('Scaled density',side=2,outer=TRUE,adj=0.5,padj=41.5,cex=1.2)
 mtext('Tooth length (mm)',side=1,outer=TRUE,adj=0.78,padj=1.5,cex=1.2)
@@ -194,19 +195,19 @@ mtext('Tooth length (mm)',side=1,outer=TRUE,adj=0.78,padj=1.5,cex=1.2)
 for r=2:reps
     datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
     R"""
-    lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
+    lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000050')
     """
 end
 R"""
-plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='',ylab='',main='',col=pal[5],lwd=2,xlim=c(0,40),xaxt='n',yaxt='n')
-lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
+plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='',ylab='',main='',col=pal[1],lwd=3,xlim=c(0,40),xaxt='n',yaxt='n')
+lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000050')
 axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
 text(42, 0.9, paste($(ndata[1]),"\nAdult site","\n","Error = ",round($(bfvaluea[1]),2),'*',sep=''), pos = 2)
 """
 for r=2:reps
     datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
     R"""
-    lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
+    lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000050')
     """
 end
 R"dev.off()"
