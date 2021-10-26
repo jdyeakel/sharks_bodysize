@@ -15,6 +15,8 @@ end
 # namespace = string("$(homedir())/sharks_bodysize/",filename);
 # data = CSV.read(namespace,header=true,DataFrame)
 
+data = data[:,5]
+
 filename_settings = "data/sharks_modern2/simsettings.jld";
 namespace = smartpath(filename_settings);
 @load namespace l0 L n0 gen mintemp_j maxtemp_j mintemp_a maxtemp_a distvec sigtauvec tauvec reps paramvec its
@@ -29,7 +31,7 @@ sddistchij = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 sddistchia = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 
 
-measures = Array{Float64}(data[!,5][findall(!ismissing,data[!,5])]);
+measures = Array{Float64}(data[findall(!ismissing,data)]);
 # U = kde(measures);
 # lineplot(U.x,U.density)
 
@@ -105,11 +107,12 @@ dista = mean(moddistchia,dims=1)[1,:,:];
 msdj = mean(sddistchij,dims=2)[1,:,:];
 msda = mean(sddistchia,dims=2)[1,:,:];
 
-ndata = names(data);
+# ndata = names(data);
+ndata = ["Delaware Bay (DE)"]
 
 filename = "data/sharks_modern2/analysisdata2.jld";
 namespace = smartpath(filename);
-@save namespace mcj mca mdj mda distj dista
+# @save namespace mcj mca mdj mda distj dista
 
 binmatrixj = Array{Int64}(undef,length(sigtauvec),length(tauvec));
 binmatrixa = Array{Int64}(undef,length(sigtauvec),length(tauvec));
@@ -134,7 +137,7 @@ bfcoordsj = coordsj; bfcoordsa = coordsa;
 M = binmatrixj;
 qM = qmatrixj
 filename_data = "data/sharks_modern2/simdata.jld";
-measures = Array{Float64}(data[!,5][findall(!ismissing,data[!,5])]);
+measures = Array{Float64}(data[findall(!ismissing,data)]);
 heatmap(M')
 r=1;
 site_type = "juv";
@@ -144,14 +147,14 @@ lineplot!(ply,toothlength,scaledsimdensity,color=:red)
 ###################
 
 
-filename = "figures/fig_empirical_comp_modern2.pdf";
+filename = "figures/fig_empirical_comp_modern3.pdf";
 namespace = smartpath(filename);
 filename_data = "data/sharks_modern2/simdata.jld";
 Mj = binmatrixj[:,:]; Ma = binmatrixa[:,:];
 qMj = qmatrixj[:,:]; qMa = qmatrixa[:,:];
 zmin = minimum([qMj;qMa]);
 zmax = maximum([qMj;qMa]);
-measures = Array{Float64}(data[!,5][findall(!ismissing,data[!,5])]);
+measures = Array{Float64}(data[findall(!ismissing,data)]);
 r=1;
 datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
 datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
@@ -163,14 +166,30 @@ ncol = c('black','black','black','white','white')
 palq = brewer.pal(11,'Spectral')
 pdf($namespace,width=12,height=3)
 par(mfrow=c(1,4))
-image(x=$sigtauvec,y=$tauvec,z=($(qmatrixj[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='Juvenile migration window',ylab='Adult migration window',main='Juvenile site')
+par(list(oma = c(4, 4, 0, 0), mar = c(1, 1, 1, 2)))
+image(x=$sigtauvec,y=$tauvec,z=($(qmatrixj[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='',ylab='',xaxt='n',yaxt='n')
 points($(bfcoordsj[1]),$(bfcoordsj[2]),pch=21,col='white',bg=pal[5],cex=2)
-text(10,38,paste($(ndata[5]),': ',round($(bfvaluej),2),sep=''),col=ncol[5])
-image(x=$sigtauvec,y=$tauvec,z=($(qmatrixa[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='Juvenile migration window',ylab='Adult migration window',main='Adult site')
+# text(10,38,paste($(ndata[5]),': ',round($(bfvaluej),2),sep=''),col=ncol[5])
+axis(side=2,at =NULL,mgp=c(3, 0.75, 0),las=2)
+axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
+mtext('Adult migration window',side=2,outer=TRUE,adj=0.5,padj=-1.5,cex=1.2)
+
+
+image(x=$sigtauvec,y=$tauvec,z=($(qmatrixa[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='',ylab='',xaxt='n',yaxt='n')
 points($(bfcoordsa[1]),$(bfcoordsa[2]),pch=21,col='white',bg=pal[5],cex=2)
-text(10,38,paste($(ndata[5]),': ',round($(bfvaluea),2),sep=''),col=ncol[5])
-plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Juvenile site',col=pal[5],lwd=2,xlim=c(0,40))
+# text(10,38,paste($(ndata[5]),': ',round($(bfvaluea),2),sep=''),col=ncol[5])
+axis(side=2,at =NULL,mgp=c(3, 0.75, 0),las=2)
+axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
+mtext('Juvenile migration window',side=1,outer=TRUE,adj=0.18,padj=1.5,cex=1.2)
+
+
+plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='',ylab='',main='',col=pal[5],lwd=2,xlim=c(0,40),xaxt='n',yaxt='n')
+text(42, 0.9, paste($(ndata[1]),"\nJuvenile site","\n","Error = ",round($(bfvaluej[1]),2),sep=''), pos = 2)
 lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
+axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
+mtext('Scaled density',side=2,outer=TRUE,adj=0.5,padj=41.5,cex=1.2)
+mtext('Tooth length (mm)',side=1,outer=TRUE,adj=0.78,padj=1.5,cex=1.2)
+
 """
 for r=2:reps
     datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
@@ -179,8 +198,10 @@ for r=2:reps
     """
 end
 R"""
-plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='Tooth length (mm)',ylab='Scaled density',main='Adult site',col=pal[5],lwd=2,xlim=c(0,40))
+plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='',ylab='',main='',col=pal[5],lwd=2,xlim=c(0,40),xaxt='n',yaxt='n')
 lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
+axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
+text(42, 0.9, paste($(ndata[1]),"\nAdult site","\n","Error = ",round($(bfvaluea[1]),2),'*',sep=''), pos = 2)
 """
 for r=2:reps
     datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
