@@ -78,7 +78,7 @@ namespace = smartpath(filename_settings);
     
     # If not, continue
     if check == false
-        println(string("running: ",[r,sigtauvec[sigtau_pos],tauvec[tau_pos]]))
+        println(string("running: ",[distvec[dist_pos],sigtauvec[sigtau_pos],tauvec[tau_pos]]))
         
         #Temperature range (high latitude: 8-13; Low latitude 22-30)
         #Juvenile site
@@ -132,7 +132,7 @@ namespace = smartpath(filename_settings);
         # @save namespace mass1 mass2 epsilonvec clock popstate toothdrop state toothlength1 toothlength2;
         
         @save namespace mass1 mass2 toothdrop toothlength1 toothlength2;
-        println(string("saved: ",[r,sigtauvec[sigtau_pos],tauvec[tau_pos]]))
+        println(string("saved: ",[distvec[dist_pos],sigtauvec[sigtau_pos],tauvec[tau_pos]]))
     end
     
 end
