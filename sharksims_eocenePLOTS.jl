@@ -5,20 +5,24 @@ else
 end
 
 # Highlatitude
-# foldername = "sharks_eocene2";
-# figfilename = "eocene_highlatitude";
+foldername = "sharks_eocene2";
+figfilename = "eocene_highlatitude";
 
 # LowLatitude
 # foldername = "sharks_eocene_lowlatitude";
 # figfilename = "eocene_lowlatitude";
 
 # Modern
-foldername = "sharks_modern2";
-figfilename = "modern";
+# foldername = "sharks_modern2";
+# figfilename = "modern";
 
 filename_settings = string("data/",foldername,"/simsettings.jld");
 namespace = smartpath(filename_settings);
 @load namespace l0 L n0 gen mintemp_j maxtemp_j mintemp_a maxtemp_a distvec sigtauvec tauvec reps paramvec its
+
+#Convert sigtauvec to mass units
+M = (0.00013*L^2.4)*1000;
+sigtauvecmass = ((sigtauvec .* M) ./ 50)/1000; #in KG
 
 
 meanjuv = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
@@ -120,7 +124,7 @@ tla4, da4 = plotdensityreturn(filename,indices,"adult");
 
 
 # Eocene Figure
-filename = string("figures/fig_means_peaks_",figfilename,".pdf");
+filename = string("figures/fig_means_peaks_",figfilename,"_rev.pdf");
 namespace = smartpath(filename);
 # i = 4; #temp regime
 # j = 2; #dist regime
@@ -139,28 +143,28 @@ palpoints = brewer.pal(9,'Set1'); palpoints[6]=palpoints[9];
 pdf($namespace,width=10,height=8)
 par(list(oma = c(2, 3, 0, 0), mar = c(1, 3, 1, 2)))
 par(list(new=TRUE, plt=c(0.02, 0.35, .63, 0.98)))
-image(x=$sigtauvec,y=$tauvec,z=$(mmeanjuv[:,:]),xlab='',ylab='',col=pal,zlim=c($minsize,$maxsize),xaxt='n',yaxt='n')
-points(head($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[1],col='black',cex=3)
-text(head($sigtauvec,1)*4,tail($tauvec,1)*0.9,'I',cex=1.5)
-points(tail($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[2],col='black',cex=3)
-text(tail($sigtauvec,1)*(0.95),tail($tauvec,1)*0.9,'II',cex=1.5)
-points(head($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[3],col='black',cex=3)
-text(head($sigtauvec,1)*4.4,head($tauvec,1)*4.4,'III',cex=1.5)
-points(tail($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[4],col='black',cex=3)
-text(tail($sigtauvec,1)*0.95,head($tauvec,1)*4.4,'IV',cex=1.5)
+image(x=$sigtauvecmass,y=$tauvec,z=$(mmeanjuv[:,:]),xlab='',ylab='',col=pal,zlim=c($minsize,$maxsize),xaxt='n',yaxt='n')
+points(head($sigtauvecmass,1),tail($tauvec,1),pch=21,bg=palpoints[1],col='black',cex=3)
+text(head($sigtauvecmass,1)*4,tail($tauvec,1)*0.9,'I',cex=1.5)
+points(tail($sigtauvecmass,1),tail($tauvec,1),pch=21,bg=palpoints[2],col='black',cex=3)
+text(tail($sigtauvecmass,1)*(0.95),tail($tauvec,1)*0.9,'II',cex=1.5)
+points(head($sigtauvecmass,1),head($tauvec,1),pch=21,bg=palpoints[3],col='black',cex=3)
+text(head($sigtauvecmass,1)*4.4,head($tauvec,1)*4.4,'III',cex=1.5)
+points(tail($sigtauvecmass,1),head($tauvec,1),pch=21,bg=palpoints[4],col='black',cex=3)
+text(tail($sigtauvecmass,1)*0.95,head($tauvec,1)*4.4,'IV',cex=1.5)
 axis(side=2,at =NULL,mgp=c(3, 0.75, 0),las=2)
 # title(ylab = 'Adult migration window', cex.lab = 1, line = 0.8)
-mtext('Adult migration window',side=2,outer=TRUE,adj=0.6,padj=-1.5,cex=1.5)
+mtext('Adult dispersal window',side=2,outer=TRUE,adj=0.6,padj=-1.5,cex=1.5)
 par(list(new=TRUE, plt=c(0.36, 0.68, .63, 0.98)))
-image.plot(x=$sigtauvec,y=$tauvec,z=$(mmeanadult[:,:]),xlab='',ylab='',col=pal,zlim=c($minsize,$maxsize),yaxt='n',xaxt='n',legend.line=2.5)
-points(head($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[5],col='black',cex=3)
-text(head($sigtauvec,1)*4,tail($tauvec,1)*0.9,'I',cex=1.5,col='white')
-points(tail($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[6],col='black',cex=3)
-text(tail($sigtauvec,1)*(0.95),tail($tauvec,1)*0.9,'II',cex=1.5)
-points(head($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[7],col='black',cex=3)
-text(head($sigtauvec,1)*4.4,head($tauvec,1)*4.4,'III',cex=1.5,col='white')
-points(tail($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[8],col='black',cex=3)
-text(tail($sigtauvec,1)*0.95,head($tauvec,1)*4.4,'IV',cex=1.5)
+image.plot(x=$sigtauvecmass,y=$tauvec,z=$(mmeanadult[:,:]),xlab='',ylab='',col=pal,zlim=c($minsize,$maxsize),yaxt='n',xaxt='n',legend.line=2.5)
+points(head($sigtauvecmass,1),tail($tauvec,1),pch=21,bg=palpoints[5],col='black',cex=3)
+text(head($sigtauvecmass,1)*4,tail($tauvec,1)*0.9,'I',cex=1.5,col='white')
+points(tail($sigtauvecmass,1),tail($tauvec,1),pch=21,bg=palpoints[6],col='black',cex=3)
+text(tail($sigtauvecmass,1)*(0.95),tail($tauvec,1)*0.9,'II',cex=1.5)
+points(head($sigtauvecmass,1),head($tauvec,1),pch=21,bg=palpoints[7],col='black',cex=3)
+text(head($sigtauvecmass,1)*4.4,head($tauvec,1)*4.4,'III',cex=1.5,col='white')
+points(tail($sigtauvecmass,1),head($tauvec,1),pch=21,bg=palpoints[8],col='black',cex=3)
+text(tail($sigtauvecmass,1)*0.95,head($tauvec,1)*4.4,'IV',cex=1.5)
 
 """
 mpeakjuvquant = mean(peakjuvquant,dims=1)[1,:,:];
@@ -170,32 +174,32 @@ maxpeakquant = maximum([mpeakjuvquant;mpeakadultquant]);
 R"""
 pal = c('white',colorRampPalette((brewer.pal(9,'YlGnBu')))(50))
 par(list(new=TRUE, plt=c(0.02, 0.35, .26, 0.61)))
-image(x=$sigtauvec,y=$tauvec,z=$(mpeakjuvquant[:,:]),xlab='',ylab='',col=pal,zlim=c(0,$maxpeakquant),yaxt='n',xaxt='n')
-points(head($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[1],col='black',cex=3)
-text(head($sigtauvec,1)*4,tail($tauvec,1)*0.9,'I',cex=1.5)
-points(tail($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[2],col='black',cex=3)
-text(tail($sigtauvec,1)*(0.95),tail($tauvec,1)*0.9,'II',cex=1.5)
-points(head($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[3],col='black',cex=3)
-text(head($sigtauvec,1)*4.4,head($tauvec,1)*4.4,'III',cex=1.5)
-points(tail($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[4],col='black',cex=3)
-text(tail($sigtauvec,1)*0.95,head($tauvec,1)*4.4,'IV',cex=1.5,col='white') #,col='white'
+image(x=$sigtauvecmass,y=$tauvec,z=$(mpeakjuvquant[:,:]),xlab='',ylab='',col=pal,zlim=c(0,$maxpeakquant),yaxt='n',xaxt='n')
+points(head($sigtauvecmass,1),tail($tauvec,1),pch=21,bg=palpoints[1],col='black',cex=3)
+text(head($sigtauvecmass,1)*4,tail($tauvec,1)*0.9,'I',cex=1.5)
+points(tail($sigtauvecmass,1),tail($tauvec,1),pch=21,bg=palpoints[2],col='black',cex=3)
+text(tail($sigtauvecmass,1)*(0.95),tail($tauvec,1)*0.9,'II',cex=1.5)
+points(head($sigtauvecmass,1),head($tauvec,1),pch=21,bg=palpoints[3],col='black',cex=3)
+text(head($sigtauvecmass,1)*4.4,head($tauvec,1)*4.4,'III',cex=1.5)
+points(tail($sigtauvecmass,1),head($tauvec,1),pch=21,bg=palpoints[4],col='black',cex=3)
+text(tail($sigtauvecmass,1)*0.95,head($tauvec,1)*4.4,'IV',cex=1.5,col='white') #,col='white'
 axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
 axis(side=2,at =NULL,mgp=c(3, 0.75, 0),las=2)
-mtext('Juvenile migration window',side=1,outer=TRUE,adj=0.32,padj=-9,cex=1.5)
+mtext('Juvenile dispersal window',side=1,outer=TRUE,adj=0.32,padj=-9,cex=1.5)
 mtext('Mean',side=1,outer=TRUE,adj=0.73,padj=-63,cex=1)
 mtext(expression(paste(Delta,' mode')),side=1,outer=TRUE,adj=0.74,padj=-39,cex=1)
 # title(xlab = 'Juvenile migration window', cex.lab = 1, line = 1.75)
 # mtext('Adult migration window',side=2,outer=FALSE,adj=0.5,padj=-4)
 par(list(new=TRUE, plt=c(0.36, 0.68, .26, 0.61)))
-image.plot(x=$sigtauvec,y=$tauvec,z=$(mpeakadultquant[:,:]),xlab='',ylab='',col=pal,zlim=c(0,$maxpeakquant),yaxt='n',xaxt='n')
-points(head($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[5],col='black',cex=3)
-text(head($sigtauvec,1)*4,tail($tauvec,1)*0.9,'I',cex=1.5)
-points(tail($sigtauvec,1),tail($tauvec,1),pch=21,bg=palpoints[6],col='black',cex=3)
-text(tail($sigtauvec,1)*(0.95),tail($tauvec,1)*0.9,'II',cex=1.5)
-points(head($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[7],col='black',cex=3)
-text(head($sigtauvec,1)*4.4,head($tauvec,1)*4.4,'III',cex=1.5)
-points(tail($sigtauvec,1),head($tauvec,1),pch=21,bg=palpoints[8],col='black',cex=3)
-text(tail($sigtauvec,1)*0.95,head($tauvec,1)*4.4,'IV',cex=1.5,col='white')
+image.plot(x=$sigtauvecmass,y=$tauvec,z=$(mpeakadultquant[:,:]),xlab='',ylab='',col=pal,zlim=c(0,$maxpeakquant),yaxt='n',xaxt='n')
+points(head($sigtauvecmass,1),tail($tauvec,1),pch=21,bg=palpoints[5],col='black',cex=3)
+text(head($sigtauvecmass,1)*4,tail($tauvec,1)*0.9,'I',cex=1.5)
+points(tail($sigtauvecmass,1),tail($tauvec,1),pch=21,bg=palpoints[6],col='black',cex=3)
+text(tail($sigtauvecmass,1)*(0.95),tail($tauvec,1)*0.9,'II',cex=1.5)
+points(head($sigtauvecmass,1),head($tauvec,1),pch=21,bg=palpoints[7],col='black',cex=3)
+text(head($sigtauvecmass,1)*4.4,head($tauvec,1)*4.4,'III',cex=1.5)
+points(tail($sigtauvecmass,1),head($tauvec,1),pch=21,bg=palpoints[8],col='black',cex=3)
+text(tail($sigtauvecmass,1)*0.95,head($tauvec,1)*4.4,'IV',cex=1.5,col='white')
 axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
 # title(xlab = 'Juvenile migration window', cex.lab = 1, line = 1.75)
 

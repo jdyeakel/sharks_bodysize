@@ -1,0 +1,7 @@
+Make dots on figure 2 bigger
+Label juvenile vs. adult site on figure 2
+
+Make points bigger in figure 4
+Label columns in figure 4
+Label top 8 as A and bottom 8 as B
+Make text bigger

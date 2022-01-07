@@ -1,0 +1,268 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      9582,        260]
+NotebookOptionsPosition[      8843,        239]
+NotebookOutlinePosition[      9184,        254]
+CellTagsIndexPosition[      9141,        251]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Show", "[", 
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"Plot", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1.4", "*", 
+            RowBox[{"10", "^", 
+             RowBox[{"-", "6"}]}]}], ")"}], "/", 
+          RowBox[{"(", 
+           RowBox[{"1", " ", "+", " ", 
+            RowBox[{"Exp", "[", 
+             RowBox[{
+              RowBox[{"-", 
+               RowBox[{"(", 
+                RowBox[{"1", "/", 
+                 RowBox[{"(", 
+                  FractionBox[
+                   RowBox[{"ej", "*", "M"}], "lmax"], ")"}]}], ")"}]}], "*", 
+              RowBox[{"(", 
+               RowBox[{"m", "-", 
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{"1", "/", "4"}], ")"}], "*", "M"}]}], ")"}]}], 
+             "]"}]}], ")"}]}], ",", 
+         RowBox[{"{", 
+          RowBox[{"m", ",", "0", ",", "114560"}], "}"}], ",", 
+         RowBox[{"PlotRange", "\[Rule]", 
+          RowBox[{"{", 
+           RowBox[{"0", ",", 
+            RowBox[{"1.4", "*", 
+             RowBox[{"10", "^", 
+              RowBox[{"-", "6"}]}]}]}], "}"}]}], ",", 
+         RowBox[{"PlotLabel", "\[Rule]", 
+          RowBox[{"N", "[", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"M", "/", "4"}], "+", 
+              RowBox[{"(", 
+               FractionBox[
+                RowBox[{"ej", "*", "M"}], "lmax"], ")"}]}], ")"}], "-", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"M", "/", "4"}], "-", 
+              RowBox[{"(", 
+               FractionBox[
+                RowBox[{"ej", "*", "M"}], "lmax"], ")"}]}], ")"}]}], 
+           "]"}]}]}], "]"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"Graphics", "[", 
+        RowBox[{"Line", "[", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"M", "/", "4"}], "-", 
+              RowBox[{"(", 
+               FractionBox[
+                RowBox[{"ej", "*", "M"}], "lmax"], ")"}]}], ",", 
+             RowBox[{"(", 
+              RowBox[{"1.4", "*", 
+               RowBox[{"10", "^", 
+                RowBox[{"-", "6"}]}]}], ")"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"M", "/", "4"}], "-", 
+              RowBox[{"(", 
+               FractionBox[
+                RowBox[{"ej", "*", "M"}], "lmax"], ")"}]}], ",", 
+             RowBox[{"(", "0", ")"}]}], "}"}]}], "}"}], "]"}], "]"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{"Graphics", "[", 
+        RowBox[{"Line", "[", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"M", "/", "4"}], "+", 
+              RowBox[{"(", 
+               FractionBox[
+                RowBox[{"ej", "*", "M"}], "lmax"], ")"}]}], ",", 
+             RowBox[{"(", 
+              RowBox[{"1.4", "*", 
+               RowBox[{"10", "^", 
+                RowBox[{"-", "6"}]}]}], ")"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"M", "/", "4"}], "+", 
+              RowBox[{"(", 
+               FractionBox[
+                RowBox[{"ej", "*", "M"}], "lmax"], ")"}]}], ",", 
+             RowBox[{"(", "0", ")"}]}], "}"}]}], "}"}], "]"}], "]"}]}], 
+      "\[IndentingNewLine]", "}"}], "]"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"ej", ",", "0.5", ",", "20"}], "}"}]}], "]"}], "/.", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"M", "->", "114560"}], ",", 
+    RowBox[{"lmax", "\[Rule]", "50"}]}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.848171515392674*^9, 3.848171602926928*^9}, {
+  3.848171687246015*^9, 3.848171731287497*^9}, {3.848171764825306*^9, 
+  3.848171856207376*^9}, {3.84817200758016*^9, 3.848172035146689*^9}, {
+  3.848172085845105*^9, 3.848172184440712*^9}, {3.848172219665607*^9, 
+  3.848172225950808*^9}, {3.848172674849275*^9, 3.848172740995809*^9}, {
+  3.848172861259366*^9, 3.848172880494959*^9}},
+ CellLabel->
+  "In[176]:=",ExpressionUUID->"95336931-323f-4c45-bbd3-67ee1fcefa68"],
+
+Cell[BoxData[
+ TagBox[
+  StyleBox[
+   DynamicModuleBox[{$CellContext`ej$$ = 11.9, Typeset`show$$ = True, 
+    Typeset`bookmarkList$$ = {}, Typeset`bookmarkMode$$ = "Menu", 
+    Typeset`animator$$, Typeset`animvar$$ = 1, Typeset`name$$ = 
+    "\"untitled\"", Typeset`specs$$ = {{
+      Hold[$CellContext`ej$$], 0.5, 20}}, Typeset`size$$ = {
+    743., {236., 241.}}, Typeset`update$$ = 0, Typeset`initDone$$, 
+    Typeset`skipInitDone$$ = True, $CellContext`ej$140283$$ = 0}, 
+    DynamicBox[Manipulate`ManipulateBoxes[
+     1, StandardForm, "Variables" :> {$CellContext`ej$$ = 0.5}, 
+      "ControllerVariables" :> {
+        Hold[$CellContext`ej$$, $CellContext`ej$140283$$, 0]}, 
+      "OtherVariables" :> {
+       Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
+        Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
+        Typeset`specs$$, Typeset`size$$, Typeset`update$$, Typeset`initDone$$,
+         Typeset`skipInitDone$$}, "Body" :> Show[{
+         Plot[(1.4 10^(-6))/(1 + 
+          Exp[(-(1/($CellContext`ej$$ 114560/50))) ($CellContext`m - (1/4) 
+             114560)]), {$CellContext`m, 0, 114560}, 
+          PlotRange -> {0, 1.4 10^(-6)}, PlotLabel -> 
+          N[(114560/4 + $CellContext`ej$$ 114560/50) - (
+            114560/4 - $CellContext`ej$$ 114560/50)]], 
+         Graphics[
+          
+          Line[{{114560/4 - $CellContext`ej$$ 114560/50, 1.4 10^(-6)}, {
+            114560/4 - $CellContext`ej$$ 114560/50, 0}}]], 
+         Graphics[
+          
+          Line[{{114560/4 + $CellContext`ej$$ 114560/50, 1.4 10^(-6)}, {
+            114560/4 + $CellContext`ej$$ 114560/50, 0}}]]}], 
+      "Specifications" :> {{$CellContext`ej$$, 0.5, 20}}, "Options" :> {}, 
+      "DefaultOptions" :> {}],
+     ImageSizeCache->{788., {295., 301.}},
+     SingleEvaluation->True],
+    Deinitialization:>None,
+    DynamicModuleValues:>{},
+    SynchronousInitialization->True,
+    UndoTrackedVariables:>{Typeset`show$$, Typeset`bookmarkMode$$},
+    UnsavedVariables:>{Typeset`initDone$$},
+    UntrackedVariables:>{Typeset`size$$}], "Manipulate",
+   Deployed->True,
+   StripOnInput->False],
+  Manipulate`InterpretManipulate[1]]], "Output",
+ CellChangeTimes->{
+  3.848172186530643*^9, 3.848172227274579*^9, {3.8481727331268377`*^9, 
+   3.8481727414551373`*^9}, {3.848172865317112*^9, 3.848172901277182*^9}},
+ CellLabel->
+  "Out[176]=",ExpressionUUID->"114de413-59ad-4188-b714-803251cba026"]
+}, Open  ]],
+
+Cell[TextData[{
+ "This is the size of the window... as a function of x-> ",
+ Cell[BoxData[
+  RowBox[{"(", 
+   FractionBox[
+    RowBox[{"ej", "*", "M"}], "lmax"], ")"}]],
+  CellChangeTimes->{{3.848171515392674*^9, 3.848171602926928*^9}, {
+   3.848171687246015*^9, 3.848171731287497*^9}, {3.848171764825306*^9, 
+   3.848171856207376*^9}, {3.84817200758016*^9, 3.848172035146689*^9}, {
+   3.848172085845105*^9, 3.848172184440712*^9}, {3.848172219665607*^9, 
+   3.848172225950808*^9}, {3.848172674849275*^9, 3.848172740995809*^9}, {
+   3.848172861259366*^9, 3.848172880494959*^9}},ExpressionUUID->
+  "e017a9e8-8b69-4cc1-b957-8d9c56dd9647"]
+}], "Text",
+ CellChangeTimes->{{3.848172958602235*^9, 
+  3.8481729778228807`*^9}},ExpressionUUID->"ca27b836-5ec1-43e0-8059-\
+d8067e2fe255"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"M", "/", "4"}], "+", 
+     RowBox[{"(", 
+      FractionBox[
+       RowBox[{"ej", "*", "M"}], "lmax"], ")"}]}], ")"}], "-", 
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"M", "/", "4"}], "-", 
+     RowBox[{"(", 
+      FractionBox[
+       RowBox[{"ej", "*", "M"}], "lmax"], ")"}]}], ")"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.848172786838772*^9, 3.8481727930824413`*^9}},
+ CellLabel->
+  "In[174]:=",ExpressionUUID->"6bccb739-0965-4a11-9226-55dea1a86c90"],
+
+Cell[BoxData[
+ FractionBox[
+  RowBox[{"2", " ", "ej", " ", "M"}], "lmax"]], "Output",
+ CellChangeTimes->{3.848172793516017*^9},
+ CellLabel->
+  "Out[174]=",ExpressionUUID->"105d1064-89f9-4d56-9c20-e5ee0b75ff0f"]
+}, Open  ]]
+},
+WindowSize->{1107, 1090},
+WindowMargins->{{Automatic, 658}, {112, Automatic}},
+FrontEndVersion->"12.0 for Mac OS X x86 (64-bit) (April 8, 2019)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 4242, 115, 258, "Input",ExpressionUUID->"95336931-323f-4c45-bbd3-67ee1fcefa68"],
+Cell[4825, 139, 2419, 50, 650, "Output",ExpressionUUID->"114de413-59ad-4188-b714-803251cba026"]
+}, Open  ]],
+Cell[7259, 192, 775, 16, 43, "Text",ExpressionUUID->"ca27b836-5ec1-43e0-8059-d8067e2fe255"],
+Cell[CellGroupData[{
+Cell[8059, 212, 555, 17, 49, "Input",ExpressionUUID->"6bccb739-0965-4a11-9226-55dea1a86c90"],
+Cell[8617, 231, 210, 5, 52, "Output",ExpressionUUID->"105d1064-89f9-4d56-9c20-e5ee0b75ff0f"]
+}, Open  ]]
+}
+]
+*)
+

@@ -21,6 +21,10 @@ filename_settings = "data/sharks_modern2/simsettings.jld";
 namespace = smartpath(filename_settings);
 @load namespace l0 L n0 gen mintemp_j maxtemp_j mintemp_a maxtemp_a distvec sigtauvec tauvec reps paramvec its
 
+#Convert sigtauvec to mass units
+M = (0.00013*L^2.4)*1000;
+sigtauvecmass = ((sigtauvec .* M) ./ 50) ./ 1000; #in KG
+
 mchij = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 mchia = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 modchij = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
@@ -108,7 +112,7 @@ msdj = mean(sddistchij,dims=2)[1,:,:];
 msda = mean(sddistchia,dims=2)[1,:,:];
 
 # ndata = names(data);
-ndata = ["Delaware Bay (DE)"]
+ndata = ["Delaware Bay"]
 
 filename = "data/sharks_modern2/analysisdata2.jld";
 namespace = smartpath(filename);
@@ -129,7 +133,7 @@ bfcoordsa = Array{Float64}(undef,2);
 cartj = findmin(qmatrixj); carta = findmin(qmatrixa);
 bfvaluej = cartj[1];
 bfvaluea = carta[1];
-coordsj = [sigtauvec[cartj[2][1]],tauvec[cartj[2][2]]]; coordsa = [sigtauvec[carta[2][1]],tauvec[carta[2][2]]];
+coordsj = [sigtauvecmass[cartj[2][1]],tauvec[cartj[2][2]]]; coordsa = [sigtauvecmass[carta[2][1]],tauvec[carta[2][2]]];
 bfcoordsj = coordsj; bfcoordsa = coordsa;
 
 
@@ -147,7 +151,7 @@ lineplot!(ply,toothlength,scaledsimdensity,color=:red)
 ###################
 
 
-filename = "figures/fig_empirical_comp_modern3.pdf";
+filename = "figures/fig_empirical_comp_modern3_rev.pdf";
 namespace = smartpath(filename);
 filename_data = "data/sharks_modern2/simdata.jld";
 Mj = binmatrixj[:,:]; Ma = binmatrixa[:,:];
@@ -168,16 +172,16 @@ palq = brewer.pal(11,'Spectral')
 pdf($namespace,width=12,height=3)
 par(mfrow=c(1,4))
 par(list(oma = c(4, 4, 0, 0), mar = c(1, 1, 1, 2)))
-image(x=$sigtauvec,y=$tauvec,z=($(qmatrixj[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='',ylab='',xaxt='n',yaxt='n')
-points($(bfcoordsj[1]),$(bfcoordsj[2]),pch=21,col='white',bg=pal[1],cex=3)
+image(x=$sigtauvecmass,y=$tauvec,z=($(qmatrixj[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='',ylab='',xaxt='n',yaxt='n')
+points($(bfcoordsj[1]),$(bfcoordsj[2]),pch=21,col='white',bg=pal[1],cex=5)
 # text(10,38,paste($(ndata[5]),': ',round($(bfvaluej),2),sep=''),col=ncol[5])
 axis(side=2,at =NULL,mgp=c(3, 0.75, 0),las=2)
 axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
 mtext('Adult migration window',side=2,outer=TRUE,adj=0.5,padj=-1.5,cex=1.2)
 
 
-image(x=$sigtauvec,y=$tauvec,z=($(qmatrixa[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='',ylab='',xaxt='n',yaxt='n')
-points($(bfcoordsa[1]),$(bfcoordsa[2]),pch=21,col='white',bg=pal[1],cex=3)
+image(x=$sigtauvecmass,y=$tauvec,z=($(qmatrixa[:,:])),zlim=c($zmin,$zmax),col=palq,xlab='',ylab='',xaxt='n',yaxt='n')
+points($(bfcoordsa[1]),$(bfcoordsa[2]),pch=21,col='white',bg=pal[1],cex=5)
 # text(10,38,paste($(ndata[5]),': ',round($(bfvaluea),2),sep=''),col=ncol[5])
 axis(side=2,at =NULL,mgp=c(3, 0.75, 0),las=2)
 axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
@@ -185,7 +189,7 @@ mtext('Juvenile migration window',side=1,outer=TRUE,adj=0.18,padj=1.5,cex=1.2)
 
 
 plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='',ylab='',main='',col=pal[1],lwd=3,xlim=c(0,40),xaxt='n',yaxt='n')
-text(42, 0.9, paste($(ndata[1]),"\nJuvenile site","\n","Error = ",round($(bfvaluej[1]),2),sep=''), pos = 2)
+text(42, 0.92, paste($(ndata[1]),"\n","Error = ",round($(bfvaluej[1]),2),sep=''), pos = 2,cex=1.2)
 lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000050')
 axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
 mtext('Scaled density',side=2,outer=TRUE,adj=0.5,padj=41.5,cex=1.2)
@@ -202,7 +206,7 @@ R"""
 plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='',ylab='',main='',col=pal[1],lwd=3,xlim=c(0,40),xaxt='n',yaxt='n')
 lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000050')
 axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
-text(42, 0.9, paste($(ndata[1]),"\nAdult site","\n","Error = ",round($(bfvaluea[1]),2),'*',sep=''), pos = 2)
+text(42, 0.92, paste($(ndata[1]),"\n","Error = ",round($(bfvaluea[1]),2),'*',sep=''), pos = 2,cex=1.2)
 """
 for r=2:reps
     datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");

@@ -355,6 +355,10 @@ function popgen_migrate_g(m0,M,tempvec1,tempvec2,n0,gen,distance,velocity,D,sigt
             #sigmoidal increase over body mass to top migration above juvpos
             # sigtau = 5;
             m1 = D*(velocity/distance) ./ (1 .+ exp.(- (1/sigtau) .* (collect(1:ltime) .- juvpos)));
+
+            # The corresponding masses along the sigtauvec are:
+            # sigtauvec*(M/epsilonstep)
+
             # The last bit could be written as: (in terms of masses)
             # ((mass1[1,:] .- mass1[1,juvpos]) ./ maximum(mass1[1,:])) .* length(mass1[1,:])
             
