@@ -56,7 +56,7 @@ paramvec = [repeat(collect(1:ltl),inner=size(paramposvec_pre)[1]) paramvec_pre];
 
 its = size(paramvec)[1];
 
-filename_settings = "data/sharks_modern2_toothloss/simsettings.jld";
+filename_settings = "data/sharks_modern2_toothloss_maxwarm/simsettings.jld";
 namespace = smartpath(filename_settings);
 @save namespace l0 L n0 gen mintemp_j maxtemp_j mintemp_a maxtemp_a distvec toothlossratepercentchangevec sigtauvec tauvec ltl paramvec its
 
@@ -72,7 +72,7 @@ namespace = smartpath(filename_settings);
     
 
     #Does the file exist? If not, continue
-    filename = "data/sharks_modern2_toothloss/simdata.jld";
+    filename = "data/sharks_modern2_toothloss_maxwarm/simdata.jld";
     indices = [toothlossratepercentchange_pos,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
     check = isfile(namespace);
@@ -126,7 +126,7 @@ namespace = smartpath(filename_settings);
         toothlength2 = 2.13337 .+ (0.187204 .* mass2.^(0.416667)); #mm
         
         #save data
-        filename = "data/sharks_modern2_toothloss/simdata.jld";
+        filename = "data/sharks_modern2_toothloss_maxwarm/simdata.jld";
         indices = [toothlossratepercentchange_pos,sigtau_pos,tau_pos];
         namespace = smartpath(filename,indices);
         
