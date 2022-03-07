@@ -107,6 +107,7 @@ namespace = smartpath(filename_settings);
         velocity = 1;
         D = 1;
 
+        toothlossratepercentchange = toothlossratepercentchangevec[toothlossratepercentchange_pos];
         #Steepness of juvenile migration (function of mass)
         sigtau = sigtauvec[sigtau_pos];
         #Steepness of adult migration (function of time)
