@@ -5,16 +5,16 @@ else
 end
 
 # Highlatitude
-foldername = "sharks_eocene2";
-figfilename = "eocene_highlatitude";
+# foldername = "sharks_eocene2";
+# figfilename = "eocene_highlatitude";
 
 # LowLatitude
 # foldername = "sharks_eocene_lowlatitude";
 # figfilename = "eocene_lowlatitude";
 
 # Modern
-# foldername = "sharks_modern2";
-# figfilename = "modern";
+foldername = "sharks_modern2";
+figfilename = "modern";
 
 filename_settings = string("data/",foldername,"/simsettings.jld");
 namespace = smartpath(filename_settings);

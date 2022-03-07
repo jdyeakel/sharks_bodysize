@@ -17,6 +17,7 @@ using UnicodePlots
 if homedir() == "/home/z840"
     
     @everywhere include("$(homedir())/sharks_bodysize/src/popgen_migrate_g.jl")
+    @everywhere include("$(homedir())/sharks_bodysize/src/popgen_migrate_g_toothseasonality.jl")
     @everywhere include("$(homedir())/sharks_bodysize/src/ts.jl")
     @everywhere include("$(homedir())/sharks_bodysize/src/F.jl")
     @everywhere include("$(homedir())/sharks_bodysize/src/smartpath.jl")
@@ -32,6 +33,7 @@ if homedir() == "/home/z840"
 else
     
     @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/popgen_migrate_g.jl")
+    @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/popgen_migrate_g_toothseasonality.jl")
     @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/ts.jl")
     @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/F.jl")
     @everywhere include("$(homedir())/Dropbox/PostDoc/2018_sharks/src/smartpath.jl")

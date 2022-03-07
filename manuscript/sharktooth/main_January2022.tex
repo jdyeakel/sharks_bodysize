@@ -1,0 +1,866 @@
+%% Author_tex.tex
+%% V1.0
+%% 2012/13/12
+%% developed by Techset
+%%
+%% This file describes the coding for rsproca.cls
+
+\documentclass[]{rsos}%%%%where rsos is the template name
+
+\usepackage{wasysym}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{lineno}
+\linenumbers
+
+%%%% *** Do not adjust lengths that control margins, column widths, etc. ***
+
+%%%%%%%%%%% Defining Enunciations  %%%%%%%%%%%
+\newtheorem{theorem}{\bf Theorem}[section]
+\newtheorem{condition}{\bf Condition}[section]
+\newtheorem{corollary}{\bf Corollary}[section]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+%%%% Article title to be placed here
+\title{Decoding the dynamics of dental distributions: insights from shark demography and dispersal}
+
+% Can we sneak a Jaws reference here? like "It's a squal us" or "Smile" or something about a need for a "bigger boat" or something about "going fishing" or a "toothy problem". OR: Show me your teeth: determining demography.... what about: Decoding the dynamics of dental distributions with demographic 
+
+\author{%%%% Author details
+Sora L. Kim$^{1,2,*}$, Justin D. Yeakel$^{1,*}$, Meghan A. Balk$^{3}$, Jaelyn J. Eberle$^{4}$, Sarah Zeichner$^{2,5}$, Dina Fieman$^{6}$, J\"urgen Kriwet$^{7}$}
+% and X. Third author$^{3}$}%
+
+%%%%%%%%% Insert author address here
+\address{\footnotesize{$^{1}$School of Natural Science, University of California Merced,$^{2}$Department of Geophysical Sciences, University of Chicago, $^{3}$National Ecological Observatory Network, $^{4}$Department of Geological Sciences and Museum of Natural History, University of Colorado,
+$^{5}$Division of Geological and Planetary Sciences, California Institute of Technology, $^{6}$School of Geography, Environment, and Earth Sciences, Victoria University of Wellington, $^{7}$Department of Paleontology, University of Vienna
+$^{*}$Contributed equally}}
+
+
+%%%% Subject entries to be placed here %%%%
+\subject{paleontology, ecology, body size, migration, nursery}
+
+%%%% Keyword entries to be placed here %%%%
+\keywords{sand tiger, metapopulation, Eocene, Gulf of Mexico, Arctic, Antarctic, Delaware Bay, latitudinal gradient, body size}
+
+%%%% Insert corresponding author and its email address}
+\corres{Sora Kim\\
+\email{skim380@ucmerced.edu}}
+
+%%%% Abstract text to be placed here %%%%%%%%%%%%
+\begin{abstract} %200 words max
+Shark teeth are the most abundant vertebrate fossil, and because tooth size generally correlates with body size, their accumulations document the size structure of populations. Understanding how ecological and environmental processes influence size structure, and how this extends to influence these dental distributions, may offer a window into the ecological and environmental dynamics of past and present shark populations. Here we examine the dental distributions of sand tigers, including extant \emph{Carcharias taurus} and extinct \emph{Striatolamia macrota}, to reconstruct the  size structure for a contemporary locality and four Eocene localities. We compare empirical distributions against expectations from a population simulation to gain insight into potential governing ecological processes. Specifically, we investigate the influence of dispersal flexibility to and from protected nurseries. We show that changing the flexibility of initial dispersal of juveniles from the nursery and annual migration of adults to the nursery explains a large amount of dental distribution variability. Our framework predicts dispersal strategies of an extant sand tiger population, and supports nurseries as important components of sand tiger life history in both extant and Eocene populations. These results suggest nursery protection may be vital for shark conservation with increasing anthropogenic impacts and climate change.
+\end{abstract}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\maketitle
+
+\section{Introduction}
+% Extant sharks occupy a wide range of habitats varying from fresh, brackish, and saline waters as well as all oceanic basins except the Southern Ocean of Antarctica.
+
+Sharks have been a cornerstone of oceanic communities for hundreds of millions of years, a rare constant in a sea of change.
+The enormous spatial and temporal dominance of shark species suggests considerable ecological plasticity, which has likely contributed to their evolutionary success and may be key to understanding the ongoing and future effects of climate change on this diverse group \cite{Whitenack}.
+%Fossil shark teeth are the most abundant vertebrate fossil and often the only element for paleoecological studies since their skeletal tissue rarely withstand fossilization.
+Documenting the success of sharks as marine predators has followed a trail of fossilized teeth, accumulating in ocean sediments and indirectly recording their ecological variability as well as the oceanic conditions in which they lived.
+While fossil shark teeth assemblages have been used to elucidate water temperature and salinity \cite{Kim2014d} as well as species' age distributions \cite{Kim2020}, ontogenetic stages \cite{straube2020intraspecific}, and the presence of nurseries \cite{Pimiento2010, Villafana2020}, the ecological mechanisms driving population size structure remain enigmatic even in extant populations.
+Given tooth size scales allometrically with body size \cite{Shimada2004}, accumulations of shark teeth within narrow temporal windows may provide insight into the functioning of shark populations and communities.
+%Inferences to ecological and environmental processes are difficult to deduce from fossils because the large spatial and temporal distribution of the recorded data. 
+%While shark teeth are the most abundant vertebrate fossil, with a record spanning over 400 million years, the dynamics giving rise to these dental distributions -- in particular the interacting effects of shark ecology and the environment -- are not well understood.
+% These ecological and evolutionary traits hint that sharks are resilient to climate change; however, an integrated risk assessment for sharks and rays in the Great Barrier Reef suggests those in coastal areas with freshwater inputs are most vulnerable due to changes in temperature, salinity, and ocean circulation \cite{Chin2010}.
+
+%Tooth distributions to body size
+%The geologic record is prolific with fossil shark teeth as well as dermal denticles, both of which document past shark populations and community by way of accumulation. 
+%Collections of this material are well-suited to provide insight into the biological organization of shark communities across large spatial and temporal scales.
+% These specimens provide insight into shark ecology and environmental conditions with the potential for quantitative analysis examining biological organization on larger spatial and temporal scales.
+%For example, collections of dermal denticles have provided insight into how shark community composition responded to the Cretaceous- Paleogene mass extinction \cite{sibert2018two}, and revealed a severe loss of shark diversity or range shift during the early Miocene \cite{sibert2021early, naylor2021comment, feichtinger2021comment}.
+%It is possible that accumulations of shark teeth within narrow temporal windows can  provide insights to the functioning of shark populations and communities because tooth size scales allometrically with body size \cite{Shimada2002, Shimada2004, Shimada2007}.
+% For example, oxygen isotope analysis of shark enameloid indicates tolerance across a large temperature and salinity range \cite{Kim2014d, Kim2020}, 
+%While fossil shark teeth assemblages have been used to elucidate water temperature and salinity \cite{Kim2014d, zacke2009surface} as well as species' age distributions \cite{Kim2020}, ontogenetic stages \cite{straube2020intraspecific}, and the presence of nurseries \cite{Pimiento2010, herraiz2020use, Villafana2020}, the ecological mechanisms driving population size structure remain enigmatic even in extant populations.
+
+
+% , when distributions are taken across species, and populations, when distributions are taken within species.
+%I'm going to see how moving the 'here we' statement a bit forward works, as I don't think we've built up to the mystery that comes before we state the mystery we are trying to solve!
+% Here, we seek to delve further into ecology by exploring how body size distributions project ecological interactions and traits as well as environmental condition in sharks.
+% INSERT: something related to examples of overcoming or altering distribution to salinity / oxygen change.
+
+% Body size to life history back to tooth distributions to the past
+%Sharks are gape-limited predators, meaning that body size has an enormous influence on the structure and functioning of the higher trophic levels of marine communities \cite{brose2006consumer}. 
+Body size has an enormous influence on the structure and functioning of marine communities \cite{brose2006consumer}. 
+%Sharks are gape-limited predators, and gape size scales with body size.
+Following birth, individuals must acquire enough energy to both build and maintain somatic tissue, achieving reproductive maturity and eventually reaching an asymptotic body size \cite{West:2001bv}.
+Because the majority of shark species are ectothermic, the rate at which individuals grow is constrained not only by resource availability \cite{bhat2020scaling}, but also by water temperature \cite{schindler2002sharks}. 
+As temperature varies seasonally and spatially, shark species that migrate between regions are subject to changing growth rates as they transition from juvenile to adult size classes \cite{heithaus2007nursery}, and some species may integrate behaviors that take advantage of differentials in resources and temperature to escape smaller body sizes more quickly.
+For example, many contemporary shark species give birth in warmer estuarine environments where resources are plentiful and large predators are rare, whereupon individuals migrate to colder pelagic environments as they grow \cite{heupel2007shark}.
+Such life history processes, especially those contributing to dispersal over time and space, will affect their imprint on the dental distributions left behind, and may be one of the few windows into the ecologies of ancient shark species and their relationships to past climates.
+% Because tooth distributions are often preserved across paleontological timescales, it is possible that the ecological mechanisms from which they arise can be explored, providing insight into the processes that led to their accumulation.
+
+
+% Body size is a biological indicator often used to determine ontogeny and energy balance in mammals and fish. 
+% % in sharks, body size is related to tooth crown height where, when comparing the same tooth position, smaller teeth are associated with smaller individuals \cite{Shimada2002, Shimada2004, Shimada2007, Shimada2020, Villafana2020}.
+% Body size distributions of species within a geographic area are controlled by a combination of biotic interactions [e.g., in plants (Muller-Landau et al. 2006; West et al. 2006)] and resource acquisition (Kerr and Dickie 2001; Ernest et al. 2003).
+% Less known are controls on body size distributions of a species across its geographic range.
+% In fish, in addition to resources and biotic controls, temperature plays an important role in determining growth speed and asymptotic size. 
+% % One way to probe the interaction between biology and environment when interpreting  body size distributions is to look at theoretical models that factor life history and temperature.
+% % These dynamic model outputs can be compared to empirical data to infer processes and mechanisms that shape body size distributions.
+
+%THE PAST: THE EOCENE
+%NOTE: I think we should save the 'We did x,y' for the paragraph below starting 'Here we', as this still reads a background and sets us up for what we do
+% We chose to examine the impacts of environment on shark population structure in the Eocene given their prolific fossil record and abundance in archived collections.  
+The Eocene (56-33.9 Ma) is known for its abundant shark fossil record, with archived collections spanning locations that range from the equator to both poles.
+%since To understand the effects of the current climate crisis, much insight can be gained from reconstructing shark paleobiology 
+This time period may represent a deep-time analogue for the current climate crisis \cite{burke2018pliocene}, perhaps facilitating a better understanding of how contemporary shark species might respond to similar environmental pressures.
+Sand tigers occupied a nearly continuous latitudinal gradient ranging from the Arctic to Southern Ocean in the Eocene, demonstrating their remarkable plasticity. 
+The sole evidence of their vast geographical distribution and evolutionary success is contained within local collections of fossilized teeth.
+For example, high-latitude sites such as Banks Island were deltaic, brackish zones in the Canadian Arctic with reduced salinity \cite{Waddell2008, Kim2014d} and low shark diversity \cite{padilla2014sand} (figure \ref{fig:map}, dark green), whereas sites such as Seymour Island off the Antarctic Peninsula were fully marine  habitats \cite{Ivany2008} with high shark diversity \cite{Kriwet2016} (figure \ref{fig:map}, dark blue).
+Despite these environmental differences, sand tigers  (${}^\dag$\emph{Striatolamia macrota}, Agassiz, 1843 and ${}^\dag$\emph{Carcharias macrota}; extinct species denoted with ${}^\dag$) occupied both locales during the Eocene \cite{Padilla2014,Kriwet2016}, in addition to lower latitude environments, notably in the Gulf of Mexico \cite{Westgate} (figure \ref{fig:map}, lighter shades).
+% which share many characteristics and are synonymized by some \cite{purdy1998chondrichthyan}.
+% We chose two mid-latitude localities because their community assemblage resembled the those in high latitudes.
+Low latitude Eocene sites exhibit an environmental gradient similar to that of the high latitude sites, but in warmer waters with less seasonal variability.
+For example, the low latitude Red Hot Truck Stop locality of the Tuscahoma and Bashi formations (Fm) in Mississippi was a reduced salinity habitat \cite{Beard2009} (figure \ref{fig:map}, light green), similar to that of Banks Island in the Arctic, whereas the Whiskey Bridge locality of the Crockett Fm. in Texas reflected a more diverse assemblage characteristic of pelagic communities \cite{Westgate} (figure \ref{fig:map}, light blue), bearing greater similarity with Seymour Island in the Southern Ocean. 
+% In contrast, the Stone City Fm. at Whiskey Creek Bridge is dominated by marine fauna and sediments indicate a sheltered, 20-60m depth micro-tidal sea subject to repetitive hurricane-intensity storm disturbance . 
+Compellingly, these dental distributions reveal unique and idiosyncratic attributes, which may encode important ecological relationships governing Eocene sand tiger populations.
+% and fossil teeth provide biologically relevant data that allow comparisons among populations and insight to ecological plasticity.
+
+%Body size is an often measured biological trait because it reflects an organism's energy balance, for which there are different demands related to ontogeny and environment. 
+% Body size is thought to increase with latitude for endothermic taxa (i.e., birds and mammals); however, there is mixed evidence for ectotherms and even differing patterns at the generic and species level. 
+% A review of freshwater fishes suggests an inverse Bergmann’s Rule \cite{Belk2002}, but this hypothesis is difficult to test for sharks today given the low diversity in the Arctic Ocean (i.e., only Greenland sharks) and lack of species in today’s Southern Ocean. 
+% [MAB NOTE: I think we stay away from Bergmann's Rule only because this paper doesn't really test it and because there isn't a temperature gradient.] SLK: deleted that bit
+
+To what extent can life history dynamics drive accumulations of sand tiger teeth, and is it possible to infer such processes from the distributions themselves?
+Here we examine sand tiger dental distributions from these four Eocene localities that span high- and low-latitudes, as well as a contemporary sand tiger population near Delaware Bay (figure \ref{fig:map}).
+We observe that shark dental distributions vary not only in terms of means and variance, but that some reveal pronounced bimodality while others do not.
+% Such bimodality is a common feature of shark tooth size distributions, and while in for some species may be related to sexual dimorphism, for others - including sand tiger sharks - 
+% Given that tooth size and body size are strongly correlated \cite{Shimada2002, Shimada2004, Shimada2007}, such variation in the shapes of local dental distributions may reflect an intersection of environmental and ecological drivers contributing to the presence of different shark size classes in each locality.
+% For example, many shark species migrate to coastal nurseries to reproduce \cite{Jorgensen2010,Macdonald2021} and the increased concentration of juveniles at these sites may skew dental distributions to smaller sizes compared to sites in pelagic environments with a higher proportion of adults.
+We then assess how temperature, seasonality, and dispersal to and from a nursery, or juvenile, site can affect the shapes of dental distributions.
+To investigate these effects, we constructed a mechanistic model of a two-site shark metapopulation, where one site serves as a coastal nursery (the juvenile site) and the other serves as a pelagic adult habitat (the adult site; figure \ref{fig:diagram}). 
+%Our population-level framework incorporates temperature-dependent growth, size-dependent first dispersal of juveniles from the nursery to the adult site, and the seasonal dispersal of adults from the pelagic adult site to the coastal nursery.
+This framework correctly predicts the size structure of a contemporary sand tiger population, as well as aspects of known life history traits characterizing the dispersal habits of sand tigers occupying the Delaware Bay.
+%Comparing observed dental distributions to those generated by our model enables a disentangling of likely ecological and environmental mechanisms contributing to observed differences in dental distribution geometries.
+Application of our approach to sand tiger populations emphasizes the importance of seasonal adult dispersal as well as the role of juvenile sites serving as nursery localities from the Eocene to the present in both high- and low-latitude localities.
+That our results support the presence of shark nurseries across a range of oceanic conditions spanning ~50 million years lends particular credence to the notion that protecting nursery sites may be vital for shark conservation in the face of future climate change.
+
+%Our results point to three key findings.
+%First, we show that changing the flexibility of initial juvenile dispersal to the adult site and annual adult dispersal to the juvenile site have a large effect on dental distribution shape, impacting the mean, variance, and presence or absence of bimodality, all of which feature into shaping empirical distributions.
+%Second, we leverage our framework to correctly predict whether a contemporary sand tiger size structure represents either a juvenile or adult locality, as well as aspects of known life history traits characterizing the dispersal habits of sand tigers occupying the Delaware Bay.
+%Third, we show that our framework, when applied to both contemporary and Eocene sand tiger populations, emphasizes the importance of seasonal adult dispersal as well as the role of juvenile sites serving as nursery localities from the Eocene to the present in both high- and low-latitude localities.
+%That our results support the presence of shark nurseries across a range of oceanic conditions spanning ~50 million years lends particular credence to the notion that protecting nursery sites may be vital for shark conservation in the face of future climate change.
+
+% That our approach both supports our understanding of a contemporary sand tiger population 
+
+% [1 - dental distribution in contemporary in eocene communities are diverse]
+% [2 - basic life history characteristics controlling dispersal to, from juvenile and adult sites result in a large diversity of dental distribution geometries]
+% [3 - we can gain mechanistic insight into the drivers of contemporary dental distributions by back-calculating life history characteristics from distribution shape]
+% [4 - use this to gain insight into the ecologies of eocene populations spanning the poles]
+
+
+
+% each empirical site has a unique/idiosyncratic distribution that can't be attributed to temp/location
+% the mean of nursery and adult dental distributions can vary enormously, depending on how well sites are 'mixed'
+% The juvenile and adult migration windows have the largest effect on this 'mixing', largely determining changes in mean and whether or not the distributions exhibit bimodality
+% Bimodality (in both site types) is the consequence of increased variability of when a juvenile transitions adult site (high mixing of juveniles), and more strict seasonality for when adults reproduce at the nursery (low mixing of adults).
+% Finally we explore best fits and show that, given model assumptions, some sites can be more readily distinguished as juv/adult, whereas for others it is more uncertain
+% Tusc/Banks are more similar environs and both are good fits for juvenile sites despite having distributions that look different... both have small juv migration windows and low to intermediate adult migration windows
+% StoneCity/Antarctica are more similar environs but have different migrational interpretations. StoneCity more likely adult site; Antarctica could be either (a juv site with high adult migration window and low juv adult migration window... or an adult site with high juv and high adult migraiton windows). 
+
+
+% I THINK SOME OF THE ORIGINAL INTRO MATERIAL MIGHT BE BETTER IN DISCUSSION...
+%I'VE MOVED IT TO DISCUSSION
+
+
+
+\section{Methods}
+
+%\subsection{Geologic Setting}
+%\underline{Banks Island, NWT Canada}
+%The fossil shark teeth from the Arctic were discovered as float on the unconsolidated Cyclic Member sands of the Eureka Sound Formation close to the Muskox and Eames rivers within Aulavik National Park on northern Banks Island, Northwest Territories (NWT), Canada (~74o N). 
+%Researchers should request the exact coordinates from the Canadian Museum of Nature, Ottawa, Canada. 
+%The fossil shark teeth localities near the Muskox and Eames rivers are Eocene in age. This is based on pollen samples, mammalian biostratigraphy, and a zircon produced date of 〖52.6〗\pm 1.9 Ma \cite{Miall1979, Sweet2012, Reinhardt2010, Hopkins1974, Hopkins1975}. 
+
+%\underline{Seymour Island, Antarctica}
+%The Antarctic shark teeth are from the La Meseta Formation on Seymour Island, 100 km east of the Antarctic Peninsula at 64°17’S, 56°45’W \cite{Sadler1988, Ivany2008, Kriwet2005, Kriwet2016, Engelbrecht2017, Engelbrecht2017b, Engelbrecht2017c, Engelbrecht2017d, Engelbrecht2019}. 
+%Previous studies estimate that La Meseta Fm. spans Early – early Middle Eocene to Late Eocene, with TELMs 2-5, which contain \emph{S. macrota} teeth, spanning ~early Middle Eocene to Late Middle Eocene \cite{Long1992, Stilwell1992, Reguero2012, Kriwet2016}    
+%Previous studies have determined that the La Meseta Fm. depositional environment was estuarine \cite{Marenssi1994, Ivany2008, Amenabar2020}.
+
+%\underline{Whiskey Bridge, Burleston County, TX USA}
+%The shark teeth from Texas were found in the Stone City Formation (~41.8Ma), which is located on the south bank of the Brazos River in Burleston County, TX, 18.5km west of Bryan, Brazos County, TX \cite{Breard1999, Westgate} (and personal correspondence with C.J. Flis, Oct. 2016). 
+%Stone City Fm.’s late Middle Eocene age was determined by biostratigraphy and radiometric dating of nearby fossil ash (Heintz et al., 2015; personal correspondence with C.J. Flis, Oct. 2016).
+%Previous studies of Stone City Fm. sediment deposition suggest a sheltered, 20-60m depth micro-tidal sea subject to repetitive hurricane-intensity storm disturbance \cite{Breard1999, harding2014mineralogy} (and personal correspondence with C.J. Flis, Oct. 2016).  
+
+%\underline{Red Hot Truck Stop, Meridian, Mississippi}
+%The shark teeth found in eastern Mississippi were discovered in the unconsolidated sands of the T4 Channel Sand at the top of Tuscahoma Fm. at the Red Hot Truck Stop locality (Carnegie Museum or CM 517), near Interstate 20, in the NW corner, of the NW ¼, of the NE ¼, of Section 20, T6N, R16E, Lauderdale County, Mississippi \cite{ingram1991tuscahoma}. 
+%At the base of the T4 Sand is a lag deposit that preserved the vertebrate teeth and fossil fragments (Ingram, 1991). The upper Tuscahoma T4 sand was dated to be 55-+ 1.4 Ma \cite{mancini1995geochronology} using potassium-argon (K-Ar) radiometric age determination.
+%The lithology of the Tuscahoma Formation and T4 Sand is consistent with that of a large-scale, fluvial-dominated deltaic system \cite{Beard2009}. 
+
+\subsection{Tooth Identification and Measurement}
+Shark species in the fossil record are largely identified by their tooth morphology \cite{Cappetta2012} due to the poor preservation of cartilaginous skeletons. 
+${}^\dag$\emph{Striatolamia macrota} teeth are identified by emphasized striations on the lingual side relative to the smooth labial side \cite{Cappetta2012}. 
+Anterior teeth (A1-2 and a1-2) are recognized by their long and narrow shape and acute angle between two roots, compared to the lateral and posterior teeth that have a short, blade-like appearance \cite{Cunningham2000,Padilla2014, Cappetta2012}. 
+%The anterior teeth have an acute angle between the two roots and have two small lateral cusplets \cite{Padilla2014, Cappetta2012}. 
+This tooth position was chosen as a proxy for body size because its large size and distinct morphology compared to other tooth positions within the jaw. 
+Limiting the positions measured from fossil teeth prevents potential for over representation of a single individual within the assemblage. 
+%Because the shark body length and tooth crown height relationship established by Shimada \cite{Shimada2004} for \emph{C. taurus} may not be representative and accurate for the Eocene species ${}^\dag$\emph{S. macrota}, we reconstruct body length using anterior crown height. 
+We measured anterior tooth height from the enameloid base to the blade tip of the labial side with digital calipers to an accuracy of 0.1 mm. 
+%The labial and lingual sides of the tooth, and the maximum width was also measured and recorded. 
+%The labial side of the tooth is adjacent to the cheek of the shark, and the lingual is that side adjacent to the tongue \cite{Cappetta2012}.  
+Every seventh tooth was re-measured for 0.3 mm accuracy. 
+%To ground truth the population model, we  used total length measurements from an extant \emph{Carcharias taurus} population tagged near Delaware Bay, USA \cite{Teter2015}. 
+The modern analogue for the Eocene ${}^\dag$\emph{S. macrota} is the extant sand tiger \emph{C. taurus} based on the similarities in tooth shape throughout the entire dentition \cite{Cunningham2000}. 
+We transformed total length measurements from the 2012 tagging season in Delaware Bay \cite{haulsee2018spatial, Teter2015} to anterior tooth crown height based on the allometric relationships from Shimada et al. \cite{Shimada2004} and previously applied to fossil ${}^\dag$\emph{S. macrota} in Kim et al. \cite{Kim2020}. %12.50 * ATCH - 26.24 = TL where ATCH is the anterior tooth crown height of A1-2 and a1-2 using data in Shimada \cite{Shimada2002} and previously applied to fossil \emph{S. macrota} in Kim et al. \cite{Kim2020}. 
+% Given the extensive knowledge of this contemporary population's movement patterns in the western Atlantic from Massachusetts to Florida \cite{haulsee2018spatial, Teter2015, Kneebone2012, kneebone2014movement}, this body size distribution provided a qualitative metric for the model's accuracy.
+
+For each assemblage, we tested the sample size needed to estimate the mean and standard deviation of the tooth distribution. 
+We then calculated the means and standard deviations of each tooth distribution and performed a power test to calculate the sample size required to estimate the mean and standard deviation within a 95\% confidence level and 10\% margin of error. 
+
+%Sharks replace teeth throughout their lifetime with a conveyor belt-like system. 
+%In many modern sharks, including sand tigers, teeth within an individual position scale with body size \cite{Shimada2002, Shimada2004, Shimada2007, Shimada2020}. 
+%We used anterior tooth height as a proxy for body size and interpret population size distribution for \emph{Striatolamia macrota} in each locality. 
+${}^\dag$\emph{Striatolamia macrota} teeth from Banks Island are curated at the Canadian Museum of Nature (Ottawa, ON Canada); Seymour Island are curated at the University of California Museum of Paleontology (UCMP; Berkeley, CA USA), Paleontological Research Institute (PRI; Ithaca, NY USA), and Swedish Natural History Museum (NRM; Stockholm, Sweden); Red Hot Truck Stop locality are curated at the Carnegie Museum of Natural History (CM; Pittsburgh, PA); and Whiskey Bridge locality are curated at the Whiteside Museum of Natural History (WMNH; Seymour, TX). 
+Locality descriptions are provided in Supplementary Materials Appendix I.
+
+
+
+
+
+\subsection{Population simulation}
+
+To explore specific ecological mechanisms that may be responsible for the observed dental distributions, we employed a process-based model allowing us to incorporate likely physiological and ecological constraints influencing shark populations.
+We constructed a two-site size-class model that tracks female shark populations over time, where one of the two sites is designated a juvenile site, or nursery, and the other is designated an adult site (figure \ref{fig:diagram}).
+Because there is dispersal from the juvenile to adult site, and from the adult to juvenile site, each locality hosts a complex size-structure formed from a mixture of younger and older shark individuals, and it is this mixture from which accumulated tooth distributions are derived.
+See Supplementary Materials Appendix II for a detailed description of the population simulation.
+
+We considered four key dynamics influencing changes in population size for both sites: reproduction, somatic growth, mortality, and dispersal between sites.
+In our framework, reproduction takes place only at the juvenile site, whereas mortality occurs at both sites.
+The per-capita reproductive rate $r$ was thus set to $r=0$ at the adult site, and $r = 0.47 \times 10^{-7}$ female inds/s \cite{cortes1996comparative} at the juvenile site, independent from time of year or water temperature. 
+The per-capita mortality rate was assumed to be constant across size classes within both juvenile and adult sites at $\mu = 5.71 \times 10^{-9}$ inds/s \cite{schindler2002sharks}. 
+Shark individuals were assumed to increase in mass $m$ (g) following the growth trajectory described by West et al. \cite{West:2001bv} as a function of metabolic rate, varying with temperature.
+Accordingly, shark individuals grow more quickly in warm environments, reaching the asymptotic mass $M$ at a younger age.
+Because there is not significant sexual dimorphism among sand tigers \cite{Goldman2006}, our model considers only the population dynamics of females.
+
+
+In our two-site model, juveniles disperse to the adult site once they have reached a particular mass, and adult females migrate annually from the adult to juvenile site to reproduce.
+The initial dispersal of juveniles to the adult site and annual dispersal of adults to the juvenile site are considered separately because we assume these events are mass-dependent and time-dependent, respectively.
+As offspring grow in size to maturation $m_j$, their migration rate to the adult site increases sigmoidally.
+The juvenile dispersal window $\xi_j$ describes the flexibility of this mass threshold: a smaller dispersal window (low $\xi_j$) means that initial dispersal of juveniles to the adult site operates around a strict mass threshold $m_j$, whereas a large juvenile dispersal window (high $\xi_j$) means that initial dispersal of juveniles to the adult site is flexible around $m_j$.
+% Importantly, a low juvenile dispersal window also implies that the juvenile site is serving a separate function than the adult site - in other words, the juvenile site is operating as a distinct nursery where juveniles must reside until a particular threshold size.
+We assume that individuals occupying the adult site disperse back to the juvenile site to reproduce annually, such that the adult dispersal rate is a function of time.
+The adult dispersal window $\xi_a$ describes the flexibility of this annual dispersal: a smaller dispersal window (low $\xi_a$) means that annual adult dispersal to the juvenile site operates around a strict peak day, whereas a large adult dispersal window (high $\xi_a$) means that annual adult dispersal to the juvenile site is flexible.
+We note that the resolution and range of juvenile and adult dispersal windows had to be adjusted from site to site to account for simulation limitations related to population dynamics in different temperature environments.
+As individuals grow and disperse over time, they drop teeth at a constant rate \cite{zeichner2017discrimination}, such that the accumulation of differently-sized dentition mirrors the size-distribution of sharks visiting each site.
+
+
+\subsection{Comparing observed and simulated dental distributions}
+
+% We 1) evaluate whether an observed site is juv/adult and 2) evaluate dispersal strategy
+Our overall goal is to use the known conditions generating simulated dental distributions to gain insight into the unknown conditions generating empirical dental distributions.
+Specifically, we aim to evaluate \emph{i}) whether an observed distribution is better described as a juvenile versus adult site, and \emph{ii}) which dispersal strategy -- strict versus flexible juvenile and adult dispersal windows -- may have contributed to the observed distributional geometry. 
+To compare simulated dental distributions to those observed from contemporary and Eocene localities, we first parameterized the model with estimated winter minimum and summer maximum mean ocean temperatures for both juvenile and adult sites.
+See Supplementary Materials Appendix III for site temperature estimates.
+% and simulated distributions across a range of dispersal window sizes $(\xi_j,\xi_a)$. %as well as the expected distance between sites.
+% Low latitude sites such as Whiskey Bridge and Red Hot Truck Stop have more similar winter and summer temperature extremes, whereas high latitude sites such as Banks Island (CA) and Seymour Island (AN), have larger differences in seasonal extremes (see Supplementary XX).
+% The contemporary Delaware Bay site has seasonal differences similar to high-latitude sites, but with warmer temperatures overall.
+% Similarly, nursery and adult sites spanning a latitudinal gradient would be expected to have larger differences in seasonal temperature extremes, whereas those spanning longitudinal gradients would not.
+% While Eocene temperatures can be constrained based on independent climate indicators, the dispersal windows $\xi_j$ and $\xi_a$ cannot.
+% For both both contemporary and Eocene sites, we simulated dental distributions across a large range of dispersal window $(\xi_j,\xi_a)$ values. % allowing us to assess which combination of values resulted in distributions sharing similarities to empirical distributions.
+% To evaluate whether an observed distribution represents a juvenile or adult site, as well as the most likely dispersal strategy resulting in the observed distribution, 
+We then simulated dental distributions for both juvenile and adult sites across all combinations of $(\xi_j,\xi_a)$.
+Because simulated distributions were both non-normal and multi-modal, to compare distributions we compared means, standard deviations, and both the presence/absence and numerically-estimated values of one or multiple modes -- into a single error term
+\begin{equation}
+\epsilon_{j,a}(\xi_j,\xi_a) = \sum_{k=1}^4 \left| w^{\rm sim}_k(\xi_j,\xi_a) - w^{\rm obs}_k \right|/w^{\rm obs}_k,
+\label{eq:error}
+\end{equation}
+for juvenile and adult sites, where $w^{\rm sim}_k(\xi_j,\xi_a)$ and $w^{\rm obs}_k$ are the measured values for the features described above with respect to simulated and observed tooth distributions respectively, given the simulated dispersal windows $(\xi_j,\xi_a)$.
+Accordingly, the simulated juvenile or adult site dental distribution with a lower $\epsilon$ will indicate a better match for the observed dental distribution, and the particular combination of $(\xi_j,\xi_a)$ that results in the lower $\epsilon$ will point to the best-fit dispersal strategy.
+% Accordingly, simulated distributions with a lower $\epsilon$ share greater similarities relative to the observed distribution, such that the $(\xi_j,\xi_a)$ resulting in ${\rm min}(\epsilon)$ was deemed the best match.
+% For each site we assumed no prior knowledge of whether it constituted a nursery or adult tooth distribution, and derived ${\rm min}(\epsilon)$ with respect to both simulated nursery and adult distributions, with the expectation that the correct site type would have the lower ${\rm min}(\epsilon)$.
+
+
+
+%Parameterization
+
+%Justification - SET UP
+% Examining equatorial (warm, low-seasonality) vs. non-equatorial (cold, high-seasonality) environments allows us to examine the effects of different temperatures regimes on accumulated tooth distributions, we also examined a system reflecting expected temperature regimes and seasonality of the Eocene Ocean.
+% We consider the dynamics of three different migrational systems: 
+% \emph{i}) a population with both adult and nursery sites far from the equator (cold temperatures, high seasonality),
+% \emph{ii}) a population with both adult and nursery sites near the equator (warm temperatures, low seasonality), and
+% \emph{iii}) a population with the adult site near the equator (warm, low seasonality), and the juvenile site far from the equator (cold, high seasonality).
+% [More about Eocene Ocean]
+% In addition we considered the effects of three different distances separating juvenile from adult sites, at 200, 400, and 650 Km.
+
+
+
+
+
+\section{Results and Discussion}
+
+%\subsection{Empirical tooth distributions}
+\subsection{Discerning distributions of dentition}
+
+%Modern site and dental distribution from body length results
+The life history and movement of extant sand tigers (\emph{Carcharias taurus}) has been examined extensively in the western Atlantic, in particular the population near Delaware Bay.
+A long-standing tagging program led by Delaware State University and University of Delaware between 2007 to 2015 recorded biological information such as fork length, total length, sex, and maturity state, as well as annual/seasonal movement data via acoustic and satellite tagging  \cite{Teter2015, haulsee2018spatial}.
+%One result of these surveys has pointed to a likely nursery locality in the Plymouth, Kingston, Duxbury Bay of Massachusetts, where measured individual body length spans 78-104 cm (estimated ATCH range 8.3 – 10.4cm) \cite{Kneebone2012} -- substantially smaller and younger than individuals recorded at Delaware Bay.
+Occupation of the Delaware Bay by sand tigers correlates strongly with temperature, with juveniles arriving approximately one month prior to adults \cite{haulsee2018spatial, Teter2015}.
+The residence time for the majority of individuals on the order of 150 days and sharks disperse from the site once the temperatures decrease in October \cite{haulsee2018spatial, Teter2015}.
+% , with migration patterns differing among females and males, who travel along edge of continental shelf and closer to shore, respectively. 
+Tooth length was estimated from empirical measures of body length based on well-known allometric relationships \cite{Shimada2004}. 
+We found the estimated mean anterior tooth crown height for the Delaware Bay population to be 18.92 mm with a maximum of 26.11 mm, which corresponds with actual total body length of 213 cm and 295 cm, respectively. 
+Previous work based on 96 sand tiger individuals revealed the asymptotic body length for this species to be 296 cm \cite{Goldman2006}, similar to the maximum size estimated in the Delaware Bay.
+
+%Eocene site description
+The Eocene sites explored here are well-known and iconic in the paleontological literature. 
+The Eureka Sound Fm. on Banks Island (Canada, figure \ref{fig:map}, dark green) and La Meseta Fm. on Seymour Island (Antarctica, figure \ref{fig:map}, dark blue) are the most fossiliferous high latitude Eocene sites, with previous studies focused on sedimentology, flora, and fauna \cite{cantrill2012vegetation, eberle2012life}.
+In both sites, the extinct sand tigers are well represented as ${}^\dag$\emph{S. macrota} and another ${}^\dag$\emph{Carcharias} species \cite{Padilla2014, Kriwet2016}. % found in the Eureka Sound Fm. are on Banks Island and .
+The geology of the Eureka Sound Fm. on Banks Island (Canada) points to a coastal deltaic environment with low shark diversity during the Eocene \cite{Padilla2014}, whereas the La Meseta Fm. on Seymour Island (Antarctica) is noted for its rich and diverse marine assemblage that includes 35 species of sharks \cite{Kriwet2016}.
+Among low-latitude Eocene sites, the Bashi/Tuscahoma Fm. at the Red Hot Truck Stop (MS) is largely known for its mammalian record, and is preserved in a lithology that suggests a large-scale, fluvial-dominated deltaic system \cite{Beard2009} (figure \ref{fig:map}, light green).
+Fully marine habitats are rare across the Eocene Gulf of Mexico, however the Crockett Fm. at Whiskey Bridge (TX) is one of the most fossiliferous Eocene marine sites known \cite{Flis2017}(figure \ref{fig:map}, light blue).
+While the Red Hot Truck Stop and Whiskey Bridge localities are relatively proximal along the Gulf, they are not necessarily contemporaneous as the Bashi/Tuscahoma Fm. spans the Paleocene-Eocene Thermal Maximum \cite{Beard2009} whereas the Crockett Fm. is Middle Eocene \cite{Flis2017}, and likely represent distinct sand tiger populations.
+% The localities in this study represent different depositional environments and our model indicates these differences are important to the life history of sand tigers during the Eocene and today.
+% ; we do not assume either high latitude or mid-latitude sites are coupled.
+
+
+%Eocene dental results
+The large sample sizes of sand tiger teeth from the Eocene sites allows for population-level analyses in the fossil record, which is rare for vertebrate fossil assemblages.
+We measured a total of 1,053 anterior fossil sand tiger teeth across the four fossil sites (see Supplemental Table), with distinct distributional geometries characterizing each locality (figure \ref{fig:map}).
+The Banks Island collection consisted of 397 anterior teeth with a mean $\pm$ SD crown height of 13.70 mm $\pm$ 3.41 (median = 14.10 mm). 
+The Seymour Island collections consisted of 450 anterior teeth with mean crown height of 19.61 mm $\pm$ 6.39 (median = 18.00 mm).
+The Red Hot Truck Stop collection included 284 anterior teeth with mean crown height of 12.62 mm $\pm$ 3.82 (median = 12.10 mm).
+Finally, the Whiskey Bridge collection included 158 anterior teeth with mean crown height of 22.51 mm $\pm$ 4.59 (median = 22.55 mm). 
+These sample sizes far exceed that required to estimate the distribution moments for each locality (Banks Island, n = 24; Seymour Island, n = 41; Red Hot Truck Stop, n = 35; Whiskey Bridge, n = 16).
+We find that the observed dental distributions characterizing each site are significantly different when compared against each other (one-way ANOVA: df = 3, F = 283. 74, p<0.0001; posthoc Tukey HSD: p=0.001). 
+
+%Notes and details -- comparison between contemporary and Eocene
+% We note that the two fossil localities representing open marine habitats -- Seymour Island (Antarctica) and Whiskey Bridge (TX) -- include the largest anterior teeth documented across contemporary and Eocene systems, measuring 41.00 mm and 32.57 mm, respectively. 
+% Assuming Eocene and extant sand tigers have similar tooth-body size allometric relationships, the largest teeth from Seymour Island and Whiskey Bridge correspond to body lengths measuring 486 cm and 381 cm at these high and mid-latitude sites, respectively. %, which are larger than the maximum size of extant sand tigers.
+% Larger body sizes of sand tigers in the Eocene may be an evolutionary adaptation towards different environmental/ecological conditions, but may also simply be due to ontogenetic plasticity fueled by warmer oceanic temperatures \cite{Kim2020}. % higher atmospheric carbon dioxide. 
+
+
+
+
+% Meghan please add stuff about skew and kurtosis... THANK YOU!
+
+% Whiskey Bridge (WB) = Crockett Fm. // Stone City Member?
+% Red Hot Truck Stop (RHTS) = Bashi/Tuscahoma Fm.
+% Seymour Island = La Meseta Fm. 
+% Banks Island = Eureka Sound Fm.
+
+
+%A previous study focusing on the La Meseta Fm. \emph{S. macrota} teeth found that their chemical composition supported climate simulations with carbon dioxide concentrations 3-6x pre-industrial levels \cite{Kim2020}. 
+%Sharks replace teeth throughout their lifetime with a conveyor belt-like system. 
+%In many modern sharks, including sand tigers, teeth within an individual position scale with body size \cite{Shimada2002, Shimada2004, Shimada2007, Shimada2020}. 
+%We used anterior tooth height as a proxy for body size and interpret population size distribution for \emph{Striatolamia macrota} in each locality.
+
+
+
+
+\subsection{A contemporary dental distribution predicts known dispersal strategies}
+
+The results of our population simulation reveal that changes in the initial dispersal of younger sharks from the juvenile site to the adult site, and of older sharks from the adult to juvenile site, can drastically change the shape of dental distributions within both sites (figure \ref{fig:sim}).
+While it is relatively straightforward to show how different life history characteristics may influence distributions of accumulated shark teeth by forward-simulation, it is a more difficult prospect to start with a distribution and attempt to back-calculate some understanding of the potential ecological drivers from which it emerged.
+% Considering only the dispersal strategies assessed here, we have shown that variation in dispersal windows results in a complex array of distributional geometries, so it is not a given that we can extract insight from the distribution alone.
+We next examine whether and to what extent we can gather ecological insight into dispersal strategies from a well-known contemporary sand tiger population based on our established framework.
+
+Extant sand tiger sharks (\emph{C. taurus}) are highly migratory along the continental shelf of the western margin of the Atlantic Ocean \cite{haulsee2018spatial, Teter2015, Kneebone2012, kneebone2014movement}.
+In the Delaware Bay, sand tigers aggregate in the summer to fall, and include a mixture of both juvenile and adult size classes \cite{Teter2015, haulsee2018spatial}. %DE
+The proposed nursery for sand tigers in the western Atlantic is the Plymouth, Kingston, Duxbury Bay (MA) where individuals span 78-104 cm (ATCH range 8.3 – 10.4cm) \cite{Kneebone2012}, substantially smaller and younger than individuals in Delaware Bay.
+As such, the Delaware Bay aggregate is thought to represent a mixed age population at an adult site, where dispersal to the the Bay corresponds closely with seasonal temperature \cite{Teter2015}.
+Acoustic tagging efforts indicate a gradual arrival of sand tigers, where juveniles begin arriving in early May with adults arriving approximately one month later \cite{haulsee2018spatial}. 
+In contrast to their arrival, the departure window at Delaware Bay is more tightly constrained from early to mid-October \cite{Teter2015, haulsee2018spatial}.
+Most individuals are present in the Bay for ca. 150 days, which is roughly a 40 day standard deviation around the peak  migration time \cite{haulsee2018spatial}. 
+%Length estimates for tagged individuals in the Delaware Bay population \cite{Teter2015, haulsee2016implantation, haulsee2018spatial, kilfoil2017targeted}, were converted to tooth size using established allometric scaling relationships \cite{Shimada2002}.
+%The migration distance for sand tigers from the Delaware Bay to more warmer waters of North Carolina to Florida is 200-600 km \cite{Teter2015}, however, in Australia \emph{C. taurus} is known to migrate up to 1500 km \cite{otway2011pop}.
+This well-studied modern sand tiger population at Delaware Bay thus provides a distinct opportunity to examine whether certain aspects of the well-known life-histories can be disentangled from the distributions alone.
+% During occupancy of the Bay, the dislodged teeth of individuals accumulate in shallow ocean sediment, providing a distinct opportunity to examine whether certain aspects of the well-known life-histories of sand tigers can be disentangled from the distributions alone.
+ 
+% Although there migration patterns seem to differ among females and males (i.e., travel along edge of continental shelf vs. closer to shore), studies indicate low sexual segregation of Sand Tigers during their time in the Delaware Bay region \cite{Teter2015, haulsee2018spatial}.
+% Although our model provides parameter fits for both the juvenile and adult sites, proposed body size distribution for an 'adult' locality is a better match.
+
+%MODEL FIT
+% To capture conditions representative of the migratory environment experienced by sand tigers along the Massachusetts to Delaware coastline, we set the minimum and maximum temperatures of the simulated juvenile site to $17^\circ$C and $25^\circ$C, and the minimum and maximum temperatures of the simulated adult site to $13^\circ$C and $23^\circ$C \cite{Teter2015, haulsee2018spatial, Kneebone2012}, where we assumed a distance of 700 Km separating sites. 
+We systematically compared the dental distributions produced by our population simulation across values of $\xi_j$ and $\xi_a$ for both juvenile and adult sites against the empirical distribution from the Delaware Bay by estimating error in model fit $\epsilon$ (equation \ref{eq:error}).
+We compare the model fit error for both the simulated juvenile and adult sites ($\epsilon_j$ versus $\epsilon_a$) by first investigating whether our framework was capable of detecting if the Delaware Bay population more likely represented a juvenile versus adult site.
+% Operating under the assumption that a better fit (lower $\epsilon$) for a given combination of $(\xi_j,\xi_a)$ values points to a simulated system operating under similar constraints as that observed, 
+Our assessment reveals that the minimal error for the juvenile site is $\epsilon_j = 0.6$, whereas the minimal error for the adult site is $\epsilon_a = 0.25$ (figure \ref{fig:compmodern}).
+This suggests that the Delaware Bay population represents an adult rather than juvenile population, confirming what is already understood \cite{haulsee2018spatial, Kneebone2012}, but more importantly -- at broad strokes -- validating the usefulness of our approach.
+
+
+
+Except for the scenarios where dental distributions are very similar (high $\xi_j$ and $\xi_a$) or bimodal (high $\xi_j$ and low $\xi_a$), site identity is relatively straightforward to distinguish based on differences in tooth size means.
+A more rigorous assessment of our approach is to examine whether the best fit parameterization of dispersal windows $(\xi_j,\xi_a)$ correlates with our understanding of the Delaware Bay system.
+We find that, given the adult site identification of the Delaware Bay population, the best fit dispersal window parameterization indicates a strict mass at which juveniles leave for the adult site ($\xi_j = 1$) and a flexible temporal window describing the annual adult migration ($\xi_a = 40$).
+% While we do not have information on the range of mass classes initiating first dispersal to Delaware Bay from the proposed nursery locations, 
+Importantly, the temporal range that describes the arrival of adults to Delaware Bay -- a standard deviation of ca. 40 days around the peak arrival date \cite{haulsee2018spatial}  -- closely matches the expected adult dispersal window predicted by our best-fit model distribution (figure \ref{fig:compmodern}).
+And while we do not have information on the range of mass classes initiating first dispersal to Delaware Bay, the low juvenile dispersal window provides indirect support for the Plymouth, Kingston, Duxbury Bay juvenile site serving as a nursery where pups remain until a strict size threshold is reached. 
+By matching the observed Delaware Bay dental distribution to those simulated from established conditions, we suggest that our framework  provide particular insight into central life history characteristics governing sand tiger dispersal.
+
+
+
+\subsection{Deciphering life history and dispersal in the Eocene}
+
+Understanding the nature of shark communities in response to documented changes in Eocene climate may provide insight into the future of shark populations in our changing oceans.
+Because our primary window into these systems is through the lens of accumulated teeth, interpreting dental distributions from an ecological perspective may permit disentangling aspects of their ecologies, such as life history mediated dispersal behaviors.
+We thus use our framework to examine the underlying ecological constraints potentially driving the accumulation of dental distributions at two high latitude and two low latitude Eocene sites.
+
+
+
+
+
+
+% Given the reconstructed temperature regimes for high- and low-latitude Eocene sites, results from simulated dental distributions revealed qualitatively similar geometries across $\xi_j$ and $\xi_a$. 
+% For example, warmer temperatures in low-latitude sites reduce the prevalence of bimodality at juvenile sites (region IV in figure \ref{fig:sim} and supplementary figures 2,3) and accumulated tooth size is generally more variable in warmer environments (all regions in figure \ref{fig:sim} and supplementary figures 2-3).
+% In warmer sites, shark growth rate is increased (Eq. \ref{t1}), allowing individuals to reach maturity faster, resulting in larger populations that are composed of more individuals with larger body size.
+% The increase in overall variability is due to this broader range of size classes, whereas the reduced bimodality with high $\xi_j$ and low $\xi_a$ at the juvenile site is due to the accumulation of younger individuals quickly reaching larger body size prior to initial dispersal to the adult site.
+
+
+%Which site is a juvenile versus adult site
+Our evaluation of sand tiger dental distributions from both high- and low-latitude brackish and marine sites aligns with paleontological reconstructions of site habitat.
+For high-latitude locations, we observe that the Banks Island (Canada) site better fits the simulated juvenile ($\epsilon_j = 0.62$) relative to adult site ($\epsilon_a=1.32$), whereas the Seymour Island (Antarctica) site better fits the simulated adult ($\epsilon_a = 0.29$) relative to juvenile site ($\epsilon_j = 0.31$), though this latter difference is negligible (rows 1-2, figure \ref{fig:comp}).
+% Banks Island lies in the northern extent of the Northwest Territories.
+In comparison, the fossil shark tooth-bearing strata of Banks Island (Eureka Sound Fm.) dates to the early-middle Eocene \cite{Padilla2014}, and is reconstructed to be a channel or mouth bar deposit of a delta front \cite{Miall1979}. %the Eureka Sound Formation (i.e., the Cyclic Member) on 
+The presence of sand tiger teeth in unconsolidated sands, a fossilized crocodyliform fossil \cite{eberle2014first}, and paleosalinity reconstructed to be much lower than today's Arctic surface waters \cite{Kim2014d, Waddell2008}, all point to a mild and brackish estuarine environment \cite{west2015arctic, west2020paleobotanical}, supporting our prediction of this site serving as a nursery location (row 1, figure \ref{fig:comp}).
+% 12.7 PSU was estimated using a paleosalinity model modified by Kim et al. (2014); this is much lower than today’s Arctic surface waters, which have a salinity of 25-33 PSU and therefore implies a brackish water environment for the early Eocene Arctic Ocean (Kim et al., 2014).
+In contrast, the faunal composition and geochemistry of the Seymour Island locality (La Meseta Fm.) suggest typical marine conditions \cite{Ivany2008, Kriwet2016, Kim2020}.
+This site encompasses seven stratigraphic biostratigraphy units that span middle to late Eocene; although the shark assemblage changes across the formation \cite{Kriwet2016}, ${}^\dag$\emph{S. macrota} is the most abundant spanning ca. 45-41 My and demonstrate relatively stable oceanographic conditions \cite{Kim2020}.
+%Temperature reconstructions and climate simulations point to relatively warm and stable conditions \cite{zhu2020simulation, Kim2020}, though tectonic models indicate early opening of the Drakes Passage \cite{eagles2006small} that had large effects on paleoceanographic conditions \cite{scher2006timing}.
+While our simulations narrowly support this locality serving as an adult site, the plateaued error surface precludes a clear interpretation (row 2, figure \ref{fig:comp}).
+
+% %Banks Island
+% An ocean paleotemperature of 12-13 °C was estimated for the early-middle Eocene Arctic based on the TEX86 method (Sluijs et al., 2008). 
+% The unconsolidated sand shark teeth were found in is interpreted as a channel or mouth bar deposit in the delta front (Padilla et al., 2014). 
+% A crocodyliform fossil found in the Cyclic Member on Banks Island (Eberle et al., 2014) suggests a mild temperature on Banks Island in the Eocene (Markwick, 1998). 
+
+% %Seymour Island
+% Although the depositional setting could have potentially been influenced by freshwater influx, La Meseta faunal composition and geochemical analyses suggest normal marine conditions (Stilwell and Zinsmeister, 1992; Marenssi, 1998; Ivany et al., 2008).
+% Oxygen isotope ratio analysis of biogenic phosphate from sand tiger shark fossils in La Meseta Fm. suggest temperatures ranging from ~12-16ºC during the same time range, but do not see a similarly conclusive cooling trend (Kim et al., in review).
+
+
+
+For low-latitude localities, we observe that the Red Hot Truck Stop (MS) better fits simulated juvenile ($\epsilon_j = 0.21$) compared to adult sites ($\epsilon_a = 1.96$), whereas Whiskey Creek (TX) better fits simulated adult ($\epsilon_a = 1.03$) compared to juvenile sites ($\epsilon_j = 2.03$) (rows 3-4, figure \ref{fig:comp}).
+Palynofloral reconstruction of the Red Hot Truck Stop locality (Bashi/Tuscahoma Fm.) supports a paratropical climate \cite{Harrington2003} characterized by a large fluvial-dominated deltaic system in an estuarine habitat that spans the Paleocene/Eocene Thermal Maximum \cite{Beard2009}. 
+In contrast, the Whiskey Creek locality (Crockett Fm.) is dated to the early part of the Middle Eocene Climate Optimum \cite{Flis2017} and represents a shallower marine habitat with normal salinity \cite{Breard1999}. 
+This sub-tropical climate supported at least three species of sand tigers (${}^\dag$\emph{Carcharias cuspidata}, ${}^\dag$\emph{C. hopei}, and ${}^\dag$\emph{S. macrota}) \cite{Breard1999, Westgate} found within the Stone City Member of the Crockett Fm.
+% , which are all found within the Stone City Member of the Crockett Fm. at Whiskey Bridge.
+Taken together, these reconstructions support the notion that Red Hot Truck Stop and Whiskey Creek represent juvenile and adult sites respectively, as predicted by our framework. 
+
+% %Red hot truck stop
+% Palynofloras at the Red Hot Truck Stop locality contained 113 taxonomic groups that allowed an assessment of a paratropical vegetation habitat in the Gulf Coast (Harrington. 2003).
+% The lithology of the Tuscahoma Formation and T4 Sand is consistent with that of a large-scale, fluvial-dominated deltaic system (Beard and Dawson, 2009). 
+% The large-scale cross bedding and cross-cutting represents the cut-and-fill depositional characteristics associated with estuarine channel facies (Ingram, 1991). 
+
+% %Whiskey Bridge
+% The extant fauna is comparable to modern Gulf Coastal Plain fauna living in shallow inner shelf marine waters, and suggests that Stone City Fm. preserves a record of a tropical to sub-tropical climate with normal marine salinity (Breard and Springer, 1999; Harding et al., 2014; personal correspondence with C.J. Flis, Oct. 2016). 
+% Specifically, Stone City Fm. preserves three species of sand tiger sharks (Carcharias cuspidata, C. hopei, Striatolamia macrota; Breard and Springer, 1999). 
+% XRD and Mossbauer spectral analyses of Stone City Fm. clay pellets further support normal marine conditions and basic pH (7.5-8.5), based on the abundance of oodonite and paucity of glauconite (Harding et al., 2014), and suggest deposition in a shallower, tropical environment.
+
+
+
+% This correspondence lends support to our model design and by extension suggests that the large range of Eocene distributional geometries may have an ecological rather than taphonomic or evolutionary origin.
+% Specifically, we posit that temperature-driven differences in growth rates and migration between juvenile and adult sites introduce enough variability in distributional features to account for the variation observed in fossil deposits.
+% By comparing the ecological conditions giving rise to the best-fit simulated distributions in paleontological sand tiger environments relative to contemporary sand tiger populations, we can perhaps better understand how very similar species -- separated by millions of years -- responded to very different environmental conditions.
+
+
+\subsection{Dental distributions support the importance of shark nurseries}
+% Contemporary sand tiger size structure suggest strict juvenile dispersal windows (low $\xi_j$) and flexible adult dispersal windows (high $\xi_j$; figure \ref{fig:compmodern}).
+% However, best fit simulated dental distributions for both high- and low- latitude brackish and marine Eocene localities all point to adult dispersal windows that are either intermediate (the Banks Island brackish locality, and the Seymour Island and Whiskey Ridge marine localities) or very small (the Red Hot Truck Stop brackish locality).
+% If the adult dispersal window is small, annual adult migration to juvenile sites is restricted, pointing to stronger effects of seasonality on sand tiger life history.
+% Paleoclimate reconstruction of the Eocene Arctic does indicate strong seasonality with a temperature shift of $16.5^\circ$C between summer and winter with cold month mean temperatures over $0^\circ$C while warm month mean temperature estimates span $19-25^\circ$C  \cite{basinger1994early,eberle2010seasonal, sluijs2009warm, west2015arctic, west2020paleobotanical}, and this would suggest sharks in these environments may have life histories that are strongly seasonal.
+% Moreover, the oxygen isotopic record of \emph{Conus} shells along the Gulf Coast points to seasonal changes in nutrient availability \cite{kobashi2003oxygen}, where spring upwelling likely facilitated increased productivity.
+% Taken together, our results support a significant effect of seasonality driving dispersal to juvenile sites for both high- and low-latitude Eocene localities, in line with expectations from the geological record.
+
+
+%Juvenile dispersal window
+The contemporary Delaware Bay sand tiger population as well as those from all Eocene sites except the Seymour Island marine locality point to a small juvenile dispersal window, meaning that a strict size threshold initiates first dispersal to the adult site (figure \ref{fig:comp}).
+With regard to the Seymour Island locality, we observe that, for both simulated juvenile and adult sites, the error surface uniquely plateaus across a large range of potential $(\xi_j,\xi_a)$ values providing similarly good fits (row 2 in figure \ref{fig:comp}).
+This error surface limits our ability to either interpret whether Seymour Island better represents a juvenile versus adult site or to confidently estimate the size of either dispersal window.
+However, elevated juvenile and adult dispersal windows in the Antarctic may not be surprising, as this site is known to have accumulated across a longer temporal window \cite{montes2019late} where changing environmental conditions associated with the opening of the Drake passage \cite{Kim2020, zhu2020simulation} affected the shark community assembly \cite{Kriwet2016} and may have influenced how sites were used by shark populations over time and space.
+% For the three other Eocene sites, regions of low error are comparatively restricted to limited parameter space, all of which point to small juvenile dispersal windows (figure \ref{fig:comp}).
+% That the contemporary sand tiger population and these Eocene localities all point to small juvenile dispersal windows suggests that estuarine habitats with disproportionate representation of young individuals may be serving as protected nurseries.
+
+
+Contemporary shark nurseries are thought to enable resource access, promote juvenile growth, and to protect vulnerable pups against mortality from potential predators \cite{heithaus2007nursery, heupel2007shark}.
+Upon maturation and release from mesopredator pressure, dispersal to adult sites enables growing individuals access to larger prey and perhaps mating opportunities \cite{jorgensen2012eating}, though the timing of these events are variable among sand tiger populations \cite{Teter2015, otway2011pop}.
+In our framework, a large juvenile dispersal window means that both smaller and larger individuals initiate this first dispersal.
+These conditions imply that the costs and benefits of the juvenile site are similar to those of the adult site, such that it is no longer serving in the context of a nursery.
+In contrast, a strict juvenile dispersal window points to a sharp threshold in body size initiating first dispersal, implying that the costs and benefits characterizing juvenile and adult sites vary significantly, and supporting the notion of the juvenile site serving as a nursery. %This scenario means that the juvenile site is playing an important role in structuring shark life history
+% In the contemporary sand tiger population and three of four Eocene localities investigated here, 
+
+We find strong support for strict juvenile dispersal windows and by extension the role of juvenile sites serving as nurseries for the contemporary sand tiger population as well as three of four Eocene localities. % that segregate resource and predation risks experienced by individuals.
+Declines in nursery habitats have been invoked as a potential extinction mechanism for both fossil \cite{Pimiento2010} and contemporary shark populations \cite{heupel2007shark, heithaus2007nursery}, though the extent to which nurseries may buffer against population declines is controversial \cite{kinney2009reassessing}.
+Our results reinforce the notion that nurseries have played an important role in structuring sand tiger life histories across a range of oceanic conditions spanning tens of millions of years.
+% By linking dental distribution shape to strict juvenile dispersal windows, our results lend strong support for the presence of nurseries and their utmost importance to maintain sand tiger populations, both past and present.
+
+
+
+
+% Three of four Eocene sites point to small juvenile dispersal windows, however the Seymour Island locality does not (figure \ref{fig:comp}.
+% As for the Seymour Island locality, we observe that, with respect to both simulated juvenile and adult sites, the error surface uniquely plateaus across a large range of potential $(\xi_j,\xi_a)$ values, which provide similarly good fits.
+% This limits our ability to either interpret whether Seymour Island better represents a juvenile versus adult site or divine the size of either dispersal window.
+
+
+\section{Conclusion}
+
+%WHAT WE HAVE DONE
+We have shown that two important drivers of shark life history -- the variability in the size of juveniles first leaving a nursery and the temporal variability marking annual migrations of adults back to a nursery -- can result in the diversity of dental distributions characterizing both observed contemporary and paleontological sand tiger populations.
+% We suggest that our framework provides mechanistic insight into whether a particular dental distribution is the product of either juvenile or adult site occupation, as well as particular life history attributes contributing to distributional geometries.
+% Extending our framework to Eocene dental records, we find strong support for seasonal migrations to nursery localities, emphasizing the importance of nurseries in structuring the life histories of sand tigers over the course of their long evolutionary history.
+%ZOOMING OUT
+% Dental distributions directly reflect variability in body size, and it is this window into growth coupled with demography and dispersal strategies that permit insight into life history.
+% Body size distributions are naturally reflections of ontogenetic and demographic processes within populations, and different shark species are characterized by distributions with distinct shapes.
+% For example, great white sharks (\emph{Carcharodon carcharias}), bluntnose sixgill sharks (\emph{Hexanchus griseus}), and greenland sharks (\emph{Somniosus microcephalus}) have body size distributions that appear normally distributed, whereas basking sharks (\emph{Cetorhinus maximus}) tend towards bimodal distributions \cite{mcclain2015sizing}, megamouth sharks (\emph{Megachasma pelagios}) have distributions that are right-skewed \cite{watanabe2019distribution}, and some extinct sharks (\emph{Otodus megalodon}) had  body size distributions that appear left-skewed \cite{pimiento2015body}.
+% Understanding the drivers of these body size distributions, measured directly or estimated from tooth length, has the potential to reveal important insights into the ecological constraints shaping these systems.
+%Fine
+While we evaluate the dental distributions treated here as a product of dispersal patterns driven largely by size and seasonality, the diverse distributions observed across shark species may also account for differences in survivorship, sexual dimorphism, and species' position within the marine food web.
+Because fossil teeth are accumulated over long periods of time, differences in some dental distributions may also reflect sediment formation, taphonomic dynamics, evolutionary change, and/or tectonic processes \cite{Whitenack}. 
+Disentangling the potential drivers of particular dental distributions must be justified from an understanding of both the geological characteristics of the locality as well as a biological understanding of the species.
+Deciphering the mechanisms from which dental distributions are formed permits an ecological window into both extinct and extant shark communities, and we suggest this may generate new insights into how these enduring and enigmatic species persist in the face of change.
+
+
+
+
+
+
+\vskip1pc
+
+\ethics{The authors have no competing interests to declare. All data and analyses provided here are not published elsewhere.}
+
+\dataccess{Raw data for empirical tooth distributions are provided in the Dryad repository at https://doi.org/10.6071/M3RT05. Simulation code is available in the public GitHub repository
+\url{https://github.com/jdyeakel/sharks_bodysize}
+}
+
+\aucontribute{Conceptualization - SLK, JDY, JJE; Methodology - SLK, JDY, JJE; Investigation - SLK, JDY, SSZ, DF, JK; Formal Analysis - MAB, JDY, DF; Writing original draft - SLK, JDY, MAB; Review and Editing - all authors; Supervision - SLK, JJE; Funding Acquisition - SLK, JJE, JK.}
+
+\competing{The authors have no competing interests.}
+
+\funding{
+This  research  was  funded  in  part  by  the  National Science Foundation (SGP1842049) and University of Chicago T.C. Chamberlin Fellowship to SLK; Mellon Mayes Undergraduate Fellowship at University of Chicago, National Science Foundation Graduate Research Fellowship, and NASA Emerging Worlds grant ($18-EW18_2-0084$) to SSZ; Austrian Science  Fund (FWF)  [P  33820] to  JK. 
+For  the purpose  of open  access, JK  has  applied  a  CC  BY  public copyright  licence  to  any Author.
+Field research to collect shark teeth on Banks Island, Canada was supported by National Science Foundation grant ARC0804627 to JE.}
+
+\ack{
+This research would not be possible without the support of many individuals. 
+We thank the curators and collection managers for their help and access to collect the empirical data: K. Shepherd and M. Currie at the Canadian Museum of Nature, P. Holroyd at the University of California Museum of Paleontology, L. Skibinski at Paleontological Research Institute, T. Mörs at the Swedish Natural History Museum, A. Henrici at the Carnegie Museum of Natural History, and C. Flis at the Whiteside Natural History Museum. 
+We are grateful to D. Fox for access to data from the 2012 \emph{Carcarias taurus} tagging season as part of his research program at Delaware State University.
+Our research benefited from conversations with M. Clementz,  P. Holroyd, D. Jablonski, and S. Kidwell over the years.
+Thank you to Christina Spence Morgan for scientific illustration on figures \ref{fig:map} and \ref{fig:diagram}.}
+
+\disclaimer{Insert disclaimer text here.}
+
+
+\clearpage
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Shark_Map4C.pdf}
+    \caption{Map of sand tiger localities and size distributions based on anterior tooth crown height. 
+    In the Eocene, ${}^\dag$\emph{Striatolamia macrota} inhabited high latitude waters (darker shades), such as Banks Island, Canada (Eureka Sound Fm., dark green) and Seymour Island, Antarctica (La Meseta Fm., dark blue), as well as mid-latitude waters (lighter shades) in the Gulf of Mexico, such as the Red Hot Truck Stop, Mississippi (Bashi/Tuscahoma Fm., light green) and Whiskey Bridge, Texas (Crockett Fm., light blue). 
+    These sites also represent brackish (Banks Island, high latitude, and Red Hot Truck Stop, low latitude; greens) and marine (Seymour Island, high latitude, and Whiskey Bridge, low latitude; blues) waters. 
+    Extant sand tigers were caught at Delaware Bay (black) and anterior tooth crown height is transformed from total length. ${}^\dag$\emph{Striatolamia macrota} illustration by Christina Spence Morgan.}
+\label{fig:map}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1\linewidth]{BodySizeFigure_Draft2_Jan20.pdf}  
+   \caption{Conceptual diagram of the population simulation where sand tiger individuals migrate between a juvenile/nursery (yellow) and adult site (orange). 
+   The ontogenetic growth rates of sand tiger individuals increase with temperature (blue and red growth curves) from an initial mass $m_0$ to an asymptotic mass $M$.
+   After birth, newborns reside in the juvenile site until they reach maturity at mass $m_j$, after which they disperse to the adult site.
+   The juvenile dispersal window $\xi_j$ (pink) denotes the variability in size at which initial dispersal occurs. 
+   Adults disperse to the juvenile site, where $\xi_a$ denotes the variability in the timing of the migration (green), which occurs annually from the adult to the juvenile site and back (map inset).
+   Individuals drop teeth as they migrate, such that accumulating dental distributions capture the size structure of populations at both sites.
+   Empirical dental distributions (blue distribution) can be compared to simulated distributions at juvenile and adult sites (yellow and orange distributions, respectively) and evaluated for best-fit based on mean, variance, and modality, thereby gaining insight into life-history characteristics such as the juvenile and adult dispersal windows. Illustration by Christina Spence Morgan.}
+  \label{fig:diagram}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1\linewidth]{fig_means_peaks_highlatitude_rev.pdf}  
+\caption{Simulation results for the dynamic population model as a function of juvenile and adult dispersal windows ($\xi_j$ and $\xi_a$, respectively). 
+Changes in dental distribution shape are captured by site-specific means (top two panels) and the distance between modes ($\Delta$ mode; bottom two panels).
+A $\Delta$ mode value of zero means there is only one mode.
+Representative distributions of anterior tooth crown height are shown for juvenile site and adult sites for regions I-IV  (horizontal along bottom and vertical along right edge, respectively), where color denotes both region and site identity.
+Regions I-IV depict various combinations of small and large dispersal windows. Region I (high $\xi_a$, low $\xi_j$); II (high $\xi_a$, high $\xi_j$); III (low $\xi_a$, low $\xi_j$); IV (low $\xi_a$, high $\xi_j$).
+Results are shown for high altitude Eocene conditions, but are qualitatively similar for all evaluated localities.}
+\label{fig:sim}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1\linewidth]{fig_empirical_comp_Delaware2.pdf}  
+\caption{Comparison of empirical dental distributions from sand tigers in the Delaware Bay and those simulated across different values of the juvenile ($\xi_j$) and adult ($\xi_a$) dispersal windows.
+Better fits between empirical and simulated distributions at juvenile (A) and adult sites (B) are represented by warmer colors (lower $\epsilon$; Eq. \ref{eq:error}). 
+Best-fit simulation results for juvenile and adult simulation results at a particular $(\xi_j,\xi_a)$ are denoted by black circles.
+The corresponding distributions at this best-fit value of $(\xi_j,\xi_a)$ are shown for juvenile (C) and adult (D) sites for comparison (thin lines) relative to the empirical distribution (thick line). 
+Within-site best-fit error values are reported in the upper-right, and the across-site best-fit error is denoted with an asterisk (${}^\ast$).}
+\label{fig:compmodern}
+\end{figure}
+
+
+
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=1\linewidth]{fig_empirical_eocene_comp_all2.pdf}
+\caption{
+Comparison of empirical dental distributions from sand tigers at Eocene localities and those simulated across different values of the juvenile ($\xi_j$) and adult ($\xi_a$) dispersal windows.
+Eocene localities include the high latitude Banks Island (first row, dark green) and Seymour Island (second row, dark blue) sites as well as the low latitude Red Hot Truck Stop (third row, light green) and Whiskey Bridge Sites (fourth row, light blue).
+Blues denote sites reconstructed as marine habitats; greens denote sites reconstructed as near-shore estuarine habitats.
+Across all rows, better fits between empirical and simulated distributions at juvenile (A) and adult sites (B) are represented by warmer colors (lower $\epsilon$; Eq. \ref{eq:error}). 
+Best-fit simulation results for juvenile and adult simulation results at a particular $(\xi_j,\xi_a)$ are denoted by colored circles.
+The corresponding distributions at this best-fit value of $(\xi_j,\xi_a)$ are shown for juvenile (C) and adult (D) sites for comparison (thin lines) relative to the empirical distribution (thick line). 
+Within-site best-fit error values are reported in the upper-right, and the across-site best-fit error is denoted with an asterisk (${}^\ast$).}
+\label{fig:comp}
+\end{figure}
+
+
+\clearpage
+%%%%%%%%%% Insert bibliography here %%%%%%%%%%%%%%
+% \bibliographystyle{RS}
+% \bibliography{aa_starving3}
+
+\begin{thebibliography}{99}
+
+\bibitem{Whitenack}
+Whitenack LB, Kim SL, Sibert EC. in press  Bridging the Gap Between
+  Chondrichthyan Paleobiology and Biology. {\em Biology of sharks and their
+  relatives} \textbf{3}.
+
+\bibitem{Kim2014d}
+Kim S, Eberle J, Bell D, Fox D, Padilla A. 2014  {Evidence from shark teeth for
+  a brackish Arctic Ocean in the Eocene greenhouse}. {\em Geology} \textbf{42},
+  695--698.
+
+\bibitem{Kim2020}
+Kim SL, Zeichner SS, Colman AS, Scher HD, Kriwet J, M{\"{o}}rs T, Huber M. 2020
+   { Probing the ecology and climate of the Eocene Southern Ocean with sand
+  tiger sharks Striatolamia macrota }. {\em Paleoceanography and
+  Paleoclimatology} pp. 1--21.
+
+\bibitem{straube2020intraspecific}
+Straube N, Pollersp{\"o}ck J. 2020  Intraspecific dental variations in the
+  deep-sea shark Etmopterus spinax and their significance in the fossil record.
+  {\em Zoomorphology} \textbf{139}, 483--491.
+
+\bibitem{Pimiento2010}
+Pimiento C, Ehret DJ, MacFadden BJ, Hubbell G. 2010  {Ancient nursery area for
+  the extinct giant shark megalodon from the Miocene of Panama}. {\em PLoS ONE}
+  \textbf{5}.
+
+\bibitem{Villafana2020}
+Villafa{\~{n}}a JA, Hernandez S, Alvarado A, Shimada K, Pimiento C, Rivadeneira
+  MM, Kriwet J. 2020  {First evidence of a palaeo-nursery area of the great
+  white shark}. {\em Scientific Reports} \textbf{10}, 1--8.
+
+\bibitem{Shimada2004}
+Shimada K. 2004  {The relationship between the tooth size and total body length
+  in the sandtiger shark, Carcharias taurus (Laminformes : Odontaspidae)}. {\em
+  Journal of Fossil Research} \textbf{37}, 76--81.
+
+\bibitem{brose2006consumer}
+Brose U, Jonsson T, Berlow EL, Warren P, Banasek-Richter C, Bersier LF,
+  Blanchard JL, Brey T, Carpenter SR, Blandenier MFC et~al.. 2006
+  Consumer--resource body-size relationships in natural food webs. {\em
+  Ecology} \textbf{87}, 2411--2417.
+
+\bibitem{West:2001bv}
+West GB, Brown JH, Enquist BJ. 2001  {A general model for ontogenetic growth}.
+  {\em Nature} \textbf{413}, 628--631.
+
+\bibitem{bhat2020scaling}
+Bhat U, Kempes CP, Yeakel JD. 2020  Scaling the risk landscape drives optimal
+  life-history strategies and the evolution of grazing. {\em Proceedings of the
+  National Academy of Sciences} \textbf{117}, 1580--1586.
+
+\bibitem{schindler2002sharks}
+Schindler DE, Essington TE, Kitchell JF, Boggs C, Hilborn R. 2002  Sharks and
+  tunas: fisheries impacts on predators with contrasting life histories. {\em
+  Ecological Applications} \textbf{12}, 735--748.
+
+\bibitem{heithaus2007nursery}
+Heithaus MR. 2007  Nursery areas as essential shark habitats: a theoretical
+  perspective. In {\em American Fisheries Society Symposium} vol.~50 p.~3.
+  American Fisheries Society.
+
+\bibitem{heupel2007shark}
+Heupel MR, Carlson JK, Simpfendorfer CA. 2007  Shark nursery areas: concepts,
+  definition, characterization and assumptions. {\em Marine Ecology Progress
+  Series} \textbf{337}, 287--297.
+
+\bibitem{burke2018pliocene}
+Burke KD, Williams JW, Chandler MA, Haywood AM, Lunt DJ, Otto-Bliesner BL. 2018
+   Pliocene and Eocene provide best analogs for near-future climates. {\em
+  Proceedings of the National Academy of Sciences} \textbf{115}, 13288--13293.
+
+\bibitem{Waddell2008}
+Waddell LM, Moore TC. 2008  {Salinity of the Eocene Arctic Ocean from oxygen
+  isotope analysis of fish bone carbonate}. {\em Paleoceanography} \textbf{23},
+  1--14.
+
+\bibitem{padilla2014sand}
+Padilla A, Eberle JJ, Gottfried MD, Sweet AR, Hutchison JH. 2014  A sand tiger
+  shark--dominated fauna from the Eocene Arctic greenhouse. {\em Journal of
+  Vertebrate Paleontology} \textbf{34}, 1307--1316.
+
+\bibitem{Ivany2008}
+Ivany LC, Lohmann KC, Hasiuk F, Blake DB, Glass A, Aronson RB, Moody RM. 2008
+  {Eocene climate record of a high southern latitude continental shelf: Seymour
+  Island, Antarctica}. {\em Bulletin of the Geological Society of America}
+  \textbf{120}, 659--678.
+
+\bibitem{Kriwet2016}
+Kriwet J, Engelbrecht A, M{\"{o}}rs T, Reguero M, Pfaff C. 2016  {Ultimate
+  Eocene (Priabonian) chondrichthyans (Holocephali, Elasmobranchii) of
+  Antarctica}. {\em Journal of Vertebrate Paleontology} \textbf{36}.
+
+\bibitem{Padilla2014}
+Padilla A, Eberle JJ, Gottfried MD, Sweet AR, Hutchison JH. 2014  {A sand tiger
+  shark-dominated fauna from the Eocene Arctic greenhouse}. {\em Journal of
+  Vertebrate Paleontology} \textbf{34}, 1307--1316.
+
+\bibitem{Westgate}
+Westgate JW. 2001  Paleoecology and biostratigraphy of marginal marine Gulf
+  Coast Eocene vertebrate localities. In {\em Eocene biodiversity} ,  pp.
+  263--297. Springer.
+
+\bibitem{Beard2009}
+Beard KC, Dawson MR. 2009  Early Wasatchian mammals of the red hot local fauna,
+  uppermost Tuscahoma formation, Lauderdale County, Mississippi. {\em Annals of
+  Carnegie Museum} \textbf{78}, 193--243.
+
+\bibitem{Cappetta2012}
+Cappetta H. 2012 {\em {Handbook of Paleoichthyology, Volume 3E}}.
+Munich: Verlag chondricht edition.
+
+\bibitem{Cunningham2000}
+Cunningham SB. 2000  {A comparison of isolated teeth of early Eocene
+  Striatolamia macrota (Chondrichthyes , Lamniformes), with those of a Recent
+  sand shark , Carcharias taurus}. {\em Tertiary Research} \textbf{20}, 17--31.
+
+\bibitem{haulsee2018spatial}
+Haulsee D, Breece M, Brown L, Wetherbee B, Fox D, Oliver M. 2018  Spatial
+  ecology of Carcharias taurus in the northwestern Mid-Atlantic coastal ocean.
+  {\em Marine Ecology Progress Series} \textbf{597}, 191--206.
+
+\bibitem{Teter2015}
+Teter SM, Wetherbee BM, Fox DA, Lam CH, Kiefer DA, Shivji M. 2015  {Migratory
+  patterns and habitat use of the sand tiger shark (Carcharias taurus) in the
+  western North Atlantic}. {\em Marine and Freshwater Research} \textbf{66},
+  158--169.
+
+\bibitem{cortes1996comparative}
+Cort{\'e}s E, Parsons GR. 1996  Comparative demography of two populations of
+  the bonnethead shark (Sphyrna tiburo). {\em Canadian Journal of Fisheries and
+  Aquatic Sciences} \textbf{53}, 709--718.
+
+\bibitem{Goldman2006}
+Goldman KJ, Branstetter S, Musick JA. 2006  {A re-examination of the age and
+  growth of sand tiger sharks, Carcharias taurus, in the western North
+  Atlantic: The importance of ageing protocols and use of multiple
+  back-calculation techniques}. {\em Environmental Biology of Fishes}
+  \textbf{77}, 241--252.
+
+\bibitem{zeichner2017discrimination}
+Zeichner S, Colman A, Koch P, Polo-Silva C, Galv{\'a}n-Maga{\~n}a F, Kim S.
+  2017  Discrimination factors and incorporation rates for organic matrix in
+  shark teeth based on a captive feeding study. {\em Physiological and
+  Biochemical Zoology} \textbf{90}, 257--272.
+
+\bibitem{cantrill2012vegetation}
+Cantrill DJ, Poole I. 2012 {\em The vegetation of Antarctica through geological
+  time}.
+Cambridge University Press.
+
+\bibitem{eberle2012life}
+Eberle JJ, Greenwood DR. 2012  Life at the top of the greenhouse Eocene
+  world—A review of the Eocene flora and vertebrate fauna from Canada’s
+  High Arctic. {\em Bulletin} \textbf{124}, 3--23.
+
+\bibitem{Flis2017}
+Flis JE, Yancey TE, Flis CJ. 2017  {Middle Eocene Storm Deposition in the
+  Northwestern Gulf of Mexico, Burleson County, Texas, U.S.A}. {\em Gulf Coast
+  Association of Geological Societies} \textbf{6}, 201--225.
+
+\bibitem{Kneebone2012}
+Kneebone J, Chisholm J, Skomal GB. 2012  {Seasonal residency, habitat use, and
+  site fidelity of juvenile sand tiger sharks Carcharias taurus in a
+  Massachusetts estuary}. {\em Marine Ecology Progress Series} \textbf{471},
+  165--181.
+
+\bibitem{kneebone2014movement}
+Kneebone J, Chisholm J, Skomal G. 2014  Movement patterns of juvenile sand
+  tigers (Carcharias taurus) along the east coast of the USA. {\em Marine
+  Biology} \textbf{161}, 1149--1163.
+
+\bibitem{Miall1979}
+Miall AD. 1979  {Mesozoic and Tertiary geology of Banks Island, Arctic Canada:
+  the history of an unstable craton margin}. {\em Geological Survey of Canada
+  Memoir} \textbf{387}, 1--235.
+
+\bibitem{eberle2014first}
+Eberle JJ, Gottfried MD, Hutchison JH, Brochu CA. 2014  First record of Eocene
+  bony fishes and crocodyliforms from Canada’s Western Arctic. {\em PloS one}
+  \textbf{9}, e96079.
+
+\bibitem{west2015arctic}
+West CK, Greenwood DR, Basinger JF. 2015  Was the Arctic Eocene
+  ‘rainforest’monsoonal? Estimates of seasonal precipitation from early
+  Eocene megafloras from Ellesmere Island, Nunavut. {\em Earth and Planetary
+  Science Letters} \textbf{427}, 18--30.
+
+\bibitem{west2020paleobotanical}
+West CK, Greenwood DR, Reichgelt T, Lowe AJ, Vachon JM, Basinger JF. 2020
+  Paleobotanical proxies for early Eocene climates and ecosystems in northern
+  North America from middle to high latitudes. {\em Climate of the Past}
+  \textbf{16}, 1387--1410.
+
+\bibitem{Harrington2003}
+Harrington GJ. 2003  {Wasatchian (Early Eocene) pollen floras from the Red Hot
+  Truck Stop, Mississippi, USA}. {\em Palaeontology} \textbf{46}, 725--738.
+
+\bibitem{Breard1999}
+Breard SQ, Stringer GL. 1999  {Abstract: Integrated Paleoecology and Marine
+  Vertebrate Fauna of the Stone City Formation (Middle Eocene), Brazos River
+  Section, Texas }. {\em AAPG Bulletin} \textbf{83}.
+
+\bibitem{montes2019late}
+Montes M, Beamud E, Nozal F, Santillana S. 2019  Late Maastrichtian-Paleocene
+  chronostratigraphy from Seymour Island (James Ross Basin, Antarctic
+  Peninsula). Eustatic controls of sedimentation. {\em Advances in Polar
+  Science} \textbf{30}, 303--327.
+
+\bibitem{zhu2020simulation}
+Zhu J, Poulsen CJ, Otto-Bliesner BL, Liu Z, Brady EC, Noone DC. 2020
+  Simulation of early Eocene water isotopes using an Earth system model and its
+  implication for past climate reconstruction. {\em Earth and Planetary Science
+  Letters} \textbf{537}, 116164.
+
+\bibitem{jorgensen2012eating}
+Jorgensen SJ, Arnoldi NS, Estess EE, Chapple TK, R{\"u}ckert M, Anderson SD,
+  Block BA. 2012  Eating or meeting? Cluster analysis reveals intricacies of
+  white shark (Carcharodon carcharias) migration and offshore behavior. {\em
+  PloS one} \textbf{7}, e47819.
+
+\bibitem{otway2011pop}
+Otway N, Ellis M. 2011  Pop-up archival satellite tagging of Carcharias taurus:
+  movements and depth/temperature-related use of south-eastern Australian
+  waters. {\em Marine and Freshwater Research} \textbf{62}, 607--620.
+
+\bibitem{kinney2009reassessing}
+Kinney MJ, Simpfendorfer CA. 2009  Reassessing the value of nursery areas to
+  shark conservation and management. {\em Conservation letters} \textbf{2},
+  53--60.
+
+\end{thebibliography}
+
+
+
+
+
+
+
+\end{document}
