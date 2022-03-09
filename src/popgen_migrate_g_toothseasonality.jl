@@ -278,7 +278,7 @@ function popgen_migrate_g_toothseasonality(m0,M,tempvec1,tempvec2,n0,gen,distanc
     toothlossrate_maxwarm = toothlossratebase .+ (maxtoothlossrate - mintoothlossrate).*sin.((pi/(daysinyear/2)).*collect(0:1:daysinyear));
     toothlossrate_maxcold = toothlossratebase .+ (maxtoothlossrate - mintoothlossrate).*sin.(pi.+ (pi/(daysinyear/2)).*collect(0:1:daysinyear));
 
-    toothlossrate = copy(toothlossrate_maxwarm);
+    toothlossrate = copy(toothlossrate_maxcold);
     
     
     # N=100; #how many timebins to save to calculate steady state distribution
