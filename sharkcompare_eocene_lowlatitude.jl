@@ -194,7 +194,7 @@ library(fields)
 library(RColorBrewer)
 # pal = brewer.pal(5,'Set1')[3:4]
 pal = c('#BFCC95','#97C0D0')
-palq = brewer.pal(11,'Spectral')
+palq = brewer.pal(10,'Spectral')
 ncol = c('black','black','black','white','white')
 pdf($namespace,width=12,height=5)
 par(mfrow=c($num,4))

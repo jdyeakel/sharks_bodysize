@@ -201,7 +201,7 @@ library(fields)
 library(RColorBrewer)
 pal = brewer.pal(5,'Set1')
 pal = c('#6E7F40','#3251E8')
-palq = brewer.pal(11,'Spectral')
+palq = brewer.pal(10,'Spectral')
 ncol = c('black','black','black','white','white')
 pdf($namespace,width=12,height=5)
 par(mfrow=c($num,4))
@@ -277,7 +277,7 @@ for i=2:num
     R"""
     plot($(datadensityj.x),$(datadensityj.density/maximum(datadensityj.density)),type='l',xlab='',ylab='',col=pal[$i],lwd=3,xlim=c(0,40),xaxt='n',yaxt='n')
     lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000020')
-    text(42, 0.92, paste($(ndata[i]),"\n","Error = ",round($(bfvaluej[i]),2),sep=''), pos = 2,cex=1.2)
+    text(42, 0.92, paste($(ndata[i]),"\n","Error = ",round($(bfvaluej[i]),2),'*',sep=''), pos = 2,cex=1.2)
     """
     for r=2:reps
         datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
@@ -294,7 +294,7 @@ for i=2:num
     R"""
     plot($(datadensitya.x),$(datadensitya.density/maximum(datadensitya.density)),type='l',xlab='',ylab='',col=pal[$i],lwd=3,xlim=c(0,40),xaxt='n',yaxt='n')
     lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000020')
-    text(42, 0.92, paste($(ndata[i]),"\n","Error = ",round($(bfvaluea[i]),2),'*',sep=''), pos = 2,cex=1.2)
+    text(42, 0.92, paste($(ndata[i]),"\n","Error = ",round($(bfvaluea[i]),2),sep=''), pos = 2,cex=1.2)
     """
     for r=2:reps
         datadensitya, toothlengtha, scaledsimdensitya = plotcompare(Ma,qMa,filename_data,measures,r,"adult");
@@ -313,4 +313,15 @@ R"""
 dev.off()
 """
 
+#DOUBLE CHECK THE DIMENSIONS OF QMATRIX
+qmatrixat = [repeat([0],20)';qmatrixa]
+qmatrixat = [repeat([0],20)';qmatrixat]
+qmatrixat = [repeat([0],20)';qmatrixat]
+filename = "figures/fig_qmatrix_test.pdf";
+namespace = smartpath(filename);
+R"""
+pdf($namespace,width=5,height=5)
+image(x=$(collect(1:size(qmatrixat)[1])),y=$tauvec,z=($(qmatrixat)))
+dev.off()
+"""
 

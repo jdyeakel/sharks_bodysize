@@ -186,7 +186,7 @@ library(RColorBrewer)
 # pal = brewer.pal(5,'Set1')
 pal = c('black','black')
 ncol = c('black','black','black','white','white')
-palq = brewer.pal(11,'Spectral')
+palq = brewer.pal(10,'Spectral')
 pdf($namespace,width=12,height=3)
 par(mfrow=c(1,4))
 par(list(oma = c(4, 4, 0, 0), mar = c(1, 1, 1, 2)))
@@ -212,7 +212,6 @@ lines($toothlengthj,$scaledsimdensityj,lty=1,col='#00000050')
 axis(side=1,at =NULL,mgp=c(3, 0.75, 0))
 mtext('Scaled density',side=2,outer=TRUE,adj=0.5,padj=41.5,cex=1.2)
 mtext('Tooth length (mm)',side=1,outer=TRUE,adj=0.78,padj=1.5,cex=1.2)
-
 """
 for r=2:reps
     datadensityj, toothlengthj, scaledsimdensityj = plotcompare(Mj,qMj,filename_data,measures,r,"juv");
@@ -232,7 +231,7 @@ for r=2:reps
     lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000050')
     """
 end
-R""""
+R"""
 dev.off()
 """
 
