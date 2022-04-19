@@ -1,8 +1,25 @@
 function toothdist_analysis(toothdrop,toothlength)
 
+
+    jden = (toothdrop[:,1]/sum(toothdrop[:,1]));
+    aden = (toothdrop[:,2]/sum(toothdrop[:,2]));
+
     #MEASURE SOMETHING
-    mvj = dot(toothlength,(toothdrop[:,1]/sum(toothdrop[:,1])));
-    mva = dot(toothlength,(toothdrop[:,2]/sum(toothdrop[:,2])));
+    #MEANS
+    mvj = dot(toothlength,jden);
+    mva = dot(toothlength,aden);
+
+    #MEDIANS
+    medianj = toothlength[findall(x->x>0.5,cumsum(aden))[1]];
+    mediana = toothlength[findall(x->x>0.5,cumsum(aden))[1]];
+
+    #Quartiles
+    quartile25j = toothlength[findall(x->x>0.25,cumsum(jden))[1]];
+    quartile25a = toothlength[findall(x->x>0.25,cumsum(aden))[1]];
+
+    quartile75j = toothlength[findall(x->x>0.75,cumsum(jden))[1]];
+    quartile75a = toothlength[findall(x->x>0.75,cumsum(aden))[1]];
+
     
     # meanjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mvj;
     # meanadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mva;
@@ -265,7 +282,7 @@ function toothdist_analysis(toothdrop,toothlength)
     modesa = sort([secondtootha,maxtootha]);
 
 
-    return mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist, modesj, modesa
+    return mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist, modesj, modesa, medianj, mediana, quartile25j, quartile25a, quartile75j, quartile75a
 
 
 

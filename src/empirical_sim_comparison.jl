@@ -1,14 +1,14 @@
 function empirical_sim_comparison(toothdrop,toothlength,measures)
 
 
-    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist, modesj, modesa = toothdist_analysis(toothdrop,toothlength);
+    mvj, mva, varj, vara, pj, pa, peakjuvbin, peakadultbin, peakjuvdist, peakadultdist, modesj, modesa, medianj, mediana, quartile25j, quartile25a, quartile75j, quartile75a = toothdist_analysis(toothdrop,toothlength);
 
 
     #derive empirical toothdrop and toothlength vectors
     U = kde(measures);
     emp_toothlength = U.x;
     emp_toothdrop = U.density;
-    mve, vare, pe, peakebin, peakedist, modes = toothdist_emp_analysis(emp_toothdrop,emp_toothlength);
+    mve, vare, pe, peakebin, peakedist, modes, mediane, quartile25e, quartile75e = toothdist_emp_analysis(emp_toothdrop,emp_toothlength);
 
     #Error function
     function errorfunc(pred,obs)
@@ -24,6 +24,19 @@ function empirical_sim_comparison(toothdrop,toothlength,measures)
     #SDs
     sdchij = errorfunc(sqrt(varj),sqrt(vare));
     sdchia = errorfunc(sqrt(vara),sqrt(vare));
+
+    #MEDIANS
+    medianchij = errorfunc(medianj,mediane);
+    medianchia = errorfunc(mediana,mediane);
+
+    #Quartile 25
+    quartile25chij = errorfunc(quartile25j,quartile25e);
+    quartile25chia = errorfunc(quartile25a,quartile25e);
+
+    #Quartile 75
+    quartile75chij = errorfunc(quartile75j,quartile75e);
+    quartile75chia = errorfunc(quartile75a,quartile75e);
+
 
     #HA! THIS IS CHI SQUARE STAT
     # meandist_juv = 1 - (mve - sqrt((mvj - mve)^2))/mve; 
@@ -62,7 +75,7 @@ function empirical_sim_comparison(toothdrop,toothlength,measures)
 
     end
 
-    return meanchij, meanchia, modechij, modechia, modedistchij, modedistchia, sdchij, sdchia
+    return meanchij, meanchia, modechij, modechia, modedistchij, modedistchia, sdchij, sdchia, medianchij, medianchia, quartile25chij, quartile25chia, quartile75chij, quartile75chia
 
 end
 

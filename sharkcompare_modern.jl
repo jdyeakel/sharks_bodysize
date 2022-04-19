@@ -34,6 +34,12 @@ moddistchia = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 sddistchij = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 sddistchia = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 
+mediandistchij = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
+mediandistchia = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
+quartile25distchij = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
+quartile25distchia = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
+quartile75distchij = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
+quartile75distchia = SharedArray{Float64}(reps,length(sigtauvec),length(tauvec));
 
 measures = Array{Float64}(data[findall(!ismissing,data)]);
 # U = kde(measures);
@@ -46,16 +52,14 @@ measures = Array{Float64}(data[findall(!ismissing,data)]);
 
 #3 paramters: distance, sigtau, tau
 # distposvec = repeat(collect(1:3),inner = length(sigtauvec)*length(tauvec));
-sigtauposvec = repeat(collect(1:length(sigtauvec)),inner = length(tauvec));
-tauposvec = repeat(collect(1:length(tauvec)),outer=length(sigtauvec));
-paramposvec_pre = [sigtauposvec tauposvec];
-#temperature | distance | sigtauvec | tauposvec
-# paramposvec = [repeat(collect(1:4),inner = size(paramposvec_pre)[1]) repeat(paramposvec_pre,outer=4)];
 
-paramvec_pre = repeat(paramposvec_pre,outer = reps);
-paramvec = [repeat(collect(1:reps),inner=size(paramposvec_pre)[1]) paramvec_pre];
+# sigtauposvec = repeat(collect(1:length(sigtauvec)),inner = length(tauvec));
+# tauposvec = repeat(collect(1:length(tauvec)),outer=length(sigtauvec));
+# paramposvec_pre = [sigtauposvec tauposvec];
+# paramvec_pre = repeat(paramposvec_pre,outer = reps);
+# paramvec = [repeat(collect(1:reps),inner=size(paramposvec_pre)[1]) paramvec_pre];
 
-its = size(paramvec)[1];
+# its = size(paramvec)[1];
 
 @time @sync @distributed for j=1:its
     pos = paramvec[j,:];
@@ -87,7 +91,7 @@ its = size(paramvec)[1];
     # lineplot!(ply,toothlength,simdensity_adult,color=:green)
     # lineplot!(ply,U.x,U.density,color=:blue)
 
-    meanchij, meanchia, modechij, modechia, modedistchij, modedistchia, sdchij, sdchia  = empirical_sim_comparison(toothdrop,toothlength,measures)
+    meanchij, meanchia, modechij, modechia, modedistchij, modedistchia, sdchij, sdchia, medianchij, medianchia, quartile25chij, quartile25chia, quartile75chij, quartile75chia  = empirical_sim_comparison(toothdrop,toothlength,measures)
 
     mchij[r,sigtau_pos,tau_pos] = meanchij;
     mchia[r,sigtau_pos,tau_pos] = meanchia;
@@ -97,6 +101,13 @@ its = size(paramvec)[1];
     moddistchia[r,sigtau_pos,tau_pos] = modedistchia;
     sddistchij[r,sigtau_pos,tau_pos] = sdchij;
     sddistchia[r,sigtau_pos,tau_pos] = sdchia;
+
+    mediandistchij[r,sigtau_pos,tau_pos] = medianchij;
+    mediandistchia[r,sigtau_pos,tau_pos] = medianchia;
+    quartile25distchij[r,sigtau_pos,tau_pos] = quartile25chij;
+    quartile25distchia[r,sigtau_pos,tau_pos] = quartile25chia;
+    quartile75distchij[r,sigtau_pos,tau_pos] = quartile75chij;
+    quartile75distchia[r,sigtau_pos,tau_pos] = quartile75chia;
 end
 
 
@@ -111,22 +122,29 @@ dista = mean(moddistchia,dims=1)[1,:,:];
 msdj = mean(sddistchij,dims=2)[1,:,:];
 msda = mean(sddistchia,dims=2)[1,:,:];
 
+medj = mean(mediandistchij,dims=2)[1,:,:];
+meda = mean(mediandistchia,dims=2)[1,:,:];
+q25j = mean(quartile25distchij,dims=2)[1,:,:];
+q25a = mean(quartile25distchia,dims=2)[1,:,:];
+q75j = mean(quartile75distchij,dims=2)[1,:,:];
+q75a = mean(quartile75distchia,dims=2)[1,:,:];
+
 # ndata = names(data);
 ndata = ["Delaware Bay"]
 
-filename = "data/sharks_modern2/analysisdata2.jld";
+filename = "data/sharks_modern2/analysisdata3.jld";
 namespace = smartpath(filename);
-# @save namespace mcj mca mdj mda distj dista
+@save namespace mcj mca mdj mda distj dista medj meda q25j q25a q75j q75a
 
 binmatrixj = Array{Int64}(undef,length(sigtauvec),length(tauvec));
 binmatrixa = Array{Int64}(undef,length(sigtauvec),length(tauvec));
 cof = 0.5
 
-binmatrixj = (mcj .< cof) .* (mdj .< cof) .* (distj .< cof) .* (msdj .< cof);
-binmatrixa = (mca .< cof) .* (mda .< cof) .* (dista .< cof) .* (msda .< cof);
+binmatrixj = (mcj .< cof) .* (mdj .< cof) .* (distj .< cof) .* (msdj .< cof) .* (medj .< cof) .* (q25j .< cof) .* (q75j .< cof);
+binmatrixa = (mca .< cof) .* (mda .< cof) .* (dista .< cof) .* (msda .< cof) .* (meda .< cof) .* (q25a .< cof) .* (q75a .< cof);
 
-qmatrixj = mcj .+ mdj .+ distj .+ msdj;
-qmatrixa = mca .+ mda .+ dista .+ msda;
+qmatrixj = mcj .+ mdj .+ distj .+ msdj .+ medj .+ q25j .+ q75j;
+qmatrixa = mca .+ mda .+ dista .+ msda .+ meda .+ q25a .+ q75a;
 
 bfcoordsj = Array{Float64}(undef,2);
 bfcoordsa = Array{Float64}(undef,2);
@@ -151,7 +169,7 @@ lineplot!(ply,toothlength,scaledsimdensity,color=:red)
 ###################
 
 
-filename = "figures/fig_empirical_comp_modern3_rev.pdf";
+filename = "figures/fig_empirical_comp_modern3_rev2.pdf";
 namespace = smartpath(filename);
 filename_data = "data/sharks_modern2/simdata.jld";
 Mj = binmatrixj[:,:]; Ma = binmatrixa[:,:];
@@ -214,7 +232,9 @@ for r=2:reps
     lines($toothlengtha,$scaledsimdensitya,lty=1,col='#00000050')
     """
 end
-R"dev.off()"
+R""""
+dev.off()
+"""
 
 
 # for i=2:num

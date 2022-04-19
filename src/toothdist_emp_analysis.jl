@@ -1,7 +1,20 @@
 function toothdist_emp_analysis(emp_toothdrop,emp_toothlength)
 
+
+    eden = (emp_toothdrop/sum(emp_toothdrop));
+
     #MEASURE SOMETHING
-    mve = dot(emp_toothlength,(emp_toothdrop/sum(emp_toothdrop)));
+    #Mean
+    mve = dot(emp_toothlength,eden);
+
+    #MEDIANS
+    mediane = emp_toothlength[findall(x->x>0.5,cumsum(eden))[1]];
+ 
+    #Quartiles
+    quartile25e = emp_toothlength[findall(x->x>0.25,cumsum(eden))[1]];
+ 
+    quartile75e = emp_toothlength[findall(x->x>0.75,cumsum(eden))[1]];
+ 
     
     # meanjuv[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mvj;
     # meanadult[r,temp_pos,dist_pos,sigtau_pos,tau_pos] = mva;
@@ -49,7 +62,7 @@ function toothdist_emp_analysis(emp_toothdrop,emp_toothlength)
 
     modes = sort([secondtoothe,maxtoothe]);
 
-    return mve, vare, pe, peakebin, peakedist, modes
+    return mve, vare, pe, peakebin, peakedist, modes, mediane, quartile25e, quartile75e
 
 
 

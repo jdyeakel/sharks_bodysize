@@ -5,7 +5,7 @@ else
 end
 
 filename_settings = "data/sharks_modern2_toothloss_maxwarm/simsettings.jld";
-# filename_settings = "data/sharks_modern2_toothloss_maxcold/simsettings.jld";
+# filename_settings = "data/sharks_modern2_toothloss_maxwarm/simsettings.jld";
 namespace = smartpath(filename_settings);
 @load namespace l0 L n0 gen mintemp_j maxtemp_j mintemp_a maxtemp_a distvec toothlossratepercentchangevec sigtauvec tauvec ltl paramvec its
 
@@ -77,7 +77,7 @@ meanadult = SharedArray{Float64}(ltl,length(sigtauvec),length(tauvec));
 
     #save data
     filename = "data/sharks_modern2_toothloss_maxwarm/simdata.jld";
-    # filename = "data/sharks_modern2_toothloss_maxcold/simdata.jld";
+    # filename = "data/sharks_modern2_toothloss_maxwarm/simdata.jld";
     indices = [toothlossratepercentchange_pos,sigtau_pos,tau_pos];
     namespace = smartpath(filename,indices);
     
@@ -119,15 +119,15 @@ lineplot!(ply,(toothlossratepercentchangevec .- toothlossratepercentchangevec[1]
 
 # Eocene Figure
 filename = "figures/fig_toothrateseasonality_modern_maxwarm.pdf";
-# filename = "figures/fig_toothrateseasonality_modern_maxcold.pdf";
+# filename = "figures/fig_toothrateseasonality_modern_maxwarm.pdf";
 namespace = smartpath(filename);
 R"""
 library(RColorBrewer)
 library(fields)
 pal = colorRampPalette(rev(brewer.pal(11,'Spectral')))(50)
 pdf($namespace,width=6,height=5)
-plot($(toothlossratepercentchangevec[1:11] .- toothlossratepercentchangevec[1]),$(matrixdiff_j[1:11]),type='l',lty=2,xlab='Loss rate seasonality',ylab='Mean percent change (%)',xlim=c(0,0.1),ylim=c(-0.5,0.5))
-lines($(toothlossratepercentchangevec[1:11] .- toothlossratepercentchangevec[1]),$(matrixdiff_a[1:11]),lty = 1)
+plot($(toothlossratepercentchangevec[1:11] .- toothlossratepercentchangevec[1])*100,$(matrixdiff_j[1:11]),type='l',lty=2,xlab='Loss rate seasonality (%)',ylab='Mean percent change (%)',xlim=c(0,10),ylim=c(-0.5,0.5))
+lines($(toothlossratepercentchangevec[1:11] .- toothlossratepercentchangevec[1])*100,$(matrixdiff_a[1:11]),lty = 1)
 dev.off()
 """
 

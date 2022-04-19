@@ -45,6 +45,13 @@ moddistchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
 sddistchij = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
 sddistchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
 
+mediandistchij = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+mediandistchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+quartile25distchij = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+quartile25distchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+quartile75distchij = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+quartile75distchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
+
 @time @sync @distributed for i=1:num
 
     measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
@@ -99,7 +106,7 @@ sddistchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
         # lineplot!(ply,toothlength,simdensity_adult,color=:green)
         # lineplot!(ply,U.x,U.density,color=:blue)
 
-        meanchij, meanchia, modechij, modechia, modedistchij, modedistchia, sdchij, sdchia = empirical_sim_comparison(toothdrop,toothlength,measures)
+        meanchij, meanchia, modechij, modechia, modedistchij, modedistchia, sdchij, sdchia, medianchij, medianchia, quartile25chij, quartile25chia, quartile75chij, quartile75chia  = empirical_sim_comparison(toothdrop,toothlength,measures);
 
         mchij[i,r,sigtau_pos,tau_pos] = meanchij;
         mchia[i,r,sigtau_pos,tau_pos] = meanchia;
@@ -107,9 +114,15 @@ sddistchia = SharedArray{Float64}(num,reps,length(sigtauvec),length(tauvec));
         modchia[i,r,sigtau_pos,tau_pos] = modechia;
         moddistchij[i,r,sigtau_pos,tau_pos] = modedistchij;
         moddistchia[i,r,sigtau_pos,tau_pos] = modedistchia;
-
         sddistchij[i,r,sigtau_pos,tau_pos] = sdchij;
         sddistchia[i,r,sigtau_pos,tau_pos] = sdchia;
+
+        mediandistchij[i,r,sigtau_pos,tau_pos] = medianchij;
+        mediandistchia[i,r,sigtau_pos,tau_pos] = medianchia;
+        quartile25distchij[i,r,sigtau_pos,tau_pos] = quartile25chij;
+        quartile25distchia[i,r,sigtau_pos,tau_pos] = quartile25chia;
+        quartile75distchij[i,r,sigtau_pos,tau_pos] = quartile75chij;
+        quartile75distchia[i,r,sigtau_pos,tau_pos] = quartile75chia;
     end
 
 
@@ -125,22 +138,29 @@ dista = mean(moddistchia,dims=2)[:,1,:,:];
 msdj = mean(sddistchij,dims=2)[:,1,:,:];
 msda = mean(sddistchia,dims=2)[:,1,:,:];
 
+medj = mean(mediandistchij,dims=2)[:,1,:,:];
+meda = mean(mediandistchia,dims=2)[:,1,:,:];
+q25j = mean(quartile25distchij,dims=2)[:,1,:,:];
+q25a = mean(quartile25distchia,dims=2)[:,1,:,:];
+q75j = mean(quartile75distchij,dims=2)[:,1,:,:];
+q75a = mean(quartile75distchia,dims=2)[:,1,:,:];
+
 # ndata = names(data);
 ndata = ["Banks Island","Seymour Island"];
 
-filename = "data/sharks_eocene2/analysisdata2.jld";
+filename = "data/sharks_eocene2/analysisdata3.jld";
 namespace = smartpath(filename);
-# @save namespace mcj mca mdj mda distj dista
+@save namespace mcj mca mdj mda distj dista medj meda q25j q25a q75j q75a
 
 binmatrixj = Array{Int64}(undef,num,length(sigtauvec),length(tauvec));
 binmatrixa = Array{Int64}(undef,num,length(sigtauvec),length(tauvec));
 cof = 0.5
 for i=1:num
-    binmatrixj[i,:,:] = (mcj .< cof)[i,:,:] .* (mdj .< cof)[i,:,:] .* (distj .< cof)[i,:,:] .* (msdj .< cof)[i,:,:];
-    binmatrixa[i,:,:] = (mca .< cof)[i,:,:] .* (mda .< cof)[i,:,:] .* (dista .< cof)[i,:,:] .* (msda .< cof)[i,:,:];
+    binmatrixj[i,:,:] = (mcj .< cof)[i,:,:] .* (mdj .< cof)[i,:,:] .* (distj .< cof)[i,:,:] .* (msdj .< cof)[i,:,:] .* (medj .< cof)[i,:,:] .* (q25j .< cof)[i,:,:] .* (q75j .< cof)[i,:,:];
+    binmatrixa[i,:,:] = (mca .< cof)[i,:,:] .* (mda .< cof)[i,:,:] .* (dista .< cof)[i,:,:] .* (msda .< cof)[i,:,:] .* (meda .< cof)[i,:,:] .* (q25a .< cof)[i,:,:] .* (q75a .< cof)[i,:,:];
 end
-qmatrixj = mcj .+ mdj .+ distj .+ msdj;
-qmatrixa = mca .+ mda .+ dista .+ msda;
+qmatrixj = mcj .+ mdj .+ distj .+ msdj .+ medj .+ q25j .+ q75j;
+qmatrixa = mca .+ mda .+ dista .+ msda .+ meda .+ q25a .+ q75a;
 bfcoordsj = Array{Float64}(undef,num,2);
 bfcoordsa = Array{Float64}(undef,num,2);
 bfvaluej = Array{Float64}(undef,num);
@@ -165,7 +185,7 @@ end
 ###################
 
 
-filename = "figures/fig_empirical_comp_highlatitude3_rev.pdf";
+filename = "figures/fig_empirical_comp_highlatitude3_rev2.pdf";
 namespace = smartpath(filename);
 filename_data = "data/sharks_eocene2/simdata.jld";
 Mj = binmatrixj[1,:,:]; Ma = binmatrixa[1,:,:];
@@ -289,6 +309,8 @@ for i=2:num
         """
     end
 end
-R"dev.off()"
+R"""
+dev.off()
+"""
 
 
