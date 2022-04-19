@@ -10,7 +10,7 @@ function toothdist_analysis(toothdrop,toothlength)
     mva = dot(toothlength,aden);
 
     #MEDIANS
-    medianj = toothlength[findall(x->x>0.5,cumsum(aden))[1]];
+    medianj = toothlength[findall(x->x>0.5,cumsum(jden))[1]];
     mediana = toothlength[findall(x->x>0.5,cumsum(aden))[1]];
 
     #Quartiles
