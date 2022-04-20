@@ -19,7 +19,7 @@ lsamples = length(samplesizevec);
 meandiff = SharedArray{Float64}(num,lsamples,reps);
 mode1diff = SharedArray{Float64}(num,lsamples,reps);
 mode2diff = SharedArray{Float64}(num,lsamples,reps);
-
+meddiff = SharedArray{Float64}(num,lsamples,reps);
 
 for i = 1:num
     measures = Array{Float64}(data[!,i][findall(!ismissing,data[!,i])]);
@@ -65,6 +65,7 @@ for i = 1:num
             #difference from means and modes
             
             meandiff[i,j,r] = sqrt((mve - smve)^2);
+            meddiff[i,j,r] = sqrt((mediane - smediane)^2);
             if modes[1] == 0.
                 mode1diff[i,j,r] = 0.;
             else
